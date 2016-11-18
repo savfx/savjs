@@ -51,7 +51,7 @@ export function isDate (arg) {
 
 export function typeValue (arg) {
     if (isNan(arg))
-        return 'NaN'
+        return 'Nan'
     switch (arg) {
         case undefined:
             return 'Undefined'

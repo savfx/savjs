@@ -2,7 +2,7 @@ import test from "ava"
 import expect from 'expect.js'
 import * as type from '../'
 
-test('type', (assert) => {
+test('type', (ava) => {
     const items = {
         'Object': {},
         'Array': [],
