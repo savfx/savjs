@@ -66,3 +66,20 @@ export const isInt = isInteger
 export function isUint (arg) {
     return isInteger(arg) && arg >= 0;
 }
+
+let types = {
+    isBoolean,
+    isString,
+    isNumber,
+    isObject,
+    isArray,
+    isFunction,
+    isRegExp,
+    isDate,
+    isNull,
+    isUndefined,
+    isInt,
+    isUint,
+}
+
+export {types}
