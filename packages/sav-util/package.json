@@ -2,21 +2,32 @@
   "name": "sav-util",
   "version": "0.0.1",
   "description": "util library for savjs",
-  "main": "index.js",
+  "main": "dist/sav-util.cjs.js",
+  "module": "dist/sav-util.es.js",
+  "jsnext:main": "dist/sav-util.es.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c -f cjs -o dist/sav-util.cjs.js && rollup -c -o dist/sav-util.es.js",
+    "test": "ava"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/savjs/sav-util.git"
   },
   "author": {
-    "name":"jetiny",
-    "email":"86287344@qq.com"
+    "name": "jetiny",
+    "email": "86287344@qq.com"
   },
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/savjs/sav-util/issues"
+  },
+  "devDependencies": {
+    "ava": "^0.16.0",
+    "eslint-plugin-standard": "^2.0.1",
+    "expect.js": "^0.3.1",
+    "rollup": "^0.36.3",
+    "rollup-plugin-buble": "^0.14.0",
+    "standard": "^8.5.0"
   },
   "homepage": "https://github.com/savjs/sav-util#readme"
 }
