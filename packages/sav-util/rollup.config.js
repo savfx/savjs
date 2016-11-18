@@ -5,7 +5,10 @@ const YEAR = new Date().getFullYear()
 
 export default {
   entry: 'src/index.js',
-  dest: 'dist/sav-util.cjs.js',
+  targets: [
+    { dest: 'dist/sav-util.cjs.js', format: 'cjs' },
+    { dest: 'dist/sav-util.es.js', format: 'es' },
+  ],
   plugins: [
     buble()
   ],

@@ -6,7 +6,7 @@
   "module": "dist/sav-util.es.js",
   "jsnext:main": "dist/sav-util.es.js",
   "scripts": {
-    "build": "rollup -c -f cjs -o dist/sav-util.cjs.js && rollup -c -o dist/sav-util.es.js",
+    "build": "rollup -c",
     "test": "npm run build && ava"
   },
   "repository": {
