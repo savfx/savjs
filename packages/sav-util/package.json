@@ -1,0 +1,22 @@
+{
+  "name": "sav-util",
+  "version": "0.0.1",
+  "description": "util library for savjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/savjs/sav-util.git"
+  },
+  "author": {
+    "name":"jetiny",
+    "email":"86287344@qq.com"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/savjs/sav-util/issues"
+  },
+  "homepage": "https://github.com/savjs/sav-util#readme"
+}
