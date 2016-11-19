@@ -13,25 +13,25 @@
  *     }
  * });
  */
-export function each(obj, iterator, context) {
-    if (obj) {
-        var _length = obj.length,
-            _key;
-        if (_length === +_length) { // array like
-            for (_key = 0; _key < _length; _key++) {
-                if (false === iterator.call(context, obj[_key], _key)) {
-                    return obj;
-                }
-            }
-        } else { //object
-            for (_key in obj) {
-                if (obj.hasOwnProperty(_key)) {
-                    if (false === iterator.call(context, obj[_key], _key)) {
-                        return obj;
-                    }
-                }
-            }
+export function each (obj, iterator, context) {
+  if (obj) {
+    let _length = obj.length
+    let _key
+    if (_length === +_length) { // array like
+      for (_key = 0; _key < _length; _key++) {
+        if (iterator.call(context, obj[_key], _key) === false) {
+          return obj
         }
+      }
+    } else { // object
+      for (_key in obj) {
+        if (obj.hasOwnProperty(_key)) {
+          if (iterator.call(context, obj[_key], _key) === false) {
+            return obj
+          }
+        }
+      }
     }
-    return obj;
+  }
+  return obj
 }
