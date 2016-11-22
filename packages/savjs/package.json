@@ -28,10 +28,8 @@
     "rollup-plugin-buble": "^0.14.0",
     "rollup-plugin-commonjs": "^5.0.5",
     "rollup-plugin-node-resolve": "^2.0.0",
+    "sav-util": "^0.0.3",
     "standard": "^8.5.0"
   },
-  "homepage": "https://github.com/savjs/savjs#readme",
-  "dependencies": {
-    "sav-util": "^0.0.3"
-  }
+  "homepage": "https://github.com/savjs/savjs#readme"
 }
