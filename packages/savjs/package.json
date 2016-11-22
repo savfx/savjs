@@ -6,6 +6,7 @@
   "scripts": {
     "build": "rollup -c",
     "lint": "standard rollup.config.js test/** src/**",
+    "start": "watch -p \"+(test|src)/*.js\" -c \"npm test\"",
     "test": "npm run lint && npm run build && ava"
   },
   "repository": {
@@ -29,7 +30,8 @@
     "rollup-plugin-commonjs": "^5.0.5",
     "rollup-plugin-node-resolve": "^2.0.0",
     "sav-util": "^0.0.3",
-    "standard": "^8.5.0"
+    "standard": "^8.5.0",
+    "watch-cli": "^0.2.1"
   },
   "homepage": "https://github.com/savjs/savjs#readme"
 }
