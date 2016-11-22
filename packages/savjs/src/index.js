@@ -1,5 +1,4 @@
-export default {
-  install (flux) {
 
-  }
+export default {
+
 }

@@ -2,9 +2,7 @@
   "name": "savjs",
   "version": "0.0.1",
   "description": "savjs (Store Action View) is a javascript flux application foundation",
-  "main": "dist/sav.cjs.js",
-  "module": "dist/sav.es.js",
-  "jsnext:main": "dist/sav.es.js",
+  "main": "dist/sav.umd.js",
   "scripts": {
     "build": "rollup -c",
     "lint": "standard rollup.config.js test/** src/**",
@@ -28,6 +26,8 @@
     "expect.js": "^0.3.1",
     "rollup": "^0.36.3",
     "rollup-plugin-buble": "^0.14.0",
+    "rollup-plugin-commonjs": "^5.0.5",
+    "rollup-plugin-node-resolve": "^2.0.0",
     "standard": "^8.5.0"
   },
   "homepage": "https://github.com/savjs/savjs#readme",

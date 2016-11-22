@@ -6,3 +6,11 @@
 [![Build Status](https://travis-ci.org/savjs/savjs.svg?branch=master)](https://travis-ci.org/savjs/savjs)
 
 savjs (Store Action View) is a javascript flux application foundation
+
+```js
+import savjs from 'savjs'
+
+const flux = savjs({})
+
+```
+
