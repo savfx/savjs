@@ -10,6 +10,7 @@ let probe = {
   localStorage: defined(typeof localStorage),
   XMLHttpRequest: defined(typeof XMLHttpRequest),
   MutationObserver: defined(typeof MutationObserver),
+  FormData: defined(typeof FormData),
   window: defined(typeof window),
   document: defined(typeof document)
 }
