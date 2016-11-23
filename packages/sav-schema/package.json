@@ -1,6 +1,6 @@
 {
   "name": "sav-schema",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "schema for savjs",
   "main": "dist/sav-schema.cjs.js",
   "module": "dist/sav-schema.es.js",
@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/savjs/sav-schema#readme",
   "dependencies": {
-    "sav-assert": "0.0.1",
-    "sav-util": "0.0.3"
+    "sav-assert": "0.0.2",
+    "sav-util": "0.0.4"
   }
 }

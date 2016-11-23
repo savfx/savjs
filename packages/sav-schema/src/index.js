@@ -1,1 +1,4 @@
-export * from './schema'
+import {Schema} from './schema'
+
+export {Schema}
+export default new Schema()
