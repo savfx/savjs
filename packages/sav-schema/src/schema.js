@@ -1,4 +1,4 @@
-import { isObject, isArray, prop, isNull, clone } from 'sav-util'
+import { isObject, isArray, prop, isNull, clone, isString } from 'sav-util'
 import * as assert from 'sav-assert'
 
 const TYPE_TYPE = 0
@@ -97,19 +97,37 @@ function createSturct (schema, opts) {
 
   let fields = []
   for (let key in props) {
-    let field = isObject(props[key]) ? clone(props[key]) : parseProp(props[key])
+    let pval = props[key]
+    let field
+    if (isString(pval)) {
+      field = parseProp(pval)
+    } else if (isObject(pval)) {
+      if (pval.schema) {
+        field = {type: pval}
+      } else {
+        field = clone(pval)
+      }
+      if (isObject(pval.type) && pval.type.schema) {
+        field.type = pval.type
+      }
+    }
     // override [type, subType, ref, subRef, required, key]
     const { type } = field
-    if (type.indexOf('<') > 0) { // ["Array<User>", "Array", "User"]
-      const mat = type.match(/^(\w+)(?:<(\w+)>)?$/)
-      field.type = mat[1]
-      field.subType = mat[2]
-      field.subRef = childs[field.subType] || schema[field.subType]
-    } else {
-      field.type = type
+    if (isString(type)) {
+      if (type.indexOf('<') > 0) { // ["Array<User>", "Array", "User"]
+        const mat = type.match(/^(\w+)(?:<(\w+)>)?$/)
+        field.type = mat[1]
+        field.subType = mat[2]
+        field.subRef = childs[field.subType] || schema[field.subType]
+      } else {
+        field.type = type
+      }
+      field.ref = childs[field.type] || schema[field.type]
+    } else if (isObject(type)) {
+      field.type = type.name
+      field.ref = type
     }
     field.required = ('required' in field) ? field.required : !field.optional
-    field.ref = childs[field.type] || schema[field.type]
     field.key = key
     fields.push(field)
   }
