@@ -43,33 +43,42 @@ function createEnum (schema, opts) {
   const {enums, create, check} = opts
   let valueMaps = {}
   let keyMaps = {}
+  let values = []
+  let keys = []
   let ret = {}
   if (isObject(enums)) {
     for (let key in enums) {
       let it = enums[key]
       if (isObject(it)) {
         assert.inObject(it, 'value')
+        values.push(it.value)
         valueMaps[keyMaps[key] = it.value] = key
       } else {
+        values.push(it)
         valueMaps[keyMaps[key] = it] = key
       }
+      keys.push(key)
     }
   } else if (isArray(enums)) {
     enums.forEach((it) => {
       assert.inObject(it, 'key')
       assert.inObject(it, 'value')
+      keys.push(it.key)
+      values.push(it.value)
       valueMaps[keyMaps[it.key] = it.value] = it.key
     })
   }
-  prop(ret, 'values', valueMaps) // value=>key
-  prop(ret, 'keys', keyMaps)     // key=>value
-  prop(ret, 'check', check || ((val) => assert.inObject(valueMaps, val)))
+  prop(ret, 'keys', keys)
+  prop(ret, 'values', values)
+  prop(ret, 'keyMaps', keyMaps)
+  prop(ret, 'valueMaps', valueMaps)
+  prop(ret, 'check', check || ((val) => assert.inArray(values, val)))
   prop(ret, 'create', create || (() => opts.default))
   return ret
 }
 
 function createSturct (schema, opts) {
-  const {props, refs, create, check} = opts
+  const {props, refs, create, check, extract} = opts
   assert.isObject(props)
 
   let childs = {}
@@ -127,6 +136,34 @@ function createSturct (schema, opts) {
       }
       throw err
     }
+  }))
+  prop(ret, 'extract', extract || ((value) => {
+    let res = {}
+    try {
+      fields.forEach((it) => {
+        try {
+          res[it.key] = extractStructField(ret, value, it)
+        } catch (err) {
+          (err.keys || (err.keys = [])).unshift(it.key)
+          throw err
+        }
+      })
+    } catch (err) {
+      if (err.keys) {
+        err.path = err.keys.join('.')
+      }
+      throw err
+    }
+    return res
+  }))
+  prop(ret, 'extractThen', (val) => new Promise((resolve, reject) => {
+    let res
+    try {
+      res = ret.extract(val)
+    } catch (err) {
+      return reject(err)
+    }
+    resolve(res)
   }))
   return ret
 }
@@ -220,6 +257,29 @@ function checkStructField (struct, obj, {key, type, subType, required, nullAble,
       }
     }
   }
+}
+
+function extractStructField (struct, obj, field) {
+  checkStructField(struct, obj, field)
+  const val = obj[field.key]
+  if (field.subType) {
+    let ret = []
+    for (let i = 0, l = val.length; i < l; ++i) {
+      try {
+        field.subRef.check(val[i])
+        if (field.subRef.extract) {
+          ret.push(field.subRef.extract(val[i]))
+        } else {
+          ret.push(val[i])
+        }
+      } catch (err) {
+        (err.keys || (err.keys = [])).unshift(i)
+        throw err
+      }
+    }
+    return ret
+  }
+  return val
 }
 
 function createSchemaType (schema, opts) {

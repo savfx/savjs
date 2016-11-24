@@ -1,6 +1,6 @@
 import test from 'ava'
-import { Schema } from '../'
-import { isFunction, isObject } from 'sav-util'
+import schema, { Schema } from '../'
+import { isFunction, isObject, isArray } from 'sav-util'
 
 const TypeProp = {
   create (s) {
@@ -42,7 +42,6 @@ const UserProp = {
 test('schema#api', (ava) => {
   ava.true(isFunction(Schema.register))
 
-  let schema = new Schema()
   ava.true(isFunction(schema.declare))
   // type
   const Type = schema.declare(TypeProp)
@@ -53,12 +52,15 @@ test('schema#api', (ava) => {
   const Sex = schema.declare(SexProp)
   ava.true(isFunction(Sex.check))
   ava.true(isFunction(Sex.create))
-  ava.true(isObject(Sex.keys))
-  ava.true(isObject(Sex.values))
+  ava.true(isArray(Sex.keys))
+  ava.true(isArray(Sex.values))
+  ava.true(isObject(Sex.keyMaps))
+  ava.true(isObject(Sex.valueMaps))
   ava.true(isFunction(Type.checkThen))
   // struct
   const User = schema.declare(UserProp)
   ava.true(isFunction(User.check))
   ava.true(isFunction(User.create))
   ava.true(isFunction(User.checkThen))
+  ava.true(isFunction(User.extract))
 })
