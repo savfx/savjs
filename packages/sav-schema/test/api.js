@@ -54,8 +54,7 @@ test('schema#api', (ava) => {
   ava.true(isFunction(Sex.create))
   ava.true(isArray(Sex.keys))
   ava.true(isArray(Sex.values))
-  ava.true(isObject(Sex.keyMaps))
-  ava.true(isObject(Sex.valueMaps))
+  ava.true(isObject(Sex.fields))
   ava.true(isFunction(Type.checkThen))
   // struct
   const User = schema.declare(UserProp)

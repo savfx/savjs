@@ -41,7 +41,6 @@ function createType (schema, opts) {
 
 function createEnum (schema, opts) {
   const {enums, create, check} = opts
-  let valueMaps = {}
   let keyMaps = {}
   let values = []
   let keys = []
@@ -51,11 +50,9 @@ function createEnum (schema, opts) {
       let it = enums[key]
       if (isObject(it)) {
         assert.inObject(it, 'value')
-        values.push(it.value)
-        valueMaps[keyMaps[key] = it.value] = key
+        values.push(keyMaps[key] = it.value)
       } else {
-        values.push(it)
-        valueMaps[keyMaps[key] = it] = key
+        values.push(keyMaps[key] = it)
       }
       keys.push(key)
     }
@@ -64,14 +61,19 @@ function createEnum (schema, opts) {
       assert.inObject(it, 'key')
       assert.inObject(it, 'value')
       keys.push(it.key)
-      values.push(it.value)
-      valueMaps[keyMaps[it.key] = it.value] = it.key
+      values.push(keyMaps[it.key] = it.value)
     })
   }
+  prop(ret, 'fieldByKey', val => keyMaps[val])
+  prop(ret, 'fieldByValue', val => {
+    let idx = values.indexOf(val)
+    if (idx !== -1) {
+      return keyMaps[keys[idx]]
+    }
+  })
+  prop(ret, 'fields', keyMaps)
   prop(ret, 'keys', keys)
   prop(ret, 'values', values)
-  prop(ret, 'keyMaps', keyMaps)
-  prop(ret, 'valueMaps', valueMaps)
   prop(ret, 'check', check || ((val) => assert.inArray(values, val)))
   prop(ret, 'create', create || (() => opts.default))
   return ret
