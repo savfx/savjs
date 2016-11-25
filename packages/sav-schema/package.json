@@ -1,6 +1,6 @@
 {
   "name": "sav-schema",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "schema for savjs",
   "main": "dist/sav-schema.cjs.js",
   "module": "dist/sav-schema.es.js",

@@ -256,11 +256,11 @@ function parseValue (val) {
   return val
 }
 
-function checkStructField (struct, obj, {key, type, subType, required, nullAble, ref, checkes, subRef}) {
+function checkStructField (struct, obj, {key, type, subType, required, nullable, ref, checkes, subRef}) {
   if (!required && !(key in obj)) {
     return
   }
-  if (nullAble && isNull(obj[key])) {
+  if (nullable && isNull(obj[key])) {
     return
   }
   assert.inObject(obj, key)
