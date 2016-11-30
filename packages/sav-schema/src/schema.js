@@ -50,9 +50,9 @@ function createEnum (schema, opts) {
       let it = enums[key]
       if (isObject(it)) {
         assert.inObject(it, 'value')
-        values.push(keyMaps[key] = it.value)
+        values.push((keyMaps[key] = it).value)
       } else {
-        values.push(keyMaps[key] = it)
+        values.push((keyMaps[key] = {key: key, value: it}).value)
       }
       keys.push(key)
     }
@@ -61,7 +61,7 @@ function createEnum (schema, opts) {
       assert.inObject(it, 'key')
       assert.inObject(it, 'value')
       keys.push(it.key)
-      values.push(keyMaps[it.key] = it.value)
+      values.push((keyMaps[it.key] = it).value)
     })
   }
   prop(ret, 'fieldByKey', val => keyMaps[val])
