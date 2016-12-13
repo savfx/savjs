@@ -1,4 +1,4 @@
-import { isObject, isArray, prop, isNull, clone, isString } from 'sav-util'
+import { isObject, isArray, prop, isNull, clone, isString, isFunction } from 'sav-util'
 import * as assert from 'sav-assert'
 
 const TYPE_TYPE = 0
@@ -110,6 +110,8 @@ function createSturct (schema, opts) {
       if (isObject(pval.type) && pval.type.schema) {
         field.type = pval.type
       }
+    } else if (isFunction(pval) && pval.name) { // raw String Boolean type etc.
+      field = {type: schema[pval.name]}
     }
     // override [type, subType, ref, subRef, required, key]
     const { type } = field

@@ -30,3 +30,15 @@ test('schema#type', ava => {
   assert.isObject(UserInfo)
   assert.isNotObject(schema.Sex)
 })
+
+test('schema with raw type', ava => {
+  const struct = schema.declare({
+    props: {
+      name: String,
+      age: {
+        type: Number
+      }
+    }
+  })
+  assert.isObject(struct)
+})
