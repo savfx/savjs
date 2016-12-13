@@ -1,6 +1,5 @@
 import test from 'ava'
-import { bindEvent } from '../'
-import {isFunction, isObject} from 'sav-util'
+import { bindEvent,isFunction, isObject } from '../'
 
 test('bindEvent', (av) => {
   let testObj = {}
