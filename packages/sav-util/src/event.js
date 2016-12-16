@@ -29,10 +29,10 @@ export function bindEvent (target) {
   })
 
   prop(target, 'subscribe', (event, fn) => {
-    target.on(event, fn);
+    target.on(event, fn)
     return () => {
-        target.off(event, fn);
-    };
+      target.off(event, fn)
+    }
   })
 
   prop(target, 'emit', (event, ...args) => {
