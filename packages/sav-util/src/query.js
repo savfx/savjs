@@ -2,7 +2,7 @@ import {isObject} from './type'
 
 const _encode = encodeURIComponent
 const r20 = /%20/g
-const rbracket = /\[\]$/
+const rbracket = /\[]$/
 
 function buildParams (prefix, obj, add) {
   if (Array.isArray(obj)) {
@@ -37,7 +37,7 @@ export function parseQuery (str, opts = {}) {
   .replace(/(?:^|&)([^&=]*)=?([^&]*)/g, function ($0, _name, _value) {
     if (_name) {
       let _path, _acc, _tmp, _ref;
-      (_path = []).unshift(_name = _name.replace(/\[([^\]]*)\]/g, function ($0, _k) {
+      (_path = []).unshift(_name = _name.replace(/\[([^\]]*)]/g, function ($0, _k) {
         _path.push(_k)
         return ''
       }))
