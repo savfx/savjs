@@ -29,14 +29,10 @@ export function bindEvent (target) {
   })
 
   prop(target, 'subscribe', (event, fn) => {
-    let rfn = () => {
-      if (rfn) {
-        target.off(event, rfn)
-        rfn = null
-        fn()
-      }
-    }
-    target.on(event, rfn)
+    target.on(event, fn);
+    return () => {
+        target.off(event, fn);
+    };
   })
 
   prop(target, 'emit', (event, ...args) => {
