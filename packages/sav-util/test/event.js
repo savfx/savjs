@@ -1,14 +1,11 @@
 import test from 'ava'
-import { bindEvent,isFunction, isObject } from '../'
+import { bindEvent, isFunction } from '../'
 
 test('bindEvent', (av) => {
   let testObj = {}
-  bindEvent(textObj)
-  const arr = ['on','off','once','listen','emit']
-  arr.forEach((val)=>{
-      av.true(isFunction(testObj[val]))
-      av.pass()
+  bindEvent(testObj)
+  const arr = ['on', 'off', 'once', 'subscribe', 'emit']
+  arr.forEach((val) => {
+    av.true(isFunction(testObj[val]))
   })
 })
-
-

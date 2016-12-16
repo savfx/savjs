@@ -28,11 +28,15 @@ export function bindEvent (target) {
     target.on(event, once)
   })
 
-  prop(target, 'listen', (event, fn) => {
-    target.on(event, fn)
-    return () => {
-      target.off(event, fn)
+  prop(target, 'subscribe', (event, fn) => {
+    let rfn = () => {
+      if (rfn) {
+        target.off(event, rfn)
+        rfn = null
+        fn()
+      }
     }
+    target.on(event, rfn)
   })
 
   prop(target, 'emit', (event, ...args) => {
