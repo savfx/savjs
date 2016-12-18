@@ -6,8 +6,9 @@
   "module": "dist/sav-schema.es.js",
   "jsnext:main": "dist/sav-schema.es.js",
   "scripts": {
-    "build": "rollup -c",
-    "lint": "standard rollup.config.js test/** src/**",
+    "min": "uglifyjs ./dist/sav-schema.js -o ./dist/sav-schema.min.js -c warnings=false -m",
+    "build": "rollup -c rollup.browser.js && rollup -c && npm run min",
+    "lint": "standard rollup.* test/** src/**",
     "start": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && npm run build && nyc ava ./test\"",
     "test": "npm run lint && npm run build && nyc ava ./test"
   },
@@ -30,7 +31,10 @@
     "nyc": "^10.0.0",
     "rollup": "^0.36.3",
     "rollup-plugin-buble": "^0.14.0",
+    "rollup-plugin-commonjs": "^6.0.0",
+    "rollup-plugin-node-resolve": "^2.0.0",
     "standard": "^8.5.0",
+    "uglifyjs": "^2.4.10",
     "watch-cli": "^0.2.1"
   },
   "homepage": "https://github.com/savjs/sav-schema#readme",

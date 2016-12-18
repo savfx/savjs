@@ -1,4 +1,4 @@
-import { isObject, isArray, prop, isNull, clone, isString, isFunction } from 'sav-util'
+import { isUndefined, isNumber, isBoolean, isObject, isArray, prop, isNull, clone, isString, isFunction } from 'sav-util'
 import * as assert from 'sav-assert'
 
 const TYPE_TYPE = 0
@@ -6,9 +6,14 @@ const TYPE_ENUM = 1
 const TYPE_STRUCT = 2
 const defaultTypes = []
 
+export function SchemaType () {}
+export function SchemaEnum () {}
+export function SchemaStruct () {}
+
 export class Schema {
   constructor () {
     this.declare(defaultTypes)
+    this.opts = {strict: true}
   }
   declare (opts) {
     if (isArray(opts)) {
@@ -20,6 +25,12 @@ export class Schema {
       this[opts.name] = ret
     }
     return ret
+  }
+  set strict (value) {
+    this.opts.strict = value
+  }
+  get strict () {
+    return this.opts.strict
   }
   static register (opts) {
     if (isArray(opts)) {
@@ -33,7 +44,7 @@ export class Schema {
 function createType (schema, opts) {
   const {create, check} = opts
   assert.isFunction(create)
-  let ret = {}
+  let ret = new SchemaType()
   prop(ret, 'check', check)
   prop(ret, 'create', create || (() => opts.default))
   return ret
@@ -44,7 +55,7 @@ function createEnum (schema, opts) {
   let keyMaps = {}
   let values = []
   let keys = []
-  let ret = {}
+  let ret = new SchemaEnum()
   if (isObject(enums)) {
     for (let key in enums) {
       let it = enums[key]
@@ -99,19 +110,37 @@ function createSturct (schema, opts) {
   for (let key in props) {
     let pval = props[key]
     let field
-    if (isString(pval)) {
+    if (isString(pval)) { // parse String
       field = parseProp(pval)
-    } else if (isObject(pval)) {
-      if (pval.schema) {
+    } else if (isFunction(pval)) { // raw String Boolean type etc.
+      field = {type: schema[pval.name]}
+    } else if (isObject(pval)) { // mixed Object
+      if (pval.schema) { // value: UserSchema
         field = {type: pval}
       } else {
-        field = clone(pval)
+        let typeSchema = pval.type
+        if (isString(typeSchema)) { // again
+          field = parseProp(typeSchema)
+          if (isString(field.type)) { // ref
+            field = pval
+            if (refs && refs[field.type]) {
+              field.type = refs[field.type]
+            } else if (schema[field.type]) {
+              field.type = schema[field.type]
+            }
+          }
+        } else if (isFunction(typeSchema)) { // again raw String Boolean type etc.
+          field = pval
+          field.type = schema[typeSchema.name]
+        } else if (isObject(typeSchema)) {
+          field = pval
+          if (typeSchema.schema) {
+            field.type = typeSchema
+          } else {
+            field.type = schema.declare(typeSchema)
+          }
+        }
       }
-      if (isObject(pval.type) && pval.type.schema) {
-        field.type = pval.type
-      }
-    } else if (isFunction(pval) && pval.name) { // raw String Boolean type etc.
-      field = {type: schema[pval.name]}
     }
     // override [type, subType, ref, subRef, required, key]
     const { type } = field
@@ -134,7 +163,7 @@ function createSturct (schema, opts) {
     fields.push(field)
   }
 
-  let ret = {}
+  let ret = new SchemaStruct()
   prop(ret, 'create', create || (() => {
     let struct = {}
     fields.forEach((it) => {
@@ -142,29 +171,15 @@ function createSturct (schema, opts) {
     })
     return struct
   }))
-  prop(ret, 'check', check || ((value) => {
-    try {
-      fields.forEach((it) => {
-        try {
-          checkStructField(ret, value, it)
-        } catch (err) {
-          (err.keys || (err.keys = [])).unshift(it.key)
-          throw err
-        }
-      })
-    } catch (err) {
-      if (err.keys) {
-        err.path = err.keys.join('.')
-      }
-      throw err
-    }
-  }))
   prop(ret, 'extract', extract || ((value) => {
     let res = {}
     try {
       fields.forEach((it) => {
         try {
-          res[it.key] = extractStructField(ret, value, it)
+          let val = extractStructField(ret, value, it)
+          if (!isUndefined(val)) {
+            res[it.key] = val
+          }
         } catch (err) {
           (err.keys || (err.keys = [])).unshift(it.key)
           throw err
@@ -178,6 +193,7 @@ function createSturct (schema, opts) {
     }
     return res
   }))
+  prop(ret, 'check', check || ret.extract)
   prop(ret, 'extractThen', (val) => new Promise((resolve, reject) => {
     let res
     try {
@@ -244,10 +260,10 @@ function lcword (s) {
 }
 
 function parseValue (val) {
-  if (val === 'true') {
+  if (val === 'true' || val === 'on') {
     return true
-  } else if (val === 'false') {
-    return true
+  } else if (val === 'false' || val === 'off') {
+    return false
   }
   let ret
   if ((ret = parseInt(val)) === val) {
@@ -258,7 +274,7 @@ function parseValue (val) {
   return val
 }
 
-function checkStructField (struct, obj, {key, type, subType, required, nullable, ref, checkes, subRef}) {
+function extractField (struct, obj, {key, type, required, nullable, ref}) {
   if (!required && !(key in obj)) {
     return
   }
@@ -266,33 +282,38 @@ function checkStructField (struct, obj, {key, type, subType, required, nullable,
     return
   }
   assert.inObject(obj, key)
-  const val = obj[key]
-  ref.check(val)
-  if (subType) {
-    assert.equal(type, 'Array') // allow Array<Struct> only
-    for (let i = 0, l = val.length; i < l; ++i) {
-      try {
-        subRef.check(val[i])
-      } catch (err) {
-        (err.keys || (err.keys = [])).unshift(i)
-        throw err
-      }
+  let val = obj[key]
+  if (ref.extract) { // Struct
+    val = ref.extract(val)
+  } else { // type convert
+    val = checkValue(struct, val, ref)
+  }
+  return val
+}
+
+function checkValue (struct, val, ref) {
+  if (!struct.opts.strict || !ref.schema.opts.strict || !ref.schema.strict) {
+    if (ref.opts.convert) {
+      val = ref.opts.convert(val)
     }
   }
+  ref.check(val)
+  return val
 }
 
 function extractStructField (struct, obj, field) {
-  checkStructField(struct, obj, field)
-  const val = obj[field.key]
-  if (field.subType) {
+  let val = extractField(struct, obj, field)
+  const {subType, subRef, type} = field
+  if (subType) {
+    assert.equal(type, 'Array') // allow Array<Struct> only
     let ret = []
     for (let i = 0, l = val.length; i < l; ++i) {
       try {
-        field.subRef.check(val[i])
-        if (field.subRef.extract) {
-          ret.push(field.subRef.extract(val[i]))
-        } else {
-          ret.push(val[i])
+        if (subRef.extract) {
+          ret.push(subRef.extract(val[i]))
+        } else { // no Struct
+          let subVal = checkValue(struct, val[i], subRef)
+          ret.push(subVal)
         }
       } catch (err) {
         (err.keys || (err.keys = [])).unshift(i)
@@ -314,27 +335,60 @@ function createSchemaType (schema, opts) {
     dataType = TYPE_STRUCT
     ret = createSturct(schema, opts)
   } else {
+    if (isFunction(opts.name)) {
+      opts.create = opts.name
+      opts.name = opts.create.name
+    }
     ret = createType(schema, opts)
   }
   prop(ret, 'dataType', dataType)
   prop(ret, 'schema', schema)
+  prop(ret, 'opts', opts)
   prop(ret, 'checkThen', (val) => new Promise((resolve, reject) => {
+    let newVal
     try {
-      ret.check(val)
+      newVal = ret.check(val)
     } catch (err) {
       return reject(err)
     }
-    resolve()
+    resolve(isUndefined(newVal) ? val : newVal)
   }))
   return ret
 }
 
+function stringVal (val) {
+  if (isNumber(val) || isBoolean(val)) {
+    return String(val)
+  }
+  return val
+}
+
+function boolVal (val) {
+  if (isNumber(val)) {
+    return Boolean(val)
+  }
+  if (isString(val)) {
+    if (val === 'true' || val === 'on') {
+      return true
+    }
+    return false
+  }
+  return val
+}
+
+function numberVal (val) {
+  if (isBoolean(val) || isString(val)) {
+    return Number(val)
+  }
+  return val
+}
+
 Schema.register([
-  { name: 'String', create: String, check: assert.isString },
-  { name: 'Number', create: Number, check: assert.isNumber },
-  { name: 'Array', create: Array, check: assert.isArray },
-  { name: 'Object', create: Object, check: assert.isObject },
-  { name: 'Boolean', create: Boolean, check: assert.isBoolean },
-  { name: 'Int', create: Number, check: assert.isInt },
-  { name: 'Uint', create: Number, check: assert.isUint }
+  { name: String, check: assert.isString, convert: stringVal },
+  { name: Number, check: assert.isNumber, convert: numberVal },
+  { name: Boolean, check: assert.isBoolean, convert: boolVal },
+  { name: Array, check: assert.isArray },
+  { name: Object, check: assert.isObject },
+  { name: 'Int', create: Number, check: assert.isInt, convert: numberVal },
+  { name: 'Uint', create: Number, check: assert.isUint, convert: numberVal }
 ])
