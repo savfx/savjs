@@ -16,7 +16,7 @@ export function unique (arr) {
 }
 
 export function isPromiseLike (obj) {
-  return obj && obj.then
+  return !!(obj && obj.then)
 }
 
 export function uuid () {

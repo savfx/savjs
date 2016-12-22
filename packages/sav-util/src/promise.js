@@ -9,3 +9,19 @@ let promise = {
 }
 
 export {promise}
+
+export function toPromise (target, methods) {
+  let dist = Object.create(null)
+  methods.forEach((name) => {
+    dist[name] = (...args) => {
+      return new Promise((resolve, reject) => {
+        try {
+          return resolve(target[name].apply(target, args))
+        } catch (err) {
+          return reject(err)
+        }
+      })
+    }
+  })
+  return dist
+}
