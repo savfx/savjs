@@ -3,8 +3,8 @@ let promise = {
   resolve: PROMISE.resolve.bind(PROMISE),
   reject: PROMISE.reject.bind(PROMISE),
   all: PROMISE.all.bind(PROMISE),
-  then: (fn) => {
-    return new PROMISE(fn)
+  then: (fn, reject) => {
+    return new PROMISE(fn, reject)
   }
 }
 
@@ -14,7 +14,7 @@ export function toPromise (target, methods) {
   let dist = Object.create(null)
   methods.forEach((name) => {
     dist[name] = (...args) => {
-      return new Promise((resolve, reject) => {
+      return promise.then((resolve, reject) => {
         try {
           return resolve(target[name].apply(target, args))
         } catch (err) {
