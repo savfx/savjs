@@ -33,15 +33,15 @@ function s4 () {
         .substring(1)
 }
 
-export function inherits (ctor, superCtor, useSuper) {
-  Object.setPrototypeOf(ctor.prototype, superCtor.prototype)
-    // same as
-    // ctor.prototype = new superCtor;
-    // ctor.prototype.constructor = superCtor;
-
-    // ctor.prototype.name = 'ctor';
+export function inherits (ctor, SuperCtor, useSuper) {
+  if (Object.setPrototypeOf) {
+    Object.setPrototypeOf(ctor.prototype, SuperCtor.prototype)
+  } else {
+    ctor.prototype = new SuperCtor()
+    ctor.prototype.constructor = SuperCtor
+  }
   if (useSuper) {
-    ctor.super_ = superCtor
+    ctor.super_ = SuperCtor
   }
   return ctor
 }
