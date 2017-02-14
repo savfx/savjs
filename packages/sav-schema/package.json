@@ -40,6 +40,6 @@
   "homepage": "https://github.com/savjs/sav-schema#readme",
   "dependencies": {
     "sav-assert": "^0.0.4",
-    "sav-util": "^0.0.4"
+    "sav-util": "^0.0.9"
   }
 }
