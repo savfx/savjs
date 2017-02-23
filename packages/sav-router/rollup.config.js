@@ -1,4 +1,4 @@
-import buble from 'rollup-plugin-buble'
+import babel from 'rollup-plugin-babel'
 
 const pack = require('./package.json')
 const YEAR = new Date().getFullYear()
@@ -10,7 +10,17 @@ export default {
     { dest: 'dist/sav-router.es.js', format: 'es' }
   ],
   plugins: [
-    buble()
+    babel({
+      babelrc: false,
+      externalHelpers: false,
+      exclude: 'node_modules/**',
+      'presets': [
+        'stage-3'
+      ],
+      'plugins': [
+        'transform-decorators-legacy'
+      ]
+    })
   ],
   banner   () {
     return `/*!
