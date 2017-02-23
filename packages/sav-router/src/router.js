@@ -2,11 +2,13 @@ import {connectRouter} from './container.js'
 
 export class Router {
   constructor (opts) {
-    this.opts = {...opts}
+    opts = this.opts = opts || {}
     this.providers = {}
     this.modules = []
     this.plugins = []
-    this.use(connectRouter)
+    if (!opts.noContainer) {
+      this.use(connectRouter)
+    }
   }
   use (fn) {
     this.plugins.push(fn(this))
