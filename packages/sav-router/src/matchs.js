@@ -25,7 +25,7 @@ export function matchRouters (routers, path, method) {
   while (step < len) {
     route = routers[step++]
     isModule = !!route.childs
-    if (matchRoute(route.path, params, path, {end: isModule})) {
+    if (matchRoute(route.path, params, path, {end: !isModule})) {
       if (isModule) {
         return route
       }

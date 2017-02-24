@@ -18,10 +18,9 @@ export class Router {
   }
   declare (modules) {
     if (Array.isArray(modules)) {
-      this.modules = this.modules.concat(modules)
-    } else {
-      this.modules.push(modules)
+      modules = [modules]
     }
+    this.modules = this.modules.concat(modules)
     walkPlugins(this, modules)
   }
   config (name) {
