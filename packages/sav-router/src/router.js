@@ -6,6 +6,8 @@ export class Router {
     this.providers = {}
     this.modules = []
     this.plugins = []
+    this.moduleMaps = {}
+    this._container = null
     if (!opts.noContainer) {
       this.use(connectRouter)
     }
@@ -17,7 +19,7 @@ export class Router {
     this.providers = {...this.providers, ...providers}
   }
   declare (modules) {
-    if (Array.isArray(modules)) {
+    if (!Array.isArray(modules)) {
       modules = [modules]
     }
     this.modules = this.modules.concat(modules)
@@ -26,11 +28,37 @@ export class Router {
   config (name) {
     return this.opts[name]
   }
+  set container (container) {
+    this._container = container
+  }
+  get container () {
+    return this._container
+  }
+  route () {
+    let self = this
+    return async (ctx, next) => {
+      await self.dispatch(ctx, next)
+    }
+  }
+  async dispatch (ctx, next) {
+    let {path, method} = ctx
+    let route = this.container.match(path, method)
+    if (route) {
+      let action = this.moduleMaps[route.moduleName][route.actionName]
+      route.action = action.action
+      ctx.route = route
+      ctx.params = route.params
+      await applyMiddlewares(ctx, action.middlewares)
+    } else {
+      await next()
+    }
+  }
 }
 
 function createMiddlewares (router, module) {
   const providers = router.providers
-  for (let action of module.actions) {
+  for (let actionName in module.actions) {
+    let action = module.actions[actionName]
     let middlewares = []
     for (let config of action.options) {
       let [name, ...args] = config
@@ -47,9 +75,16 @@ function createMiddlewares (router, module) {
 
 function walkPlugins (router, actions) {
   for (let module of actions) {
+    router.moduleMaps[module.name] = module
     for (let plugin of router.plugins) {
       plugin(router, module)
     }
     createMiddlewares(router, module)
+  }
+}
+
+async function applyMiddlewares (ctx, middlewares) {
+  for (let middleware of middlewares) {
+    await middleware(ctx)
   }
 }

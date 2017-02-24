@@ -6,7 +6,7 @@
   "module": "dist/sav-router.es.js",
   "jsnext:main": "dist/sav-router.es.js",
   "scripts": {
-    "start": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && npm run build && nyc ava ./test\"",
+    "start": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && npm test\"",
     "build": "rollup -c",
     "lint": "standard rollup.config.js test/** src/**",
     "na": "nyc ava ./test",
@@ -40,6 +40,7 @@
     "nyc": "^10.0.0",
     "rollup": "^0.36.3",
     "rollup-plugin-babel": "^2.7.1",
+    "sav-decorator": "0.0.2",
     "sav-util": "0.0.9",
     "standard": "^8.5.0",
     "watch-cli": "^0.2.1"

@@ -3,7 +3,7 @@ import {expect} from 'chai'
 
 import {matchRoute, matchRouters} from '../src/matchs.js'
 
-test('matchRoute:path', ava => {
+test('matchRoute:basic', ava => {
   let params = {}
   let path = 'hello/world'
   ava.true(matchRoute(path, params, path))
@@ -19,6 +19,7 @@ test('matchRoute:id', ava => {
   ava.true(matchRoute(route, params, 'hello/someone'))
   expect(params.id).to.be.equal('someone')
 
+  expect(matchRoute(route, null, 'hello/someone')).to.equal(true)
   expect(matchRoute(route, null, 'hello/someone/something')).to.equal(false)
 
   let params2 = {}

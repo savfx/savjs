@@ -59,6 +59,8 @@ export function matchRoute (path, params, pathname, opts) {
       if (key) {
         const val = typeof m[i] === 'string' ? decodeURIComponent(m[i]) : m[i]
         params[key.name] = val
+      } else {
+        console.log('pass')
       }
     }
   }

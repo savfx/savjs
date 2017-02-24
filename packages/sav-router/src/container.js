@@ -2,7 +2,7 @@ import {convertCase} from './caseconvert.js'
 import {matchRouters} from './matchs.js'
 
 const CASE_TYPE = 'case'
-export const CONTAINER_KEY = 'route'
+export const CONTAINER_KEY = 'container'
 
 export class RouteContainer {
   constructor () {
@@ -17,9 +17,6 @@ export class RouteContainer {
       }
     }
     return route
-  }
-  getModuleRoute (moduleName) {
-    return this.routerMaps[moduleName]
   }
   addModuleRoute (moduleName, route) {
     route.childs = []
@@ -42,23 +39,26 @@ export class RouteContainer {
     let moduleName = module.name
     let route = module.options.route || {}
     route.path = convertPath(route.path, router.config(CASE_TYPE), moduleName)
-    router[CONTAINER_KEY].addModuleRoute(moduleName, route)
+    router.container.addModuleRoute(moduleName, route)
   }
   providerModule ({router, module, action, name, args}) {
-    let self = router[CONTAINER_KEY]
+    let self = router.container
     self.addActionRoute(module.name, {
       actionName: action.name,
       path: convertPath(args[1], router.config(CASE_TYPE), action.name),
       methods: args[0] || []
     })
-    return async () => {
-
-    }
+    return exeAction
   }
 }
 
+async function exeAction (ctx) {
+  await ctx.route.action(ctx)
+}
+
 export function connectRouter (router) {
-  let self = router[CONTAINER_KEY] = new RouteContainer()
+  let self = new RouteContainer()
+  router.container = self
   router.provider({route: self.providerModule})
   return self.initModule
 }

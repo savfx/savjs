@@ -1,9 +1,9 @@
 import test from 'ava'
 import {expect} from 'chai'
 
-import {RouteContainer, connectRouter, CONTAINER_KEY} from '../src/container.js'
+import {RouteContainer, connectRouter} from '../src/container.js'
 
-class Router {
+class TestRouter {
   constructor (opts) {
     this.opts = {...opts}
     this.providers = {}
@@ -17,9 +17,9 @@ class Router {
 }
 
 test('container.api', ava => {
-  let router = new Router()
+  let router = new TestRouter()
   let initModule = connectRouter(router)
-  let container = router[CONTAINER_KEY]
+  let container = router.container
   let module = {
     name: 'Test',
     options: {}
