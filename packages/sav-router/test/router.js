@@ -5,14 +5,27 @@ import {Router} from '../src/router.js'
 import {get, post, route} from '../src/decorators.js'
 import {gen, quickConf} from 'sav-decorator'
 
-test('router.api', ava => {
+test('router.api', async (ava) => {
   let router = new Router()
   @gen
   class Article {
-    @get get () {}
+    @get async get () {}
     @post('/user/article/:aid') post () {}
   }
   router.declare(Article)
+  let route = router.route()
+  await route({
+    path: '/Article/get',
+    method: 'get'
+  }, async () => {
+    throw new Error('hehe')
+  })
+  await route({
+    path: '/article/post',
+    method: 'get'
+  }, async () => {
+    ava.pass()
+  })
 })
 
 test('router.declare#2', ava => {
@@ -52,5 +65,5 @@ test('router.provider.empty', ava => {
     @request @readonly req () {}
   }
   router.declare(Test)
-  expect(Test.actions[0].middlewares).to.eql([])
+  expect(Test.actions.req.middlewares).to.eql([])
 })

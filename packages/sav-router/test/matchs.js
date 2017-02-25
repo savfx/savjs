@@ -8,6 +8,7 @@ test('matchRoute:basic', ava => {
   let path = 'hello/world'
   ava.true(matchRoute(path, params, path))
   ava.true(matchRoute(path, params, path))
+  ava.false(matchRoute('hello/x', params, path))
 })
 
 test('matchRoute:id', ava => {

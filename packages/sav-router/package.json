@@ -12,7 +12,7 @@
     "na": "nyc ava ./test",
     "pretest": "npm run lint",
     "test": "npm run na",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -37,17 +37,17 @@
     "chai": "^3.5.0",
     "eslint-plugin-standard": "^2.0.1",
     "expect.js": "^0.3.1",
+    "koa": "^2.0.0-alpha.8",
     "nyc": "^10.0.0",
     "rollup": "^0.36.3",
     "rollup-plugin-babel": "^2.7.1",
-    "sav-decorator": "0.0.2",
     "sav-util": "0.0.9",
     "standard": "^8.5.0",
     "watch-cli": "^0.2.1"
   },
   "dependencies": {
     "path-to-regexp": "^1.7.0",
-    "sav-decorator": "0.0.2"
+    "sav-decorator": "^0.0.3"
   },
   "standard": {
     "parser": "babel-eslint"

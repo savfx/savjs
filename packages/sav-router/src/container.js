@@ -2,12 +2,13 @@ import {convertCase} from './caseconvert.js'
 import {matchRouters} from './matchs.js'
 
 const CASE_TYPE = 'case'
-export const CONTAINER_KEY = 'container'
+const ROUTE_PREFIX = 'prefix'
 
 export class RouteContainer {
   constructor () {
     this.routers = []
     this.routerMaps = {}
+    this.prefix = '/'
   }
   matchRoute (pathname, method) {
     let route = matchRouters(this.routers, pathname, method)
@@ -19,6 +20,7 @@ export class RouteContainer {
     return route
   }
   addModuleRoute (moduleName, route) {
+    route.path = this.prefix + route.path
     route.childs = []
     route.moduleName = moduleName
     this.routers.push(route)
@@ -26,8 +28,12 @@ export class RouteContainer {
   }
   addActionRoute (moduleName, route) {
     route.moduleName = moduleName
+    let prefix = this.prefix
     let path = route.path
-    if (path[0] === '/') {
+    if (path[0] === '/') { // absolute
+      this.routers.push(route)
+    } else if (path[0] === '~') { // relative to root
+      route.path = prefix + path.substr(1, path.length)
       this.routers.push(route)
     } else {
       let moduleRoute = this.routerMaps[moduleName]
@@ -38,8 +44,15 @@ export class RouteContainer {
   initModule (router, module) {
     let moduleName = module.name
     let route = module.options.route || {}
+    let container = router.container
+    let prefix = router.config(ROUTE_PREFIX)
+    if (typeof prefix === 'string') {
+      container.prefix = prefix
+    } else {
+      prefix = container.prefix
+    }
     route.path = convertPath(route.path, router.config(CASE_TYPE), moduleName)
-    router.container.addModuleRoute(moduleName, route)
+    container.addModuleRoute(moduleName, route)
   }
   providerModule ({router, module, action, name, args}) {
     let self = router.container
