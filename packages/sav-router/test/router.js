@@ -16,13 +16,13 @@ test('router.api', async (ava) => {
   let route = router.route()
   await route({
     path: '/Article/get',
-    method: 'get'
+    method: 'GET'
   }, async () => {
     throw new Error('hehe')
   })
   await route({
     path: '/article/post',
-    method: 'get'
+    method: 'GET'
   }, async () => {
     ava.pass()
   })

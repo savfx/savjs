@@ -1,0 +1,16 @@
+{
+  "name": "sav-router-koa2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-register": "^6.23.0",
+    "koa": "^2.0.0-alpha.8",
+    "sav-decorator": "0.0.3"
+  }
+}

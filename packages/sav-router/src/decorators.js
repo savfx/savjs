@@ -13,7 +13,7 @@ import {annotateMethod} from 'sav-decorator'
  * }
  */
 export const route = annotateMethod((target, it, [methods, ...args]) => {
-  it.push(['route', Array.isArray(methods) ? methods : [methods], ...args])
+  it.push(['route', processMethod(methods), ...args])
 })
 
 /**
@@ -37,6 +37,11 @@ export const del = routeMethods('delete')
 
 function routeMethods (method) {
   return annotateMethod((target, it, args) => {
-    it.push(['route', [method], ...args])
+    it.push(['route', processMethod(method), ...args])
   })
+}
+
+function processMethod (method) {
+  method = Array.isArray(method) ? method : [method]
+  return method.filter(it => !!it).map((it) => it.toUpperCase())
 }

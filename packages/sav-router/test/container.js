@@ -43,12 +43,12 @@ test('container.api', ava => {
     module,
     action,
     name: 'route',
-    args: [['get'], ':test']
+    args: [['GET'], ':test']
   }
   let middleware = providerModule(context)
   expect(middleware).to.be.a('function')
 
-  let route = container.matchRoute('/Test/me', 'get')
+  let route = container.matchRoute('/Test/me', 'GET')
   expect(route).to.be.a('object')
 
   expect(route).to.have.property('moduleName')
@@ -57,9 +57,9 @@ test('container.api', ava => {
   expect(route).to.have.property('methods')
   expect(route).to.have.property('params')
 
-  expect(container.matchRoute('Test/me', 'get')).to.equal(undefined)
+  expect(container.matchRoute('Test/me', 'GET')).to.equal(undefined)
 
-  let route2 = container.matchRoute('TestX', 'get')
+  let route2 = container.matchRoute('TestX', 'GET')
   expect(route2).to.equal(undefined)
 })
 
@@ -75,10 +75,10 @@ test('container.path', ava => {
   router.declare(Test)
 
   let container = router.container
-  expect(container.matchRoute('/Test/path1', 'get')).to.be.a('object')
-  expect(container.matchRoute('/Test/path', 'get')).to.be.a('object')
-  expect(container.matchRoute('/path3', 'get')).to.be.a('object')
-  expect(container.matchRoute('/path4', 'get')).to.be.a('object')
+  expect(container.matchRoute('/Test/path1', 'GET')).to.be.a('object')
+  expect(container.matchRoute('/Test/path', 'GET')).to.be.a('object')
+  expect(container.matchRoute('/path3', 'GET')).to.be.a('object')
+  expect(container.matchRoute('/path4', 'GET')).to.be.a('object')
 })
 
 test('container.prefix', ava => {
@@ -95,10 +95,10 @@ test('container.prefix', ava => {
   router.declare(Test)
 
   let container = router.container
-  expect(container.matchRoute('/api/v3/Test/path1', 'get')).to.be.a('object')
-  expect(container.matchRoute('/api/v3/Test/path', 'get')).to.be.a('object')
-  expect(container.matchRoute('/path3', 'get')).to.be.a('object')
-  expect(container.matchRoute('/api/v3/path4', 'get')).to.be.a('object')
+  expect(container.matchRoute('/api/v3/Test/path1', 'GET')).to.be.a('object')
+  expect(container.matchRoute('/api/v3/Test/path', 'GET')).to.be.a('object')
+  expect(container.matchRoute('/path3', 'GET')).to.be.a('object')
+  expect(container.matchRoute('/api/v3/path4', 'GET')).to.be.a('object')
 })
 
 test('container.case', ava => {
@@ -112,5 +112,5 @@ test('container.case', ava => {
   router.declare(Test)
 
   let container = router.container
-  expect(container.matchRoute('/test/path', 'get')).to.be.a('object')
+  expect(container.matchRoute('/test/path', 'GET')).to.be.a('object')
 })

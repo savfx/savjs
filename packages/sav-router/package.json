@@ -1,6 +1,6 @@
 {
   "name": "sav-router",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "another nodejs controller style router",
   "main": "dist/sav-router.cjs.js",
   "module": "dist/sav-router.es.js",
@@ -37,7 +37,6 @@
     "chai": "^3.5.0",
     "eslint-plugin-standard": "^2.0.1",
     "expect.js": "^0.3.1",
-    "koa": "^2.0.0-alpha.8",
     "nyc": "^10.0.0",
     "rollup": "^0.36.3",
     "rollup-plugin-babel": "^2.7.1",

@@ -16,14 +16,14 @@ test('decorators#api', ava => {
     @del del () {}
   }
   expect(refer(Test)).to.deep.equal({
-    route: [['route', ['get', 'post']]],
-    head: [['route', ['head']]],
-    options: [['route', ['options']]],
-    get: [['route', ['get']]],
-    post: [['route', ['post']]],
-    put: [['route', ['put']]],
-    patch: [['route', ['patch']]],
-    del: [['route', ['delete']]]
+    route: [['route', ['GET', 'POST']]],
+    head: [['route', ['HEAD']]],
+    options: [['route', ['OPTIONS']]],
+    get: [['route', ['GET']]],
+    post: [['route', ['POST']]],
+    put: [['route', ['PUT']]],
+    patch: [['route', ['PATCH']]],
+    del: [['route', ['DELETE']]]
   })
 })
 
@@ -42,9 +42,9 @@ test('decorators', ava => {
     test4 () {}
   }
   expect(refer(Test)).to.deep.equal({
-    test: [['route', ['get']]],
-    test2: [['route', ['delete']]],
-    test3: [['route', ['post'], 'a']],
-    test4: [['route', ['get'], ':abc']]
+    test: [['route', ['GET']]],
+    test2: [['route', ['DELETE']]],
+    test3: [['route', ['POST'], 'a']],
+    test4: [['route', ['GET'], ':abc']]
   })
 })

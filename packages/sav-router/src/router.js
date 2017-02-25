@@ -41,7 +41,8 @@ export class Router {
     }
   }
   async dispatch (ctx, next) {
-    let {path, method} = ctx
+    let method = ctx.method.toUpperCase()
+    let path = ctx.path || ctx.originalUrl
     let route = this.container.matchRoute(path, method)
     if (route) {
       let action = this.moduleMaps[route.moduleName].actions[route.actionName]
