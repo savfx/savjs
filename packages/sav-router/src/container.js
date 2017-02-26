@@ -41,39 +41,41 @@ export class RouteContainer {
       moduleRoute.childs.push(route)
     }
   }
-  initModule (router, module) {
-    let moduleName = module.name
-    let route = module.options.route || {}
-    let container = router.container
-    let prefix = router.config(ROUTE_PREFIX)
-    if (typeof prefix === 'string') {
-      container.prefix = prefix
-    } else {
-      prefix = container.prefix
-    }
-    route.path = convertPath(route.path, router.config(CASE_TYPE), moduleName)
-    container.addModuleRoute(moduleName, route)
-  }
-  providerModule ({router, module, action, name, args}) {
-    let self = router.container
-    self.addActionRoute(module.name, {
-      actionName: action.name,
-      path: convertPath(args[1], router.config(CASE_TYPE), action.name),
-      methods: args[0] || []
-    })
-    return exeAction
-  }
 }
 
-async function exeAction (ctx) {
-  await ctx.route.action(ctx)
-}
-
-export function connectRouter (router) {
+export function routePlugin (router) {
   let self = new RouteContainer()
   router.container = self
-  router.provider({route: self.providerModule})
-  return self.initModule
+  router.provider({route: processAction})
+  return processModule
+}
+
+function processModule (router, module) {
+  let moduleName = module.name
+  let route = module.options.route || {}
+  let container = router.container
+  let prefix = router.config(ROUTE_PREFIX)
+  if (typeof prefix === 'string') {
+    container.prefix = prefix
+  } else {
+    prefix = container.prefix
+  }
+  route.path = convertPath(route.path, router.config(CASE_TYPE), moduleName)
+  container.addModuleRoute(moduleName, route)
+}
+
+function processAction ({router, module, action, name, args}) {
+  let self = router.container
+  self.addActionRoute(module.name, {
+    actionName: action.name,
+    path: convertPath(args[1], router.config(CASE_TYPE), action.name),
+    methods: args[0] || []
+  })
+  return dispatchRoute
+}
+
+async function dispatchRoute (ctx) {
+  await ctx.route.action(ctx)
 }
 
 function convertPath (path, caseType, name) {

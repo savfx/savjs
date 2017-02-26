@@ -1,4 +1,4 @@
-import {connectRouter} from './container.js'
+import {routePlugin} from './container.js'
 
 export class Router {
   constructor (opts) {
@@ -8,12 +8,15 @@ export class Router {
     this.plugins = []
     this.moduleMaps = {}
     this._container = null
-    if (!this.opts.noContainer) {
-      this.use(connectRouter)
+    if (!this.opts.noRoute) {
+      this.use(routePlugin)
     }
   }
   use (fn) {
-    this.plugins.push(fn(this))
+    let ret = fn(this)
+    if (typeof ret === 'function') {
+      this.plugins.push(ret)
+    }
   }
   provider (providers) {
     this.providers = {...this.providers, ...providers}

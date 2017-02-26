@@ -45,7 +45,7 @@ test('router.declare#2', ava => {
 })
 
 test('router.opts', ava => {
-  let router = new Router({noContainer: true})
+  let router = new Router({noRoute: true})
   expect(router.plugins).to.eql([])
 
   let router2 = new Router()

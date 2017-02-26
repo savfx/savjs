@@ -1,7 +1,7 @@
 import test from 'ava'
 import {expect} from 'chai'
 
-import {RouteContainer, connectRouter} from '../src/container.js'
+import {RouteContainer, routePlugin} from '../src/container.js'
 import {Router} from '../src/router.js'
 import {get} from '../src/decorators.js'
 import {gen} from 'sav-decorator'
@@ -21,7 +21,7 @@ class TestRouter {
 
 test('container.api', ava => {
   let router = new TestRouter()
-  let initModule = connectRouter(router)
+  let initModule = routePlugin(router)
   let container = router.container
   let module = {
     name: 'Test',
