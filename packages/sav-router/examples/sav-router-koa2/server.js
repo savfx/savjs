@@ -1,5 +1,9 @@
 require('babel-register')({
-  plugins: ['transform-async-to-generator']
+  "plugins": [
+    "transform-decorators-legacy",
+    'transform-async-to-generator',
+    "transform-es2015-modules-commonjs"
+  ]
 })
 
 require('./src')
