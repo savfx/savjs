@@ -12,7 +12,7 @@
     "na": "nyc ava ./test",
     "pretest": "npm run lint",
     "test": "npm run na",
-    "prepublishOnly": "npm run build"
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
