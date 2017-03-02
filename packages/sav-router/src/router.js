@@ -49,7 +49,7 @@ export class Router {
     let route = this.container.matchRoute(path, method)
     if (route) {
       let action = this.moduleMaps[route.moduleName].actions[route.actionName]
-      route.action = action.action
+      route.method = action.method
       ctx.route = route
       ctx.params = route.params
       await applyMiddlewares(ctx, action.middlewares)
@@ -64,7 +64,7 @@ function createMiddlewares (router, module) {
   for (let actionName in module.actions) {
     let action = module.actions[actionName]
     let middlewares = []
-    for (let config of action.options) {
+    for (let config of action.middleware) {
       let [name, ...args] = config
       if (providers[name]) {
         let method = providers[name]({router, module, action, name, args})

@@ -1,14 +1,14 @@
 {
   "name": "sav-router",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "another nodejs controller style router",
   "main": "dist/sav-router.cjs.js",
   "module": "dist/sav-router.es.js",
   "jsnext:main": "dist/sav-router.es.js",
   "scripts": {
-    "start": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && npm test\"",
     "build": "rollup -c",
     "lint": "standard rollup.config.js test/** src/**",
+    "start": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && npm run na\"",
     "na": "nyc ava ./test",
     "pretest": "npm run lint",
     "test": "npm run na",
@@ -40,13 +40,12 @@
     "nyc": "^10.0.0",
     "rollup": "^0.36.3",
     "rollup-plugin-babel": "^2.7.1",
-    "sav-util": "0.0.9",
     "standard": "^8.5.0",
     "watch-cli": "^0.2.1"
   },
   "dependencies": {
     "path-to-regexp": "^1.7.0",
-    "sav-decorator": "^0.0.3"
+    "sav-decorator": "^1.0.6"
   },
   "standard": {
     "parser": "babel-eslint"

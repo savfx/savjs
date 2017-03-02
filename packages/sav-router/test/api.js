@@ -1,16 +1,16 @@
 import test from 'ava'
-import {isFunction} from 'sav-util'
+import {expect} from 'chai'
 
 import {Router, route, head, options, get, post, put, patch, del} from '../src/index'
 
 test('api', (ava) => {
-  ava.true(isFunction(Router))
-  ava.true(isFunction(route))
-  ava.true(isFunction(head))
-  ava.true(isFunction(options))
-  ava.true(isFunction(get))
-  ava.true(isFunction(post))
-  ava.true(isFunction(put))
-  ava.true(isFunction(patch))
-  ava.true(isFunction(del))
+  expect(Router).to.be.a('function')
+  expect(route).to.be.a('function')
+  expect(head).to.be.a('function')
+  expect(options).to.be.a('function')
+  expect(get).to.be.a('function')
+  expect(post).to.be.a('function')
+  expect(put).to.be.a('function')
+  expect(patch).to.be.a('function')
+  expect(del).to.be.a('function')
 })

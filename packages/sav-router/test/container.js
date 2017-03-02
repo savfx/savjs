@@ -25,7 +25,7 @@ test('container.api', ava => {
   let container = router.container
   let module = {
     name: 'Test',
-    options: {}
+    props: {}
   }
   let action = {
     name: 'profile'

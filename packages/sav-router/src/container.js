@@ -52,7 +52,7 @@ export function routePlugin (router) {
 
 function processModule (router, module) {
   let moduleName = module.name
-  let route = module.options.route || {}
+  let route = module.props.route || {}
   let container = router.container
   let prefix = router.config(ROUTE_PREFIX)
   if (typeof prefix === 'string') {
@@ -75,7 +75,7 @@ function processAction ({router, module, action, name, args}) {
 }
 
 async function dispatchRoute (ctx) {
-  await ctx.route.action(ctx)
+  await ctx.route.method(ctx)
 }
 
 function convertPath (path, caseType, name) {
