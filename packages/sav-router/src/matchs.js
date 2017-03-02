@@ -4,8 +4,6 @@ import pathToRegexp from 'path-to-regexp'
   @typedef  {Object} Route
   @property {String} path         url expr
   @property {Array}  methods      http methods
-  @property {String} actionName   the action name (ActionRoute only)
-  @property {String} moduleName   the module name
   @property {Array}  childs       the module's sub Route (ModuleRoute only)
  */
 
@@ -14,9 +12,10 @@ import pathToRegexp from 'path-to-regexp'
  * @param  {Array} routers  array of routers to match
  * @param  {String} path    the path of url
  * @param  {String} method  the method of http request
- * @return {Route}          the matched route
+ * @return {Array}          the matched route [route] or [route, params]
  */
-export function matchRouters (routers, path, method) {
+
+export function matchRouter (routers, path, method) {
   let len = routers.length
   let step = 0
   let params = {}
@@ -27,10 +26,10 @@ export function matchRouters (routers, path, method) {
     isModule = !!route.childs
     if (matchRoute(route.path, params, path, {end: !isModule, sensitive: true})) {
       if (isModule) {
-        return route
+        return [route]
       }
       if (route.methods.indexOf(method) !== -1) {
-        return {...route, params}
+        return [route, params]
       }
     }
   }

@@ -3,7 +3,39 @@ import {expect} from 'chai'
 
 import {Router} from '../src/router.js'
 import {get, post, route} from '../src/decorators.js'
-import {gen, quickConf} from 'sav-decorator'
+import {gen, conf} from 'sav-decorator'
+
+test('router.use', ava => {
+  let router = new Router()
+
+  @gen
+  class Test {
+    @conf('hello', 'world')
+    say () {}
+  }
+
+  router.use((router) => {
+    router.on('module', (moudle, {ctx}) => {
+      expect(ctx).to.equal(router)
+    })
+    router.on('action', (action, {ctx, module}) => {
+      expect(module.actions[action.name]).to.equal(action)
+    })
+    router.on('middleware', ({name, args}, {ctx, module, action}) => {
+      expect(name).to.be.a('string')
+      expect(args).to.be.a('array')
+    })
+  })
+
+  router.use({
+    module (moudle, {ctx}) {
+      expect(ctx).to.equal(router)
+    }
+  })
+
+  router.declare(Test)
+  router.declare([Test])
+})
 
 test('router.api', async (ava) => {
   let router = new Router()
@@ -46,24 +78,8 @@ test('router.declare#2', ava => {
 
 test('router.opts', ava => {
   let router = new Router({noRoute: true})
-  expect(router.plugins).to.eql([])
+  expect(router.listenerCount('module')).to.eql(0)
 
   let router2 = new Router()
-  expect(router2.plugins).to.have.lengthOf(1)
-})
-
-test('router.provider.empty', ava => {
-  let router = new Router()
-  router.provider({
-    request () {
-    }
-  })
-  let request = quickConf('request')
-  let readonly = quickConf('readonly')
-  @gen
-  class Test {
-    @request @readonly req () {}
-  }
-  router.declare(Test)
-  expect(Test.actions.req.middlewares).to.eql([])
+  expect(router2.listenerCount('module')).to.eql(1)
 })

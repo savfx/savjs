@@ -1,7 +1,7 @@
 import test from 'ava'
 import {expect} from 'chai'
 
-import {matchRoute, matchRouters} from '../src/matchs.js'
+import {matchRoute, matchRouter} from '../src/matchs.js'
 
 test('matchRoute:basic', ava => {
   let params = {}
@@ -29,32 +29,31 @@ test('matchRoute:id', ava => {
 
 test('matchRouters', ava => {
   let ret
-  expect(matchRouters([])).to.equal(undefined)
+  expect(matchRouter([])).to.equal(undefined)
 
   let moduleRoute = {
     path: 'hello/:id',
     methods: ['get'],
     childs: []
   }
-  ret = matchRouters([moduleRoute], 'hello/world', 'get')
-  expect(ret).to.deep.equal(moduleRoute)
+  ret = matchRouter([moduleRoute], 'hello/world', 'get')
+  expect(ret[0]).to.deep.equal(moduleRoute)
 
-  ret = matchRouters([moduleRoute], 'hello/world', 'post')
-  expect(ret).to.deep.equal(moduleRoute)
+  ret = matchRouter([moduleRoute], 'hello/world', 'post')
+  expect(ret[0]).to.deep.equal(moduleRoute)
 
   let actionRoute = {
     path: 'hello/:id',
     methods: ['get']
   }
-  ret = matchRouters([actionRoute], 'hello/world', 'get')
-  expect(ret).to.deep.equal({
+  ret = matchRouter([actionRoute], 'hello/world', 'get')
+  expect(ret).to.deep.equal([{
     path: 'hello/:id',
-    methods: ['get'],
-    params: {
-      id: 'world'
-    }
-  })
+    methods: ['get']
+  }, {
+    id: 'world'
+  }])
 
-  ret = matchRouters([actionRoute], 'hello/world', 'post')
+  ret = matchRouter([actionRoute], 'hello/world', 'post')
   expect(ret).to.equal(undefined)
 })
