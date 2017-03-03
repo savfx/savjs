@@ -48,6 +48,9 @@ export class Router extends EventEmitter {
       await next()
     }
   }
+  warn (...args) {
+    this.emit('warn', ...args)
+  }
 }
 
 function buildModules (ctx, modules) {
