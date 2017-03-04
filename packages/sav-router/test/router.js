@@ -97,3 +97,23 @@ test('router.warn', ava => {
   router.warn(2)
   expect(n).to.eql(3)
 })
+
+test('router.ctx.end', async (ava) => {
+  let router = new Router()
+  @gen
+  class Article {
+    @get async get (ctx) {
+      ctx.end('hello')
+      ctx.end('world', true)
+    }
+  }
+  router.declare(Article)
+  let route = router.route()
+  let ctx
+  ctx = {
+    path: '/Article/get',
+    method: 'GET'
+  }
+  await route(ctx)
+  expect(ctx.body).to.eql('world')
+})

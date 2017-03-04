@@ -35,25 +35,9 @@ export class Router extends EventEmitter {
     buildModules(this, modules)
   }
   route () {
-    let self = this
-    let payload = compose(self.payloads.concat(async (ctx, next) => {
-      await self.dispatch(ctx, next)
-    }))
+    let payloads = [payloadStart.bind(this)].concat(this.payloads).concat([payloadEnd.bind(this)])
+    let payload = compose(payloads)
     return payload
-  }
-  async dispatch (ctx, next) {
-    let method = ctx.method.toUpperCase()
-    let path = ctx.path || ctx.originalUrl
-    let matched = this.matchRoute(path, method)
-    if (matched) {
-      let [route, params] = matched
-      ctx.params = params
-      for (let middleware of route.middlewares) {
-        await middleware(ctx)
-      }
-    } else {
-      await next()
-    }
   }
   warn (...args) {
     this.emit('warn', ...args)
@@ -77,5 +61,39 @@ function buildModules (ctx, modules) {
         ctx.emit('middleware', {name, args}, middlewareCtx)
       }
     }
+  }
+}
+
+async function payloadStart (ctx, next) {
+  ctx.end = (data, rewrite) => {
+    if (ctx._end) {
+      if (rewrite) {
+        ctx._end.data = data
+      }
+    } else {
+      ctx._end = {
+        data
+      }
+    }
+  }
+  await next()
+  if (ctx._end) {
+    ctx.body = ctx._end.data
+    ctx.end = ctx._end = null
+  }
+}
+
+async function payloadEnd (ctx, next) {
+  let method = ctx.method.toUpperCase()
+  let path = ctx.path || ctx.originalUrl
+  let matched = this.matchRoute(path, method)
+  if (matched) {
+    let [route, params] = matched
+    ctx.params = params
+    for (let middleware of route.middlewares) {
+      await middleware(ctx)
+    }
+  } else {
+    await next()
   }
 }
