@@ -30,6 +30,9 @@ test('router.use', ava => {
   router.use({
     module (moudle, {ctx}) {
       expect(ctx).to.equal(router)
+    },
+    async payload (ctx, next) {
+
     }
   })
 
@@ -82,4 +85,15 @@ test('router.opts', ava => {
 
   let router2 = new Router()
   expect(router2.listenerCount('module')).to.eql(1)
+})
+
+test('router.warn', ava => {
+  let router = new Router()
+  expect(router.warn).to.be.a('function')
+  let n = 1
+  router.on('warn', (x) => {
+    n += x
+  })
+  router.warn(2)
+  expect(n).to.eql(3)
 })

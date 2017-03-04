@@ -1,11 +1,13 @@
 import {EventEmitter} from 'events'
 import {routerPlugin} from './plugin.js'
+import compose from 'koa-compose'
 
 export class Router extends EventEmitter {
   constructor (opts) {
     super()
     this.opts = {...opts}
     this.matchRoute = null
+    this.payloads = []
     if (!this.opts.noRoute) {
       this.use(routerPlugin)
     }
@@ -18,7 +20,11 @@ export class Router extends EventEmitter {
       plugin(this)
     } else if (typeof plugin === 'object') {
       for (let name in plugin) {
-        this.on(name, plugin[name])
+        if (name === 'payload') {
+          this.payloads.push(plugin[name])
+        } else {
+          this.on(name, plugin[name])
+        }
       }
     }
   }
@@ -30,9 +36,10 @@ export class Router extends EventEmitter {
   }
   route () {
     let self = this
-    return async (ctx, next) => {
+    let payload = compose(self.payloads.concat(async (ctx, next) => {
       await self.dispatch(ctx, next)
-    }
+    }))
+    return payload
   }
   async dispatch (ctx, next) {
     let method = ctx.method.toUpperCase()
