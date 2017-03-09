@@ -28,12 +28,15 @@ export function routerPlugin (ctx) {
     return match
   }
   ctx.use({
-    module ({name, props: {route}}, {ctx}) {
+    module (module, {ctx}) {
+      let {name, props: {route}} = module
       route = {...route}
-      route.path = prefix + convertPath(route.path, caseType, name)
+      route.relative = convertPath(route.path, caseType, name)
+      route.path = prefix + route.relative
       route.childs = []
       routers.push(route)
       moduleMap[name] = route
+      module.route = {route, children: []}
     },
     middleware ({name, args}, {ctx, module, action, middlewares}) {
       if (name !== 'route') {
@@ -44,17 +47,20 @@ export function routerPlugin (ctx) {
         methods: args[0] || [],
         middlewares: middlewares
       }
+      route.relative = route.path || ''
+
       let path = route.path
       if (path[0] === '/') { // absolute
         routers.push(route)
       } else if (path[0] === '~') { // relative to root
-        route.path = prefix + path.substr(1, path.length)
+        route.path = prefix + (route.relative = path.substr(1, path.length))
         routers.push(route)
       } else {
         let moduleRoute = moduleMap[module.name]
         route.path = moduleRoute.path + (route.path ? ('/' + route.path) : '')
         moduleRoute.childs.push(route)
       }
+      module.route.children.push(route)
       middlewares.push(async (ctx) => {
         await action.method(ctx)
       })
