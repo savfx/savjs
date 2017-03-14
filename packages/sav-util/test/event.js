@@ -1,5 +1,5 @@
 import test from 'ava'
-import { bindEvent, isFunction } from '../'
+import { bindEvent, isFunction } from '../src'
 
 test('bindEvent', (av) => {
   let testObj = {}

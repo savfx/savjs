@@ -1,5 +1,5 @@
 import test from 'ava'
-import { toPromise, isFunction, isObject, isPromiseLike } from '../'
+import { toPromise, isFunction, isObject, isPromiseLike } from '../src'
 
 test('toPromise', (ava) => {
   ava.true(isFunction(toPromise))

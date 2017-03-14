@@ -1,5 +1,5 @@
 import test from 'ava'
-import { probe, isObject } from '../'
+import { probe, isObject } from '../src'
 
 test('probe', (ava) => {
   ava.true(isObject(probe))

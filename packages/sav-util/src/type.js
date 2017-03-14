@@ -68,6 +68,14 @@ export function isUint (arg) {
   return isInteger(arg) && arg >= 0
 }
 
+export function isAsync (func) {
+  return isFunction(func) && func.constructor.name === 'AsyncFunction'
+}
+
+export function isPromise (obj) {
+  return obj && isFunction(obj.then)
+}
+
 let types = {
   isBoolean,
   isString,

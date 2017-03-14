@@ -1,6 +1,6 @@
 import test from 'ava'
 import expect from 'expect.js'
-import {Url} from '../'
+import {Url} from '../src'
 
 test('Url.parse & Url.stringify', () => {
   let item, val, orig

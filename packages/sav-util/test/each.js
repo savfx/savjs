@@ -1,5 +1,5 @@
 import test from 'ava'
-import { each } from '../'
+import { each } from '../src'
 
 test('each.Array', (av) => {
   av.plan(6)

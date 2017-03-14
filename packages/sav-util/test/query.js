@@ -1,6 +1,6 @@
 import test from 'ava'
 import expect from 'expect.js'
-import { Query } from '../'
+import { Query } from '../src'
 
 test('Query.stringify & Query.parse', () => {
   let item, val
