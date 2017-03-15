@@ -1,6 +1,6 @@
 {
   "name": "sav-util",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "util library for savjs",
   "main": "dist/sav-util.cjs.js",
   "module": "dist/sav-util.es.js",
@@ -32,6 +32,7 @@
     "babel-eslint": "^7.1.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.23.0",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "chai": "^3.5.0",
     "eslint-plugin-standard": "^2.0.1",
     "expect.js": "^0.3.1",
     "nyc": "^10.0.0",

@@ -1,6 +1,7 @@
 import {parseUrl, stringifyUrl} from './url'
 import {parseQuery, stringifyQuery} from './query'
 import {probe} from './probe'
+import {camelCase} from './convert'
 
 /**
  * ajax 方法
@@ -161,10 +162,4 @@ function parseHeaders (str, camelHeaders) {
     ret[camelHeaders ? camelCase(name) : name] = arr.shift()
   })
   return ret
-}
-
-function camelCase (s) {
-  return s.replace(/-(.)/g, function (a, $1) {
-    return $1.toUpperCase()
-  })
 }
