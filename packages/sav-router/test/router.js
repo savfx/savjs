@@ -1,8 +1,7 @@
 import test from 'ava'
 import {expect} from 'chai'
 
-import {Router} from '../src/router.js'
-import {get, post, route} from '../src/decorators.js'
+import {Router, get, post, route} from '../src'
 import {gen, conf} from 'sav-decorator'
 
 test('router.use', ava => {
@@ -15,21 +14,17 @@ test('router.use', ava => {
   }
 
   router.use((router) => {
-    router.on('module', (moudle, {ctx}) => {
-      expect(ctx).to.equal(router)
+    router.on('module', (moudle) => {
+      expect(moudle.ctx).to.equal(router)
     })
-    router.on('action', (action, {ctx, module}) => {
-      expect(module.actions[action.name]).to.equal(action)
-    })
-    router.on('middleware', ({name, args}, {ctx, module, action}) => {
-      expect(name).to.be.a('string')
-      expect(args).to.be.a('array')
+    router.on('action', (action) => {
+      expect(action.module.actions[action.actionName]).to.equal(action)
     })
   })
 
   router.use({
-    module (moudle, {ctx}) {
-      expect(ctx).to.equal(router)
+    module (moudle) {
+      expect(moudle.ctx).to.equal(router)
     },
     async payload (ctx, next) {
 
@@ -37,15 +32,14 @@ test('router.use', ava => {
   })
 
   router.declare(Test)
-  router.declare([Test])
 })
 
 test('router.api', async (ava) => {
   let router = new Router()
   @gen
   class Article {
-    @get async get () {}
-    @post('/user/article/:aid') post () {}
+    @get() async get () {}
+    @post('/user/article/:aid') async post () {}
   }
   router.declare(Article)
   let route = router.route()
@@ -67,14 +61,14 @@ test('router.declare#2', ava => {
   let router = new Router()
   @gen
   class Article {
-    @get get () {}
+    @get() get () {}
     @post('/user/article/:aid') post () {}
   }
   @gen
   class User {
-    @get get () {}
+    @get() get () {}
     @post('') post () {}
-    @route route () {}
+    @route() route () {}
   }
   router.declare([Article, User])
 })
@@ -102,7 +96,7 @@ test('router.ctx.end', async (ava) => {
   let router = new Router()
   @gen
   class Article {
-    @get async get (ctx) {
+    @get() async get (ctx) {
       ctx.end('hello')
       ctx.end('world', true)
     }

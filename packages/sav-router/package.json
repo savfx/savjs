@@ -1,6 +1,6 @@
 {
   "name": "sav-router",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "another nodejs controller style router",
   "main": "dist/sav-router.cjs.js",
   "module": "dist/sav-router.es.js",
@@ -42,6 +42,7 @@
     "watch-cli": "^0.2.1"
   },
   "dependencies": {
+    "sav-util": "^1.0.11",
     "koa-compose": "^3.2.1",
     "path-to-regexp": "^1.7.0",
     "sav-decorator": "^1.0.6"

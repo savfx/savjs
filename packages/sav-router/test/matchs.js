@@ -1,7 +1,7 @@
 import test from 'ava'
 import {expect} from 'chai'
 
-import {matchRoute, matchRouter} from '../src/matchs.js'
+import {matchRoute, matchRouter} from '../src'
 
 test('matchRoute:basic', ava => {
   let params = {}

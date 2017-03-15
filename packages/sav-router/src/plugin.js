@@ -1,5 +1,29 @@
-import {convertCase} from './caseconvert.js'
+import {convertCase} from 'sav-util'
 import {matchRouter} from './matchs.js'
+import {annotateMethod} from 'sav-decorator'
+
+export const route = annotateMethod((target, it, [methods, ...args]) => {
+  it.push(['route', processMethod(methods), ...args])
+})
+
+export const head = routeMethods('head')
+export const options = routeMethods('options')
+export const get = routeMethods('get')
+export const post = routeMethods('post')
+export const put = routeMethods('put')
+export const patch = routeMethods('patch')
+export const del = routeMethods('delete')
+
+function routeMethods (method) {
+  return annotateMethod((target, it, args) => {
+    it.push(['route', processMethod(method), ...args])
+  })
+}
+
+function processMethod (method) {
+  method = Array.isArray(method) ? method : [method]
+  return method.filter(Boolean).map((it) => it.toUpperCase())
+}
 
 const CASE_TYPE = 'case'
 const ROUTE_PREFIX = 'prefix'
@@ -18,8 +42,8 @@ function convertPath (path, caseType, name) {
 export function routerPlugin (ctx) {
   let prefix = ctx.config(ROUTE_PREFIX) || '/'
   let caseType = ctx.config(CASE_TYPE)
-  let routers = []
-  let moduleMap = {}
+  let routers = ctx.routers = []
+  let moduleMap = ctx.modules = {}
   ctx.matchRoute = (pathname, method) => {
     let match = matchRouter(routers, pathname, method)
     if (match && !match[1]) {
@@ -28,24 +52,30 @@ export function routerPlugin (ctx) {
     return match
   }
   ctx.use({
-    module (module, {ctx}) {
-      let {name, props: {route}} = module
+    module (module) {
+      let {moduleName, props: {route}} = module
       route = {...route}
-      route.relative = convertPath(route.path, caseType, name)
+      route.relative = convertPath(route.path, caseType, moduleName)
       route.path = prefix + route.relative
       route.childs = []
+      route.name = convertCase(moduleName, 'pascal')
       routers.push(route)
-      moduleMap[name] = route
-      module.route = {route, children: []}
+      module.route = route
+      moduleMap[moduleName] = module
     },
-    middleware ({name, args}, {ctx, module, action, middlewares}) {
-      if (name !== 'route') {
+    action (action) {
+      if (!action.props.route) {
         return
       }
+      let args = action.props.route
+      let module = action.module
       let route = {
-        path: convertPath(args[1], caseType, action.name),
+        name: convertCase(action.actionName, 'pascal'),
+        path: convertPath(args[1], caseType, action.actionName),
         methods: args[0] || [],
-        middlewares: middlewares
+        get middlewares () {
+          return action.middlewares
+        }
       }
       route.relative = route.path || ''
 
@@ -56,14 +86,12 @@ export function routerPlugin (ctx) {
         route.path = prefix + (route.relative = path.substr(1, path.length))
         routers.push(route)
       } else {
-        let moduleRoute = moduleMap[module.name]
+        let moduleRoute = moduleMap[module.moduleName].route
         route.path = moduleRoute.path + (route.path ? ('/' + route.path) : '')
         moduleRoute.childs.push(route)
       }
-      module.route.children.push(route)
-      middlewares.push(async (ctx) => {
-        await action.method(ctx)
-      })
+      action.route = route
+      action.set('route', action.method)
     }
   })
 }

@@ -1,21 +1,19 @@
 import test from 'ava'
 import {expect} from 'chai'
 
-import {Router} from '../src/router.js'
-import {get} from '../src/decorators.js'
+import {Router, get} from '../src'
 import {gen} from 'sav-decorator'
 
 test('container.path', ava => {
   let router = new Router()
   @gen
   class Test {
-    @get path1 () {}
+    @get() path1 () {}
     @get(':path2') path2 () {}
     @get('/path3') path3 () {}
     @get('~path4') path4 () {}
   }
   router.declare(Test)
-
   expect(router.matchRoute('/Test/path1', 'GET')).to.be.a('array')
   expect(router.matchRoute('/Test/path', 'GET')).to.be.a('array')
   expect(router.matchRoute('/path3', 'GET')).to.be.a('array')
@@ -28,7 +26,7 @@ test('container.prefix', ava => {
   })
   @gen
   class Test {
-    @get path1 () {}
+    @get() path1 () {}
     @get(':path2') path2 () {}
     @get('/path3') path3 () {}
     @get('~path4') path4 () {}
@@ -47,7 +45,7 @@ test('container.case', ava => {
   })
   @gen
   class Test {
-    @get path () {}
+    @get() path () {}
   }
   router.declare(Test)
 
