@@ -81,10 +81,10 @@ export function routerPlugin (ctx) {
 
       let path = route.path
       if (path[0] === '/') { // absolute
-        routers.push(route)
+        routers.unshift(route)
       } else if (path[0] === '~') { // relative to root
         route.path = prefix + (route.relative = path.substr(1, path.length))
-        routers.push(route)
+        routers.unshift(route)
       } else {
         let moduleRoute = moduleMap[module.moduleName].route
         route.path = moduleRoute.path + (route.path ? ('/' + route.path) : '')
