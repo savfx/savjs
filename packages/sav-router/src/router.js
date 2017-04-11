@@ -1,7 +1,7 @@
 import {EventEmitter} from 'events'
 import {routerPlugin} from './plugin'
 import compose from 'koa-compose'
-import {isPromise, isAsync} from 'sav-util'
+import {isPromise, isAsync, isFunction, makeProp} from 'sav-util'
 
 export class Router extends EventEmitter {
   constructor (opts) {
@@ -9,26 +9,8 @@ export class Router extends EventEmitter {
     this.opts = {...opts}
     this.matchRoute = null
     this.payloads = []
-    this.orders = [
-      'auth',
-      'hreq',
-      'req',
-      'route',
-      'hres',
-      'res',
-      'vue',
-      'view'
-    ]
     if (!this.opts.noRoute) {
       this.use(routerPlugin)
-    }
-  }
-  order (name, opts = {}) {
-    if (opts.after) {
-      orderBy(name, opts.after, false, this.orders)
-    }
-    if (opts.before) {
-      orderBy(name, opts.before, true, this.orders)
     }
   }
   config (name, dval) {
@@ -59,90 +41,57 @@ export class Router extends EventEmitter {
     return payload
   }
   async exec (ctx) {
-    if (this._execute) {
-      return await this._execute(ctx)
+    if (this._executer) {
+      return await this._executer(ctx)
     }
-    this._execute = this.route()
-    return await this._execute(ctx)
+    this._executer = this.route()
+    return await this._executer(ctx)
   }
   warn (...args) {
     this.emit('warn', ...args)
   }
 }
 
-function orderBy (src, target, before, orders) {
-  let index = orders.indexOf(target)
-  if (~index) {
-    let curr = orders.indexOf(src)
-    if (~curr) {
-      orders.splice(curr, 1)
-      if (index > curr) {
-        index--
-      }
-    }
-    orders.splice(before ? index : index + 1, 0, src)
-  }
-  return orders
-}
-
-function createMiddleware (action, ctx) {
-  let {middlewares, steps} = action
-  let orders = ctx.orders
-  let middleware = action.middleware
-  for (let it of orders) {
-    if (typeof middleware[it] === 'function') {
-      middlewares.push(middleware[it])
-      steps.push(it)
-    }
-  }
-  return middlewares
-}
-
 function buildModules (ctx, modules) {
   for (let module of modules) {
-    module.ctx = ctx
+    let prop = makeProp(module, false)
+    prop({
+      ctx
+    })
     ctx.emit('module', module)
     for (let actionName in module.actions) {
       let action = module.actions[actionName]
-      action.module = module
-      action.ctx = ctx
-      action.middleware = {}
-      action.middlewares = []
-      action.steps = []
-      action.set = setActionMiddleware.bind(action)
+      let prop = makeProp(action, false)
+      prop({
+        module,
+        ctx,
+        middlewares: action.config.map(([name]) => {
+          return {name}
+        }),
+        set (name, middleware) {
+          for (let it of action.middlewares) {
+            if (it.name === name) {
+              it.middleware = middleware
+              return
+            }
+          }
+          action.middlewares.push({name, middleware})
+        },
+        get (name) {
+          for (let it of action.middlewares) {
+            if (it.name === name) {
+              return it
+            }
+          }
+        }
+      })
       ctx.emit('action', action)
-      createMiddleware(action, ctx)
     }
-  }
-}
-
-function setActionMiddleware (name, value) {
-  if (typeof name === 'object') {
-    for (let it in name) {
-      this.middleware[it] = name[it]
-    }
-  } else {
-    this.middleware[name] = value
   }
 }
 
 async function payloadStart (ctx, next) {
-  ctx.end = (data, rewrite) => {
-    if (ctx._end) {
-      if (rewrite) {
-        ctx._end.data = data
-      }
-    } else {
-      ctx._end = {
-        data
-      }
-    }
-  }
   await next()
-  if (ctx._end) {
-    ctx.body = ctx._end.data
-    ctx.end = ctx._end = null
-  }
 }
 
 async function payloadEnd (ctx, next) {
@@ -151,17 +100,36 @@ async function payloadEnd (ctx, next) {
   let matched = this.matchRoute(path, method)
   if (matched) {
     let [route, params] = matched
-    ctx.params = params
-    for (let middleware of route.middlewares) {
-      if (isAsync(ctx)) {
-        await middleware(ctx)
-      } else {
-        let ret = middleware(ctx)
-        if (ret && isPromise(ret)) {
-          await ret
+    let prop = makeProp(ctx)
+    prop({
+      params,
+      route,
+      stack: [],
+      end (data, name) {
+        ctx.stack.push({name, data})
+      }
+    })
+    prop.getter('data', (data, name) => {
+      let ret = ctx.stack[ctx.stack.length - 1]
+      return ret && ret.data
+    })
+    for (let {name, middleware} of route.middlewares) {
+      if (isFunction(middleware)) {
+        let ret
+        if (isAsync(ctx)) {
+          ret = await middleware(ctx)
+        } else {
+          ret = middleware(ctx)
+          if (ret && isPromise(ret)) {
+            ret = await ret
+          }
+        }
+        if (name === 'route') {
+          ctx.end(ret, name)
         }
       }
     }
+    ctx.body = ctx.data
   } else {
     await next()
   }

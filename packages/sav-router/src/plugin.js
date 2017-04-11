@@ -75,10 +75,12 @@ export function routerPlugin (ctx) {
         methods: args[0] || [],
         get middlewares () {
           return action.middlewares
+        },
+        get action () {
+          return action
         }
       }
       route.relative = route.path || ''
-
       let path = route.path
       if (path[0] === '/') { // absolute
         routers.unshift(route)
@@ -90,7 +92,7 @@ export function routerPlugin (ctx) {
         route.path = moduleRoute.path + (route.path ? ('/' + route.path) : '')
         moduleRoute.childs.push(route)
       }
-      action.route = route
+      action.prop({route})
       action.set('route', action.method)
     }
   })

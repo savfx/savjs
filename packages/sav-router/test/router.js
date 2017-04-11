@@ -92,22 +92,22 @@ test('router.warn', ava => {
   expect(n).to.eql(3)
 })
 
-test('router.ctx.end', async (ava) => {
+test('router.ctx.exec', async (ava) => {
   let router = new Router()
   @gen
   class Article {
-    @get() async get (ctx) {
-      ctx.end('hello')
-      ctx.end('world', true)
+    @get()
+    hello (ctx, payload) {
+      return 'hello'
     }
   }
   router.declare(Article)
-  let route = router.route()
-  let ctx
-  ctx = {
-    path: '/Article/get',
-    method: 'GET'
+  {
+    let ctx = {
+      path: '/Article/hello',
+      method: 'GET'
+    }
+    await router.exec(ctx)
+    expect(ctx.body).to.eql('hello')
   }
-  await route(ctx)
-  expect(ctx.body).to.eql('world')
 })
