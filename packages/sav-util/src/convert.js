@@ -25,14 +25,14 @@ export function camelCase (str) {
 /**
  * Capitalize a string.
  */
-function ucfirst (str) {
+export function ucfirst (str) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 /**
  * UnCapitalize a string.
  */
-function lcfirst (str) {
+export function lcfirst (str) {
   return str.charAt(0).toLowerCase() + str.slice(1)
 }
 
