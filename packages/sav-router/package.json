@@ -1,6 +1,6 @@
 {
   "name": "sav-router",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "another nodejs controller style router",
   "main": "dist/sav-router.cjs.js",
   "module": "dist/sav-router.es.js",
@@ -44,8 +44,8 @@
   "dependencies": {
     "koa-compose": "^3.2.1",
     "path-to-regexp": "^1.7.0",
-    "sav-decorator": "^1.0.6",
-    "sav-util": "^1.0.14"
+    "sav-decorator": "^1.0.7",
+    "sav-util": "^1.0.15"
   },
   "standard": {
     "parser": "babel-eslint"
