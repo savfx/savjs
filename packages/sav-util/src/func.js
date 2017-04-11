@@ -65,12 +65,16 @@ function makePropFunc (target, propName) {
 }
 
 export function makeProp (ctx, name) {
+  if (ctx.prop) {
+    return ctx.prop
+  }
   let prop = makePropFunc(ctx, 'value')
   prop('getter', makePropFunc(ctx, 'get'))
   prop('setter', makePropFunc(ctx, 'set'))
   if (isString(name) || isUndefined(name)) {
     prop(name || 'ctx', ctx)
   }
+  prop('prop', prop)
   return prop
 }
 
