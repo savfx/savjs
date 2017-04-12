@@ -29,6 +29,11 @@ export function guid () {
   return new Date().getTime().toString(32) + Math.floor(Math.random() * 10000000000).toString(32) + s4()
 }
 
+export function shortId () {
+  let a = Math.random() + new Date().getTime()
+  return a.toString(16).replace('.', '')
+}
+
 function s4 () {
   return Math.floor((1 + Math.random()) * 0x10000)
         .toString(16)
