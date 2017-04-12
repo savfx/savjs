@@ -37,7 +37,7 @@ export function matchRouter (routers, path, method) {
 
 let regexpCache = []
 
-export function matchRoute (path, params, pathname, opts) {
+export function matchRoute (path, params, pathname, opts = {}) {
   let keys, regexp
   let key = `${opts.end}-${opts.sensitive}-${path}`// unique
   const hit = regexpCache[key]
