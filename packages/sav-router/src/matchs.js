@@ -39,14 +39,15 @@ let regexpCache = []
 
 export function matchRoute (path, params, pathname, opts) {
   let keys, regexp
-  const hit = regexpCache[path]
+  let key = `${opts.end}-${opts.sensitive}-${path}`// unique
+  const hit = regexpCache[key]
   if (hit) {
     keys = hit.keys
     regexp = hit.regexp
   } else {
     keys = []
     regexp = pathToRegexp(path, keys, opts)
-    regexpCache[path] = { keys, regexp }
+    regexpCache[key] = {keys, regexp}
   }
   const m = pathname.match(regexp)
   if (!m) {
