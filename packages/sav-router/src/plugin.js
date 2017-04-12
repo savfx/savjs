@@ -89,7 +89,8 @@ export function routerPlugin (ctx) {
         routers.unshift(route)
       } else {
         let moduleRoute = moduleMap[module.moduleName].route
-        route.path = moduleRoute.path + (route.path ? ('/' + route.path) : '')
+        let path = moduleRoute.path + (route.path ? ('/' + route.path) : '')
+        route.path = path.replace(/\/\//g, '/')
         moduleRoute.childs.push(route)
       }
       action.prop({route})
