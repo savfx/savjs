@@ -91,7 +91,17 @@ function buildModules (ctx, modules) {
 }
 
 async function payloadStart (ctx, next) {
-  makeProp(ctx)
+  let prop = makeProp(ctx)
+  prop({
+    stack: [],
+    end (data, name) {
+      ctx.stack.push({name, data})
+    }
+  })
+  prop.getter('data', (data, name) => {
+    let ret = ctx.stack[ctx.stack.length - 1]
+    return ret && ret.data
+  })
   await next()
 }
 
@@ -104,15 +114,7 @@ async function payloadEnd (ctx, next) {
     let {prop} = ctx
     prop({
       params,
-      route,
-      stack: [],
-      end (data, name) {
-        ctx.stack.push({name, data})
-      }
-    })
-    prop.getter('data', (data, name) => {
-      let ret = ctx.stack[ctx.stack.length - 1]
-      return ret && ret.data
+      route
     })
     for (let {name, middleware} of route.middlewares) {
       if (isFunction(middleware)) {
