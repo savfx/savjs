@@ -91,6 +91,7 @@ function buildModules (ctx, modules) {
 }
 
 async function payloadStart (ctx, next) {
+  makeProp(ctx)
   await next()
 }
 
@@ -100,7 +101,7 @@ async function payloadEnd (ctx, next) {
   let matched = this.matchRoute(path, method)
   if (matched) {
     let [route, params] = matched
-    let prop = makeProp(ctx)
+    let {prop} = ctx
     prop({
       params,
       route,
