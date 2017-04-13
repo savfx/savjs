@@ -1,4 +1,4 @@
-import {convertCase} from 'sav-util'
+import {convertCase, shortId} from 'sav-util'
 import {matchRouter} from './matchs.js'
 import {annotateMethod} from 'sav-decorator'
 
@@ -54,6 +54,7 @@ export function routerPlugin (ctx) {
   ctx.use({
     module (module) {
       let {moduleName, props: {route}} = module
+      let id = module.id || (module.id = moduleName + '-' + shortId())
       route = {...route}
       route.relative = convertPath(route.path, caseType, moduleName)
       route.path = prefix + route.relative
@@ -61,7 +62,7 @@ export function routerPlugin (ctx) {
       route.name = convertCase(moduleName, 'pascal')
       routers.push(route)
       module.route = route
-      moduleMap[moduleName] = module
+      moduleMap[id] = module
     },
     action (action) {
       if (!action.props.route) {
@@ -88,7 +89,7 @@ export function routerPlugin (ctx) {
         route.path = prefix + (route.relative = path.substr(1, path.length))
         routers.unshift(route)
       } else {
-        let moduleRoute = moduleMap[module.moduleName].route
+        let moduleRoute = moduleMap[module.id].route
         let path = moduleRoute.path + (route.path ? ('/' + route.path) : '')
         route.path = path.replace(/\/\//g, '/')
         moduleRoute.childs.push(route)
