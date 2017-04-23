@@ -119,7 +119,7 @@ async function payloadEnd (ctx, next) {
     for (let {name, middleware} of route.middlewares) {
       if (isFunction(middleware)) {
         let ret
-        if (isAsync(ctx)) {
+        if (isAsync(middleware)) {
           ret = await middleware(ctx)
         } else {
           ret = middleware(ctx)
