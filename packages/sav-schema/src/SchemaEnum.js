@@ -2,7 +2,7 @@
  * 枚举类型
  */
 import {isObject, isArray, isFunction} from 'sav-util'
-
+import {objectAssign} from './util.js'
 /*
 {
   name: 'Sex',
@@ -18,9 +18,9 @@ import {isObject, isArray, isFunction} from 'sav-util'
 export class SchemaEnum {
   constructor (props, schema) {
     this.schema = schema
-    Object.assign(this, props)
-    let enums = isObject(this.enums) ? toArray(this.enums)
-      : (isArray(this.enums) ? this.enums : [])
+    objectAssign(this, props, ['enums'])
+    let enums = isObject(props.enums) ? toArray(props.enums)
+      : (isArray(props.enums) ? props.enums : [])
     this.enums = []
     this.keyMaps = {}
     this.keys = []

@@ -20,6 +20,7 @@ import {isFunction} from 'sav-util'
 
 export class SchemaType {
   constructor (props, schema) {
+    this.schema = schema
     Object.assign(this, props)
     if (isFunction(this.name)) {
       if (!('default' in this)) {

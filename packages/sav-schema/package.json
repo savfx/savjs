@@ -10,7 +10,7 @@
     "build": "rollup -c rollup.browser.js && rollup -c",
     "lint": "standard rollup.* test/** src/**",
     "start": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && npm run build && nyc ava ./test\"",
-    "watch": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && nyc ava ./test/type.js\"",
+    "watch": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && nyc ava ./test/schema.js\"",
     "test": "npm run lint && npm run build && nyc ava ./test"
   },
   "repository": {
