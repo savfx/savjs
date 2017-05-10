@@ -1,5 +1,5 @@
 import test from 'ava'
-import schema, {Schema} from '../'
+import schema, {Schema} from '../src'
 import {AssertError} from 'sav-assert'
 
 test('schema#extract', (ava) => {

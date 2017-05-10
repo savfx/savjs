@@ -7,9 +7,10 @@
   "jsnext:main": "dist/sav-schema.es.js",
   "scripts": {
     "min": "uglifyjs ./dist/sav-schema.js -o ./dist/sav-schema.min.js -c warnings=false -m",
-    "build": "rollup -c rollup.browser.js && rollup -c && npm run min",
+    "build": "rollup -c rollup.browser.js && rollup -c",
     "lint": "standard rollup.* test/** src/**",
     "start": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && npm run build && nyc ava ./test\"",
+    "watch": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && nyc ava ./test/type.js\"",
     "test": "npm run lint && npm run build && nyc ava ./test"
   },
   "repository": {
@@ -26,6 +27,11 @@
   },
   "devDependencies": {
     "ava": "^0.17.0",
+    "babel-plugin-resolver": "^1.1.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-register": "^6.24.1",
+    "chai": "^3.5.0",
     "eslint-plugin-standard": "^2.0.1",
     "expect.js": "^0.3.1",
     "nyc": "^10.0.0",
@@ -41,5 +47,29 @@
   "dependencies": {
     "sav-assert": "^0.0.4",
     "sav-util": "^0.0.9"
+  },
+  "nyc": {
+    "exclude": [
+      "node_modules",
+      "test"
+    ]
+  },
+  "ava": {
+    "require": "babel-register",
+    "babel": "inherit"
+  },
+  "babel": {
+    "plugins": [
+      [
+        "resolver",
+        {
+          "resolveDirs": [
+            "src"
+          ]
+        }
+      ],
+      "transform-object-rest-spread",
+      "transform-es2015-modules-commonjs"
+    ]
   }
 }
