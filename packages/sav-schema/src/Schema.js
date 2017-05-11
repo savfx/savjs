@@ -28,9 +28,6 @@ export class Schema {
       return opts.map(it => this.declare(it))
     } else if (isObject(opts)) {
       let ret = createSchemaType(this, opts)
-      if (opts.name) {
-        this[opts.name] = ret
-      }
       return ret
     }
   }

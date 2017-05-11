@@ -72,4 +72,7 @@ export class SchemaStruct {
     })
     return struct
   }
+  check (obj) {
+    
+  }
 }
