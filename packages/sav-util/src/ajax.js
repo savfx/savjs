@@ -20,6 +20,7 @@ export function ajax (opts, next) {
   let method = (opts.method || 'GET').toUpperCase()
   let dataType = (opts.dataType || 'JSON').toUpperCase()
   let timeout = opts.timeout
+  let async = !!opts.async
   /* global XMLHttpRequest */
   let req = new XMLHttpRequest()
   let data = null
@@ -70,7 +71,7 @@ export function ajax (opts, next) {
     if (dataType === 'BINARY') {
       req.responseType = 'arraybuffer'
     }
-    req.open(method, opts.url, true)
+    req.open(method, opts.url, async)
     if (opts.headers) {
       for (let x in opts.headers) {
         req.setRequestHeader(x, opts.headers[x])
