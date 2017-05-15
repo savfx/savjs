@@ -70,7 +70,9 @@ export class SchemaStruct {
     })
     return struct
   }
-  check (obj) {
-    
+  validate (obj) {
+    for (let field of this.fields) {
+      field.validate(obj[field.name])
+    }
   }
 }
