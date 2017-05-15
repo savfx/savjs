@@ -2,7 +2,7 @@
  * 简单类型
  */
 import {isFunction} from 'sav-util'
-
+import {SchemaTypeError} from './SchemaError.js'
 /*
 {
   name: String
@@ -42,6 +42,11 @@ export class SchemaType {
       return this.parse(val)
     } else {
       return isFunction(this.default) ? this.default() : this.default
+    }
+  }
+  validate (val) {
+    if (!this.check(val)) {
+      throw new SchemaTypeError(this.name, val)
     }
   }
 }

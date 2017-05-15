@@ -37,11 +37,9 @@ export class SchemaStruct {
     if (this.name) {
       schema.export(this)
     }
-    if (opts.refs) {
-      let refs = opts.refs
-      for (let ref in refs) {
-        this.addRef(refs[ref], ref)
-      }
+    let refs = opts.refs
+    for (let ref in refs) {
+      this.addRef(refs[ref], ref)
     }
     let props = opts.props
     for (let prop in props) {

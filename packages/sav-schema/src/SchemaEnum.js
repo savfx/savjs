@@ -3,6 +3,7 @@
  */
 import {isObject, isArray, isFunction} from 'sav-util'
 import {objectAssign} from './util.js'
+import {SchemaTypeError} from './SchemaError.js'
 /*
 {
   name: 'Sex',
@@ -75,6 +76,11 @@ export class SchemaEnum {
   }
   check (val) {
     return this.hasValue(val)
+  }
+  validate (val) {
+    if (!this.check(val)) {
+      throw new SchemaTypeError(this.name, val)
+    }
   }
   parse (val) {
     if (this.values.indexOf(val) !== -1) {
