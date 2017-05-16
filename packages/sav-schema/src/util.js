@@ -1,5 +1,9 @@
 import {isObject, isArray} from 'sav-util'
 
+export const SCHEMA_TYPE = 1
+export const SCHEMA_ENUM = 2
+export const SCHEMA_STURCT = 3
+
 export function objectAssign (target, obj, excludes) {
   if (isObject(obj)) {
     let isExclude = isArray(excludes)

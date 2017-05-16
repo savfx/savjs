@@ -13,6 +13,9 @@ export class Schema {
     }, opts)
     this.declare(defaultTypes)
   }
+  get isStrict () {
+    return this.strict
+  }
   static register (opts) {
     if (isArray(opts)) {
       defaultTypes.push.apply(defaultTypes, opts)

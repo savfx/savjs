@@ -1,9 +1,10 @@
 /**
  * 结构体类型
  */
-import {objectAssign} from './util.js'
+import {objectAssign, SCHEMA_STURCT} from './util.js'
+import {SchemaField} from './SchemaField.js'
 import {createField, updateField} from './structField.js'
-import {isObject, isArray} from 'sav-util'
+import {isObject} from 'sav-util'
 /*
 props: {
   name: String,
@@ -30,6 +31,7 @@ refs: {
 
 export class SchemaStruct {
   constructor (opts, schema) {
+    this.schemaType = SCHEMA_STURCT
     this.schema = schema
     this.refs = {}
     this.fields = []
@@ -50,7 +52,7 @@ export class SchemaStruct {
     let field = createField(value, this)
     field.name = name
     updateField(field, this)
-    this.fields.push(field)
+    this.fields.push(new SchemaField(field, this))
   }
   addRef (ref, name) {
     if (ref.export && !ref.name) {
@@ -62,17 +64,14 @@ export class SchemaStruct {
     let struct = {}
     let isObj = isObject(obj)
     this.fields.forEach((it) => {
-      let ret = isObj && (it.name in obj) ? it.ref.create(obj[it.name]) : it.ref.create()
-      if (isArray(ret) && ret.length && it.type === 'Array' && it.subRef) {
-        ret = ret.map((item) => it.subRef.create(item))
-      }
-      struct[it.name] = ret
+      struct[it.name] = isObj && (it.name in obj) ? it.create(obj[it.name]) : it.create()
     })
     return struct
   }
   validate (obj) {
     for (let field of this.fields) {
-      field.validate(obj[field.name])
+      field.validate(obj)
     }
+    return obj
   }
 }

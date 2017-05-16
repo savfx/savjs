@@ -2,8 +2,7 @@
  * 枚举类型
  */
 import {isObject, isArray, isFunction} from 'sav-util'
-import {objectAssign} from './util.js'
-import {SchemaTypeError} from './SchemaError.js'
+import {objectAssign, SCHEMA_ENUM} from './util.js'
 /*
 {
   name: 'Sex',
@@ -18,6 +17,7 @@ import {SchemaTypeError} from './SchemaError.js'
 
 export class SchemaEnum {
   constructor (props, schema) {
+    this.schemaType = SCHEMA_ENUM
     this.schema = schema
     objectAssign(this, props, ['enums'])
     let enums = isObject(props.enums) ? toArray(props.enums)
@@ -77,11 +77,6 @@ export class SchemaEnum {
   check (val) {
     return this.hasValue(val)
   }
-  validate (val) {
-    if (!this.check(val)) {
-      throw new SchemaTypeError(this.name, val)
-    }
-  }
   parse (val) {
     if (this.values.indexOf(val) !== -1) {
       return val
@@ -90,7 +85,7 @@ export class SchemaEnum {
     }
   }
   get isStrict () {
-    return this.schema ? this.schema.isStrict : this.strict
+    return 'strict' in this ? this.strict : this.schema && this.schema.isStrict
   }
 }
 

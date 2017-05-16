@@ -2,7 +2,8 @@
  * 简单类型
  */
 import {isFunction} from 'sav-util'
-import {SchemaTypeError} from './SchemaError.js'
+import {SCHEMA_TYPE} from './util.js'
+
 /*
 {
   name: String
@@ -20,6 +21,7 @@ import {SchemaTypeError} from './SchemaError.js'
 
 export class SchemaType {
   constructor (props, schema) {
+    this.schemaType = SCHEMA_TYPE
     this.schema = schema
     Object.assign(this, props)
     if (isFunction(this.name)) {
@@ -42,11 +44,6 @@ export class SchemaType {
       return this.parse(val)
     } else {
       return isFunction(this.default) ? this.default() : this.default
-    }
-  }
-  validate (val) {
-    if (!this.check(val)) {
-      throw new SchemaTypeError(this.name, val)
     }
   }
 }
