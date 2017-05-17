@@ -57,7 +57,7 @@ function checkSubField (val, struct, inPlace) {
       throw err
     }
   }
-  return val
+  return ret
 }
 
 function checkField (obj, struct, inPlace) {
