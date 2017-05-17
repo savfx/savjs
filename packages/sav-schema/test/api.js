@@ -16,7 +16,6 @@ test('schema#api', (ava) => {
   })
   ava.true(isFunction(Type.check))
   ava.true(isFunction(Type.create))
-  ava.true(isFunction(Type.checkThen))
   // enum
   const Sex = schema.declare({
     default: 1,
@@ -32,8 +31,8 @@ test('schema#api', (ava) => {
   ava.true(isFunction(Sex.create))
   ava.true(isArray(Sex.keys))
   ava.true(isArray(Sex.values))
-  ava.true(isObject(Sex.fields))
-  ava.true(isFunction(Sex.checkThen))
+  ava.true(isObject(Sex.keyMaps))
+  ava.true(isObject(Sex.valueMaps))
   // struct
   const User = schema.declare({
     props: {

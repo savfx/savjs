@@ -4,7 +4,7 @@
 import {objectAssign, SCHEMA_STURCT} from './util.js'
 import {SchemaField} from './SchemaField.js'
 import {createField, updateField} from './structField.js'
-import {isObject} from 'sav-util'
+import {isObject, isUndefined} from 'sav-util'
 /*
 props: {
   name: String,
@@ -68,10 +68,42 @@ export class SchemaStruct {
     })
     return struct
   }
-  validate (obj) {
-    for (let field of this.fields) {
-      field.validate(obj)
+  validate (obj, inPlace) {
+    try {
+      let ret = inPlace ? obj : {}
+      for (let field of this.fields) {
+        try {
+          let val = field.validate(obj, inPlace)
+          if (!isUndefined(val)) {
+            ret[field.name] = val
+          }
+        } catch (err) {
+          (err.keys || (err.keys = [])).unshift(field.name)
+          throw err
+        }
+      }
+      return ret
+    } catch (err) {
+      if (err.keys) {
+        err.path = err.keys.join('.')
+      }
+      throw err
     }
-    return obj
+  }
+  check (obj) {
+    return this.validate(obj, true)
+  }
+  checkThen (obj) {
+    return Promise.resolve().then(() => {
+      return this.check(obj)
+    })
+  }
+  extract (obj) {
+    return this.validate(obj, false)
+  }
+  extractThen (obj) {
+    return Promise.resolve().then(() => {
+      return this.extract(obj)
+    })
   }
 }

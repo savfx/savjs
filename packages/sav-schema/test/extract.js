@@ -1,8 +1,9 @@
 import test from 'ava'
-import schema, {Schema} from '../src'
+import {Schema} from '../src/Schema.js'
 import {AssertError} from 'sav-assert'
 
 test('schema#extract', (ava) => {
+  let schema = new Schema()
   const UserProfile = schema.declare({
     props: {
       name: 'String',

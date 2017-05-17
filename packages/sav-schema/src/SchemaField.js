@@ -1,4 +1,4 @@
-import {isArray} from 'sav-util'
+import {isArray, isNull} from 'sav-util'
 import {SchemaRequiredError, SchemaTypeError, SchemaEnumError} from './SchemaError.js'
 import {SCHEMA_STURCT, SCHEMA_ENUM, SCHEMA_TYPE} from './util.js'
 
@@ -13,6 +13,7 @@ import {SCHEMA_STURCT, SCHEMA_ENUM, SCHEMA_TYPE} from './util.js'
 
   required: false,
   optional: true,
+  message: "用户关注数据非法"
 }
  */
 export class SchemaField {
@@ -27,51 +28,78 @@ export class SchemaField {
     }
     return ret
   }
-  validate (obj) {
-    let {name, type, required, nullable, ref} = this
-    if (!required && !(name in obj)) {
-      return
+  validate (obj, inPlace) {
+    let val = checkField(obj, this, inPlace)
+    if (this.subType) {
+      val = checkSubField(val, this, inPlace)
     }
-    if (nullable && isNull(obj[name])) {
-      return
+    return val
+  }
+}
+
+function checkSubField (val, struct, inPlace) {
+  let {type, subRef} = struct
+  if ((type !== 'Array') || !isArray(val)) { // allow Array<Struct> only
+    throw new SchemaTypeError(type, val)
+  }
+  let ret = inPlace ? val : []
+  for (let i = 0, l = val.length; i < l; ++i) {
+    try {
+      let subVal
+      if (subRef.schemaType === SCHEMA_STURCT) {
+        subVal = subRef.validate(val[i], inPlace)
+      } else {
+        subVal = checkValue(val[i], subRef)
+      }
+      ret[i] = subVal
+    } catch (err) {
+      (err.keys || (err.keys = [])).unshift(i)
+      throw err
     }
+  }
+  return val
+}
+
+function checkField (obj, struct, inPlace) {
+  let {name, required, nullable, ref} = struct
+  if (!required && !(name in obj)) {
+    return
+  }
+  if (nullable && isNull(obj[name])) {
+    return
+  }
+  try {
     if (!(name in obj)) {
       throw new SchemaRequiredError(name)
     }
+    // apply checkes
     let val = obj[name]
     if (ref.schemaType === SCHEMA_STURCT) {
-      val = ref.validate(val)
+      val = ref.validate(val, inPlace)
     } else {
-      if (!ref.check(val)) {
-        if (ref.parse) {
-          val = ref.parse(val)
-        }
-        if (!ref.check(val)) { // 仍然失败
-          if (ref.schemaType === SCHEMA_ENUM) {
-            throw new SchemaEnumError(name, val)
-          } else if (ref.schemaType === SCHEMA_TYPE) {
-            throw new SchemaTypeError(name, val)
-          }
-        }
-      }
+      val = checkValue(val, ref, name)
     }
-    const {subType, subRef} = this
-    if (subType) {
-      if (type === 'Array') {
-        for (let i = 0, l = val.length; i < l; ++i) {
-          try {
-            if (subRef.extract) {
-              ret.push(subRef.extract(val[i]))
-            } else { // no Struct
-              let subVal = checkValue(struct, val[i], subRef)
-              ret.push(subVal)
-            }
-          } catch (err) {
-            (err.keys || (err.keys = [])).unshift(i)
-            throw err
-          }
-        }
+    return val
+  } catch (err) {
+    if (struct.message) {
+      err.message = struct.message
+    }
+    throw err
+  }
+}
+
+function checkValue (val, ref, name) {
+  if (!ref.check(val)) {
+    if (ref.parse) {
+      val = ref.parse(val)
+    }
+    if (!ref.check(val)) { // 仍然失败
+      if (ref.schemaType === SCHEMA_ENUM) {
+        throw new SchemaEnumError(ref.name, val)
+      } else if (ref.schemaType === SCHEMA_TYPE) {
+        throw new SchemaTypeError(ref.name, val)
       }
     }
   }
+  return val
 }
