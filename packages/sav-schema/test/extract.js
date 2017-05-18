@@ -1,6 +1,5 @@
 import test from 'ava'
 import {Schema} from '../src/Schema.js'
-import {AssertError} from 'sav-assert'
 
 test('schema#extract', (ava) => {
   let schema = new Schema()
@@ -31,7 +30,7 @@ test('schema#extract', (ava) => {
   UserProfile.extractThen({name: 'my'}).then(() => {
     throw new Error('no')
   }).catch(err => {
-    ava.true(err instanceof AssertError)
+    ava.true(err instanceof Error)
   })
 
   const UserInfo = schema.declare({

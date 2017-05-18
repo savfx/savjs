@@ -1,4 +1,6 @@
 import babel from 'rollup-plugin-babel'
+import commonjs from 'rollup-plugin-commonjs'
+import resolve from 'rollup-plugin-node-resolve'
 
 const pack = require('./package.json')
 const YEAR = new Date().getFullYear()
@@ -6,7 +8,7 @@ const YEAR = new Date().getFullYear()
 export default {
   entry: 'src/index.js',
   targets: [
-    { dest: 'dist/sav-schema.cjs.js', format: 'cjs' }
+    { dest: 'dist/sav-schema.js', format: 'cjs' }
   ],
   plugins: [
     babel({
@@ -16,7 +18,9 @@ export default {
       'plugins': [
         ['transform-object-rest-spread', { 'useBuiltIns': true }]
       ]
-    })
+    }),
+    resolve(),
+    commonjs()
   ],
   banner   () {
     return `/*!
