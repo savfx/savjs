@@ -6,7 +6,7 @@ const YEAR = new Date().getFullYear()
 export default {
   entry: 'src/index.js',
   targets: [
-    { dest: 'dist/sav-schema.js', format: 'cjs' }
+    { dest: 'dist/sav-schema.cjs.js', format: 'cjs' }
   ],
   plugins: [
     babel({
