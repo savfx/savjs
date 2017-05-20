@@ -38,9 +38,9 @@ export class SchemaField {
 }
 
 function checkSubField (val, struct, inPlace) {
-  let {type, subRef, subType} = struct
+  let {subRef, subType} = struct
   // if (!isArray(val)) { // allow Array<Struct> only
-  //   throw new SchemaTypeError(type, val)
+  //   throw new SchemaTypeError(struct.type, val)
   // }
   let ret = inPlace ? val : []
   for (let i = 0, l = val.length; i < l; ++i) {
