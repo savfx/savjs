@@ -8,12 +8,29 @@ export function updateField (field, {schema, refs}) {
       const mat = type.match(/^(\w+)(?:<(\w+)>)?$/)
       field.type = mat[1]
       field.subType = mat[2]
-      field.subRef = refs[field.subType] || schema[field.subType]
     }
-    field.ref = refs[field.type] || schema[field.type]
+    if (!field.ref) {
+      field.ref = refs[field.type] || schema[field.type]
+    }
   } else if (isObject(type)) {
     field.type = type.name
     field.ref = type
+  }
+  if (field.ref && !(field.ref.schema)) { // 支持使用ref定义
+    field.ref = schema.declare(field.ref)
+  }
+  if (field.subType) { // 支持使用subType定义
+    if (!field.subRef) {
+      if (isString(field.subType)) {
+        field.subRef = refs[field.subType] || schema[field.subType]
+      } else if (isObject(field.subType)) {
+        field.subRef = schema.declare(field.subType)
+        field.subType = field.subRef.name
+      }
+    }
+  }
+  if (field.subRef && !(field.subRef.schema)) { // 支持使用 subRef定义
+    field.subRef = schema.declare(field.subRef)
   }
   field.required = ('required' in field) ? field.required : !field.optional
 }

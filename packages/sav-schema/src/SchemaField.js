@@ -30,7 +30,7 @@ export class SchemaField {
   }
   validate (obj, inPlace) {
     let val = checkField(obj, this, inPlace)
-    if (this.subType) {
+    if (this.subRef) {
       val = checkSubField(val, this, inPlace)
     }
     return val
@@ -38,10 +38,10 @@ export class SchemaField {
 }
 
 function checkSubField (val, struct, inPlace) {
-  let {type, subRef} = struct
-  if ((type !== 'Array') || !isArray(val)) { // allow Array<Struct> only
-    throw new SchemaTypeError(type, val)
-  }
+  let {type, subRef, subType} = struct
+  // if (!isArray(val)) { // allow Array<Struct> only
+  //   throw new SchemaTypeError(type, val)
+  // }
   let ret = inPlace ? val : []
   for (let i = 0, l = val.length; i < l; ++i) {
     try {
@@ -49,7 +49,7 @@ function checkSubField (val, struct, inPlace) {
       if (subRef.schemaType === SCHEMA_STURCT) {
         subVal = subRef.validate(val[i], inPlace)
       } else {
-        subVal = checkValue(val[i], subRef)
+        subVal = checkValue(val[i], subRef, subType)
       }
       ret[i] = subVal
     } catch (err) {
@@ -61,7 +61,7 @@ function checkSubField (val, struct, inPlace) {
 }
 
 function checkField (obj, struct, inPlace) {
-  let {name, required, nullable, ref} = struct
+  let {name, required, nullable, ref, type} = struct
   if (!required && !(name in obj)) {
     return
   }
@@ -72,12 +72,12 @@ function checkField (obj, struct, inPlace) {
     if (!(name in obj)) {
       throw new SchemaRequiredError(name)
     }
-    // apply checkes
+    // @TODO apply checkes here
     let val = obj[name]
     if (ref.schemaType === SCHEMA_STURCT) {
       val = ref.validate(val, inPlace)
     } else {
-      val = checkValue(val, ref, name)
+      val = checkValue(val, ref, type)
     }
     return val
   } catch (err) {
@@ -88,16 +88,17 @@ function checkField (obj, struct, inPlace) {
   }
 }
 
-function checkValue (val, ref, name) {
+function checkValue (val, ref, type) {
   if (!ref.check(val)) {
+    let pass
     if (ref.parse) {
-      val = ref.parse(val)
+      pass = ref.check(ref.parse(val))
     }
-    if (!ref.check(val)) { // 仍然失败
+    if (!pass) { // 仍然失败
       if (ref.schemaType === SCHEMA_ENUM) {
-        throw new SchemaEnumError(ref.name, val)
+        throw new SchemaEnumError(type, val)
       } else if (ref.schemaType === SCHEMA_TYPE) {
-        throw new SchemaTypeError(ref.name, val)
+        throw new SchemaTypeError(type, val)
       }
     }
   }

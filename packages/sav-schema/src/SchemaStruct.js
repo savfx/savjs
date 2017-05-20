@@ -68,6 +68,9 @@ export class SchemaStruct {
     })
     return struct
   }
+  createState (obj) {
+    return {[`${this.state}`]: this.create(obj)}
+  }
   validate (obj, inPlace) {
     try {
       let ret = inPlace ? obj : {}
