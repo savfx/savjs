@@ -1,5 +1,5 @@
 import test from 'ava'
-import {Schema} from '../src/Schema.js'
+import {Schema} from '../src'
 
 test('schema#extract', (ava) => {
   let schema = new Schema()

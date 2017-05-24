@@ -1,6 +1,7 @@
 import {isArray, isNull} from 'sav-util'
-import {SchemaRequiredError, SchemaTypeError, SchemaEnumError} from './SchemaError.js'
+import {SchemaRequiredError, SchemaTypeError, SchemaEnumError, SchemaCheckedError} from './SchemaError.js'
 import {SCHEMA_STURCT, SCHEMA_ENUM, SCHEMA_TYPE} from './util.js'
+import {applyCheckValue} from './SchemaRegister.js'
 
 /*
 {
@@ -20,6 +21,18 @@ export class SchemaField {
   constructor (props, struct) {
     Object.assign(this, props)
     this.struct = struct
+    let {schema} = struct
+    // delay
+    if ((!this.ref) && this.type) {
+      schema.delay(() => {
+        this.ref = schema[this.type]
+      })
+    }
+    if ((!this.subRef) && this.subType) {
+      schema.delay(() => {
+        this.subRef = schema[this.subType]
+      })
+    }
   }
   create (value) {
     let ret = arguments.length ? this.ref.create(value) : this.ref.create()
@@ -37,10 +50,10 @@ export class SchemaField {
   }
 }
 
-function checkSubField (val, struct, inPlace) {
-  let {subRef, subType} = struct
+function checkSubField (val, field, inPlace) {
+  let {subRef, subType} = field
   // if (!isArray(val)) { // allow Array<Struct> only
-  //   throw new SchemaTypeError(struct.type, val)
+  //   throw new SchemaTypeError(field.type, val)
   // }
   let ret = inPlace ? val : []
   for (let i = 0, l = val.length; i < l; ++i) {
@@ -60,8 +73,8 @@ function checkSubField (val, struct, inPlace) {
   return ret
 }
 
-function checkField (obj, struct, inPlace) {
-  let {name, required, nullable, ref, type} = struct
+function checkField (obj, field, inPlace) {
+  let {name, required, nullable, ref, type} = field
   if (!required && !(name in obj)) {
     return
   }
@@ -72,8 +85,11 @@ function checkField (obj, struct, inPlace) {
     if (!(name in obj)) {
       throw new SchemaRequiredError(name)
     }
-    // @TODO apply checkes here
     let val = obj[name]
+    let rule = applyCheckValue(val, field.checkes)
+    if (rule) {
+      throw new SchemaCheckedError(name, rule[0])
+    }
     if (ref.schemaType === SCHEMA_STURCT) {
       val = ref.validate(val, inPlace)
     } else {
@@ -81,8 +97,8 @@ function checkField (obj, struct, inPlace) {
     }
     return val
   } catch (err) {
-    if (struct.message) {
-      err.message = struct.message
+    if (field.message) {
+      err.message = field.message
     }
     throw err
   }

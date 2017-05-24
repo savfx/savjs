@@ -1,11 +1,11 @@
 import test from 'ava'
 import {expect} from 'chai'
 
-import {Schema} from '../src/Schema.js'
+import {Schema, registerType} from '../src'
 
 test('Schema.api', ava => {
-  expect(Schema.register).to.be.a('function')
-  Schema.register({
+  expect(registerType).to.be.a('function')
+  registerType({
     name: 'Age',
     default: Number
   })

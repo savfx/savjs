@@ -55,7 +55,7 @@ export function objectVal (val) {
   return val
 }
 
-export let defaultSchemas = [
+export default [
   {name: String, check: isString, parse: stringVal},
   {name: Number, check: isNumber, parse: numberVal},
   {name: Boolean, check: isBoolean, parse: boolVal},

@@ -1,6 +1,6 @@
 import {isFunction, isObject, isString} from 'sav-util'
 
-export function updateField (field, {schema, refs}) {
+export function updateField (field, {schema, root}) {
   // override [type, subType, ref, subRef, required, key]
   const { type } = field
   if (isString(type)) {
@@ -10,27 +10,27 @@ export function updateField (field, {schema, refs}) {
       field.subType = mat[2]
     }
     if (!field.ref) {
-      field.ref = refs[field.type] || schema[field.type]
+      field.ref = root.refs[field.type] || schema[field.type]
     }
   } else if (isObject(type)) {
     field.type = type.name
     field.ref = type
   }
   if (field.ref && !(field.ref.schema)) { // 支持使用ref定义
-    field.ref = schema.declare(field.ref)
+    field.ref = schema.declare(field.ref, root)
   }
   if (field.subType) { // 支持使用subType定义
     if (!field.subRef) {
       if (isString(field.subType)) {
-        field.subRef = refs[field.subType] || schema[field.subType]
+        field.subRef = root.refs[field.subType] || schema[field.subType]
       } else if (isObject(field.subType)) {
-        field.subRef = schema.declare(field.subType)
+        field.subRef = schema.declare(field.subType, root)
         field.subType = field.subRef.name
       }
     }
   }
   if (field.subRef && !(field.subRef.schema)) { // 支持使用 subRef定义
-    field.subRef = schema.declare(field.subRef)
+    field.subRef = schema.declare(field.subRef, root)
   }
   field.required = ('required' in field) ? field.required : !field.optional
 }
@@ -48,7 +48,7 @@ createField('Number|@comment:text|@optional|len,4,10')
 }
  */
 
-export function createField (input, {schema}) {
+export function createField (input, {schema, root}) {
   if (isString(input)) {
     return parseFieldStr(input)
   }
@@ -77,7 +77,7 @@ export function createField (input, {schema}) {
           ret.type = inputType
         } else {
           // {sex: {type: {name: 'Sex', enums: []} }
-          ret.type = schema.declare(inputType)
+          ret.type = schema.declare(inputType, root)
         }
       }
     }

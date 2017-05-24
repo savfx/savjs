@@ -22,6 +22,31 @@ class SchemaRequiredError extends Error {
   }
 }
 
+class SchemaCheckedError extends Error {
+  constructor (field, rule, message = '字段{field}不满足校验规则{rule}') {
+    super(message.replace('{field}', field).replace('{rule}', rule))
+    this.field = field
+    this.rule = rule
+  }
+}
+
+class SchemaNoRuleError extends Error {
+  constructor (rule, message = '校验规则{rule}不存在') {
+    super(message.replace('{rule}', rule))
+    this.rule = rule
+  }
+}
+
+class SchemaInvalidRegexpError extends Error {
+  constructor (regexp, message = '非法的正则表达式{regexp}') {
+    super(message.replace('{regexp}', regexp))
+    this.regexp = regexp
+  }
+}
+
 export {SchemaTypeError}
 export {SchemaEnumError}
 export {SchemaRequiredError}
+export {SchemaCheckedError}
+export {SchemaNoRuleError}
+export {SchemaInvalidRegexpError}

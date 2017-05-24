@@ -1,10 +1,11 @@
 import test from 'ava'
-import schema, { Schema } from '../src'
+import schema, { Schema, registerCheck, registerType } from '../src'
 import { isFunction, isObject, isArray } from 'sav-util'
 
 test('schema#api', (ava) => {
-  ava.true(isFunction(Schema.register))
-
+  ava.true(isFunction(registerCheck))
+  ava.true(isFunction(registerType))
+  ava.true(isFunction(Schema))
   ava.true(isFunction(schema.declare))
   // type
   const Type = schema.declare({

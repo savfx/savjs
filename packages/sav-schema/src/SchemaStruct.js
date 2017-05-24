@@ -30,11 +30,12 @@ refs: {
  */
 
 export class SchemaStruct {
-  constructor (opts, schema) {
+  constructor (opts, schema, root) {
     this.schemaType = SCHEMA_STURCT
     this.schema = schema
-    this.refs = {}
     this.fields = []
+    this.root = root || this
+    this.refs = root ? null : {} // 使用root的refs
     objectAssign(this, opts, ['props, refs', 'export'])
     if (this.name) {
       schema.export(this)
@@ -58,9 +59,9 @@ export class SchemaStruct {
     if (ref.export && !ref.name) {
       ref.name = name
     }
-    this.refs[name] = this.schema.declare(ref)
+    this.root.refs[name] = this.schema.declare(ref, this.root)
   }
-  create (obj) {
+  create (obj = {}) {
     let struct = {}
     let isObj = isObject(obj)
     this.fields.forEach((it) => {

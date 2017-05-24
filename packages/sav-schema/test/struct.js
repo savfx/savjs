@@ -109,9 +109,27 @@ test('struct.Error', async ava => {
   try {
     await UserInfo.checkThen({userName: 's', followerIds: [1], users: [{uid: 1}], sex: 1, users2: [], userx: false})
   } catch (err) {
-    console.log(err)
+    // console.log(err)
     expect(err).to.be.a('error')
     expect(err.keys).to.eql(['userx'])
     expect(err.path).to.eql('userx')
   }
+})
+
+test('struct.delay', async ava => {
+  await schema.ready()
+  let UserProfile = schema.declare({
+    props: {
+      userInfo: 'UserInfoX',
+      users: 'Array<UserInfoX>'
+    }
+  })
+  schema.declare({
+    name: 'UserInfoX',
+    props: {
+      uid: Number
+    }
+  })
+  await schema.ready()
+  expect(UserProfile.create()).to.eql({userInfo: {uid: 0}, users: []})
 })

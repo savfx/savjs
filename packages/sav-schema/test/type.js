@@ -3,7 +3,7 @@ import {expect} from 'chai'
 
 import {SchemaType} from '../src/SchemaType.js'
 import {isNumber} from 'sav-util'
-import {Schema} from '../src/Schema.js'
+import {Schema} from '../src'
 
 test('SchemaType', ava => {
   expect(SchemaType).to.be.a('function')
