@@ -1,5 +1,3 @@
-import {isUndefined, isString} from './type.js'
-
 export function unique (arr) {
   if (!Array.isArray(arr)) {
     throw new TypeError('array-unique expects an array.')
@@ -51,36 +49,6 @@ export function inherits (ctor, SuperCtor, useSuper) {
     ctor.super_ = SuperCtor
   }
   return ctor
-}
-
-export function prop (target, key, value) {
-  Object.defineProperty(target, key, {value})
-}
-
-function makePropFunc (target, propName) {
-  return (key, value) => {
-    if (typeof key === 'object') {
-      for (let name in key) {
-        Object.defineProperty(target, name, {[`${propName}`]: key[name]})
-      }
-    } else {
-      Object.defineProperty(target, key, {[`${propName}`]: value})
-    }
-  }
-}
-
-export function makeProp (ctx, name) {
-  if (ctx.prop) {
-    return ctx.prop
-  }
-  let prop = makePropFunc(ctx, 'value')
-  prop.getter = makePropFunc(ctx, 'get')
-  prop.setter = makePropFunc(ctx, 'set')
-  if (isString(name) || isUndefined(name)) {
-    prop(name || 'ctx', ctx)
-  }
-  prop('prop', prop)
-  return prop
 }
 
 export function strRepeat (s, n) {

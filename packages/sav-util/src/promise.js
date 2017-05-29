@@ -3,7 +3,7 @@ let promise = {
   resolve: PROMISE.resolve.bind(PROMISE),
   reject: PROMISE.reject.bind(PROMISE),
   all: PROMISE.all.bind(PROMISE),
-  then: (fn, reject) => {
+  then: (fn, reject) => { // @NOTICE deprecated to be removed next
     return new PROMISE(fn, reject)
   }
 }
@@ -24,4 +24,15 @@ export function toPromise (target, methods) {
     }
   })
   return dist
+}
+
+export function next () {
+  let promise = Promise.resolve()
+  let ret = (resolve, reject) => {
+    if (resolve || reject) {
+      promise = promise.then(resolve, reject)
+    }
+    return promise
+  }
+  return ret
 }

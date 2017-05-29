@@ -1,9 +1,13 @@
-import {prop} from './func'
+import {prop} from './prop'
 
 export function bindEvent (target) {
   let _events = {}
   prop(target, 'on', (event, fn) => {
     (_events[event] || (_events[event] = [])).push(fn)
+  })
+
+  prop(target, 'before', (event, fn) => {
+    (_events[event] || (_events[event] = [])).unshift(fn)
   })
 
   prop(target, 'off', (event, fn) => {
