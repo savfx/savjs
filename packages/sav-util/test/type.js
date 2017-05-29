@@ -1,5 +1,5 @@
 import test from 'ava'
-import expect from 'expect.js'
+import {expect} from 'chai'
 import * as type from '../src'
 
 test('type', (ava) => {
@@ -25,5 +25,15 @@ test('type', (ava) => {
 })
 
 test('isType', async (ava) => {
+  expect(type.isNull(null)).to.eql(true)
+  expect(type.isUint(5)).to.eql(true)
+  expect(type.isAsync(async () => {})).to.eql(true)
   expect(type.isPromise(Promise.resolve())).to.eql(true)
+})
+
+test('typeValue', async (ava) => {
+  expect(type.typeValue(5)).to.eql('Number')
+  expect(type.typeValue(undefined)).to.eql('Undefined')
+  expect(type.typeValue(null)).to.eql('Null')
+  expect(type.typeValue(NaN)).to.eql('Nan')
 })
