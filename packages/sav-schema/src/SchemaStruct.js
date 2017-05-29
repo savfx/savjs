@@ -4,7 +4,7 @@
 import {objectAssign, SCHEMA_STURCT} from './util.js'
 import {SchemaField} from './SchemaField.js'
 import {createField, updateField} from './structField.js'
-import {isObject, isUndefined} from 'sav-util'
+import {isObject, isUndefined, clone} from 'sav-util'
 /*
 props: {
   name: String,
@@ -69,8 +69,11 @@ export class SchemaStruct {
     })
     return struct
   }
-  createState (obj) {
-    return {[`${this.state}`]: this.create(obj)}
+  createRequest (obj) {
+    return this.create(Object.assign(isObject(this.req) ? clone(this.req) : {}, obj))
+  }
+  createResponse (obj) {
+    return this.create(Object.assign(isObject(this.res) ? clone(this.res) : {}, obj))
   }
   validate (obj, inPlace) {
     try {

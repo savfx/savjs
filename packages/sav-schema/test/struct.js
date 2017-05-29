@@ -4,18 +4,19 @@ import schema from '../src'
 
 test('struct.createState', ava => {
   let UserInfo = schema.declare({
-    state: 'userInfo',
+    req: {
+      userName: 'Hello'
+    },
     props: {
       userName: 'String'
     }
   })
-  let state = UserInfo.createState()
-  expect(state.userInfo).to.eql({userName: ''})
+  expect(UserInfo.createRequest()).to.eql({userName: 'Hello'})
+  expect(UserInfo.createResponse({userName: 'World'})).to.eql({userName: 'World'})
 })
 
 test('struct.Error', async ava => {
   let UserInfo = schema.declare({
-    state: 'userInfo',
     props: {
       userName: {
         type: 'String',
