@@ -13,9 +13,7 @@ export default {
   plugins: [
     buble(),
     resolve({
-      jsnext: true,
-      main: true,
-      browser: true
+      main: true
     }),
     commonjs()
   ],
