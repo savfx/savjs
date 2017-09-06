@@ -12,7 +12,7 @@ export class Schema {
     applyTypes(this)
   }
   get isStrict () {
-    return this.strict
+    return this.opts.strict
   }
   export (struct) {
     this[struct.name] = struct

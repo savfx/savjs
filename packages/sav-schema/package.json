@@ -2,9 +2,11 @@
   "name": "sav-schema",
   "version": "0.0.17",
   "description": "schema for savjs",
-  "main": "dist/sav-schema.js",
+  "main": "dist/sav-schema.cjs.js",
+  "browser": "dist/sav-schema.min.js",
+  "jsnext:main": "src/index.js",
   "scripts": {
-    "build": "rollup -c",
+    "build": "node ./rollup.config.js",
     "lint": "standard rollup.* test/** src/**",
     "fix": "npm run lint -- --fix",
     "start": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && npm run build && nyc ava ./test\"",
@@ -33,13 +35,12 @@
     "eslint-plugin-standard": "^2.0.1",
     "expect.js": "^0.3.1",
     "nyc": "^10.0.0",
-    "rollup": "^0.36.3",
-    "rollup-plugin-babel": "^2.7.1",
-    "rollup-plugin-commonjs": "^6.0.0",
-    "rollup-plugin-node-resolve": "^2.0.0",
-    "sav-util": "^0.0.9",
+    "rollup-standalone": "^0.42.9",
     "standard": "^8.5.0",
     "watch-cli": "^0.2.1"
+  },
+  "dependencies": {
+    "sav-util": "^1.0.21"
   },
   "homepage": "https://github.com/savjs/sav-schema#readme",
   "nyc": {
