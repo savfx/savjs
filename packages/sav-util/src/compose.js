@@ -3,13 +3,6 @@ export function compose (middleware) {
   for (const fn of middleware) {
     if (typeof fn !== 'function') throw new TypeError('Middleware must be composed of functions!')
   }
-
-  /**
-   * @param {Object} context
-   * @return {Promise}
-   * @api public
-   */
-
   return function (context, next) {
     // last called middleware #
     let index = -1
