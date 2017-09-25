@@ -34,6 +34,7 @@ function handleResolve (ret) {
     }
   } else {
     if (this.onFinally) {
+      this.nexts = []
       this.onFinally()
     }
   }
@@ -42,6 +43,7 @@ function handleResolve (ret) {
 function handleReject (err) {
   this.error = err
   if (this.onFinally) {
+    this.nexts = []
     this.onFinally(this.error)
   }
 }

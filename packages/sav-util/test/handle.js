@@ -50,3 +50,12 @@ test('HandlePromise', async (ava) => {
   })
   expect(p1).to.eql(p)
 })
+
+test('Promise.mix', async (ava) => {
+  return Promise.all([
+    new HandlePromise(1),
+    new HandlePromise(2)
+  ]).then((res) => {
+    console.log(res)
+  })
+})

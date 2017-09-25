@@ -39,15 +39,22 @@ export function ajax (opts, next) {
     }
   }
   if (isGet) {
-    if (opts.data) {
+    if (opts.data || opts.query) {
       let u = parseUrl(opts.url)
       let q = parseQuery(u.query)
-      for (let x in opts.data) {
-        q[x] = opts.data[x]
+      if (opts.query) {
+        for (let x in opts.query) {
+          q[x] = opts.query[x]
+        }
+      }
+      if (opts.data) {
+        for (let x in opts.data) {
+          q[x] = opts.data[x]
+        }
+        opts.data = null
       }
       u.query = stringifyQuery(q)
       opts.url = stringifyUrl(u)
-      opts.data = null
     }
   } else if (isPost) {
     data = opts.data
