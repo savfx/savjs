@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+  <script type="text/javascript" src="sav-schema-umd.js"></script>
+  <script type="text/javascript">
+    console.log(schema)
+    console.log(schema.declare({
+      enums: [
+        {key: 'male', value: 1},
+        {key: 'female', value: 2}
+      ]
+    }))
+  </script>
+  <script type="text/javascript/xxx">
+    // {name: 'jetiny'}
+    schema.declare({
+      props: {
+        name: String
+      }
+    })
+    schema.declare({
+      props: {
+        name: {
+          type: String
+        }
+      }
+    })
+    schema.declare({
+      props: {
+        name: {
+          type: 'String'
+        }
+      }
+    })
+    // {sex: 'female'}
+    schema.declare({
+      props: {
+        sex: {
+          type: {
+            enums: ['male', 'female']
+          }
+        }
+      }
+    })
+    // {sex: 1}
+    schema.declare({
+      props: {
+        sex: {
+          type: {
+            enums: [
+              {key: 'male', value: 0},
+              {key: 'female', value: 1}
+            ]
+          }
+        }
+      }
+    })
+    // export Sex
+    schema.declare({
+      props: {
+        sex: {
+          type: {
+            export: true,
+            enums: [
+              {key: 'male', value: 0},
+              {key: 'female', value: 1}
+            ]
+          }
+        }
+      }
+    })
+    // export Sex
+    schema.declare({
+      props: {
+        sex: {
+          type: 'Sex'
+        }
+      },
+      refs: {
+        Sex: {
+          enums: [
+            {key: 'male', value: 1},
+            {key: 'female', value: 2}
+          ]
+        }
+      }
+    })
+    // export Sex
+    schema.declare({
+      name: 'Sex',
+      enums: [
+        {key: 'male', value: 1},
+        {key: 'female', value: 2}
+      ]
+    })
+    // [1,2,3]
+    schema.declare({
+      type: '<Number>'
+    })
+    schema.declare({
+      array: Number
+    })
+    // [{name: 'jetiny'}]
+    schema.declare({
+      type: '<User>',
+      refs: {
+        User: {
+          props: {
+            name: String
+          }
+        }
+      }
+    })
+    schema.declare({
+      array: 'User',
+      refs: {
+        User: {
+          props: {
+            name: String
+          }
+        }
+      }
+    })
+    schema.declare({
+      array: {
+        props: {
+          name: String
+        }
+      }
+    })
+    // [[{name: 'jetiny'}]]
+    schema.declare({
+      type: '<<User>>',
+      refs: {
+        User: {
+          props: {
+            name: String
+          }
+        }
+      }
+    })
+    schema.declare({
+      array: 'User',
+      refs: {
+        User: {
+          array: {
+            props: {
+              name: String
+            }
+          }
+        }
+      }
+    })
+    schema.declare({
+      array: {
+        array: {
+          props: {
+            name: String
+          }
+        }
+      }
+    })
+  </script>
+</body>
+</html>
