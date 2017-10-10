@@ -28,10 +28,28 @@ Promise.all([
         'node_modules/**'
       ]
     },
+    // uglifyOptions: true,
     resolveOptions: {
       jsnext: true
+    }
+  }, (bundle, res) => {
+    res.code = banner + res.code
+  }),
+  executeRollup({
+    entry: 'lib/index-umd.js',
+    dest: 'dist/sav-schema-umd.js',
+    format: 'umd',
+    exports: 'named',
+    moduleName: 'schema',
+    babelOptions: {
+      include: [
+        'node_modules/**'
+      ]
     },
-    uglifyOptions: true
+    // uglifyOptions: true,
+    resolveOptions: {
+      jsnext: true
+    }
   }, (bundle, res) => {
     res.code = banner + res.code
   })

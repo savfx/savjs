@@ -7,11 +7,12 @@
   "jsnext:main": "src/index.js",
   "scripts": {
     "build": "node ./rollup.config.js",
-    "lint": "standard rollup.* test/** src/**",
+    "lint": "standard rollup.* test/** lib/**",
     "fix": "npm run lint -- --fix",
     "start": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && npm run build && nyc ava ./test\"",
     "watch": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && nyc ava ./test/schema.js\"",
-    "test": "npm run lint && npm run build && nyc ava ./test"
+    "test": "npm run lint && npm run build && nyc ava ./test",
+    "t": "ava ./test/struct.js"
   },
   "repository": {
     "type": "git",
@@ -40,7 +41,7 @@
     "watch-cli": "^0.2.1"
   },
   "dependencies": {
-    "sav-util": "^1.0.21"
+    "sav-util": "^1.0.24"
   },
   "homepage": "https://github.com/savjs/sav-schema#readme",
   "nyc": {

@@ -301,3 +301,73 @@ test('check.regexp', ava => {
     }
   }
 })
+
+test('check.math', ava => {
+  let UserInfo = schema.declare({
+    props: {
+      age: {
+        type: Number,
+        checkes: [
+          ['>', 0],
+          ['<', 200],
+          ['>=', 2],
+          ['<=', 198]
+        ]
+      }
+    }
+  })
+
+  UserInfo.check({age: 30})
+
+  {
+    let exp
+    try {
+      UserInfo.check({age: -1})
+    } catch (err) {
+      exp = err
+      expect(err.field).to.eql('age')
+      expect(err.rule).to.eql('>')
+    } finally {
+      expect(exp instanceof SchemaCheckedError).to.eql(true)
+    }
+  }
+
+  {
+    let exp
+    try {
+      UserInfo.check({age: 1})
+    } catch (err) {
+      exp = err
+      expect(err.field).to.eql('age')
+      expect(err.rule).to.eql('>=')
+    } finally {
+      expect(exp instanceof SchemaCheckedError).to.eql(true)
+    }
+  }
+
+  {
+    let exp
+    try {
+      UserInfo.check({age: 300})
+    } catch (err) {
+      exp = err
+      expect(err.field).to.eql('age')
+      expect(err.rule).to.eql('<')
+    } finally {
+      expect(exp instanceof SchemaCheckedError).to.eql(true)
+    }
+  }
+
+  {
+    let exp
+    try {
+      UserInfo.check({age: 199})
+    } catch (err) {
+      exp = err
+      expect(err.field).to.eql('age')
+      expect(err.rule).to.eql('<=')
+    } finally {
+      expect(exp instanceof SchemaCheckedError).to.eql(true)
+    }
+  }
+})

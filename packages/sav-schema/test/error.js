@@ -5,7 +5,8 @@ import {SchemaTypeError,
   SchemaEnumError,
   SchemaRequiredError,
   SchemaCheckedError,
-  SchemaNoRuleError
+  SchemaNoRuleError,
+  setErrors
 } from '../src/SchemaError.js'
 
 test('SchemaError.api', ava => {
@@ -14,4 +15,11 @@ test('SchemaError.api', ava => {
   expect(new SchemaRequiredError('sex')).to.be.a('error')
   expect(new SchemaCheckedError('sex', 'gt')).to.be.a('error')
   expect(new SchemaNoRuleError('sex')).to.be.a('error')
+})
+
+test('SchemaError.api', ava => {
+  setErrors({
+    type: 'typeError'
+  })
+  expect(new SchemaTypeError('String', 1).message).to.eql('typeError')
 })
