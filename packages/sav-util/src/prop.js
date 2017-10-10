@@ -1,7 +1,13 @@
 import {isUndefined, isString, isObject} from './type.js'
 
 export function prop (target, key, value) {
-  Object.defineProperty(target, key, {value, writable: true, configurable: true})
+  if (isObject(key)) {
+    for (let name in key) {
+      Object.defineProperty(target, name, {value: key[name], writable: true, configurable: true})
+    }
+  } else {
+    Object.defineProperty(target, key, {value, writable: true, configurable: true})
+  }
 }
 
 function makePropFunc (target, propName) {
