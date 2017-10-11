@@ -1,6 +1,6 @@
 import {isObject, isArray} from 'sav-util'
 import {declareTypes} from './register.js'
-import {convertOpts, createSchema} from './parser.js'
+import {createSchema} from './parser.js'
 
 export class Schema {
   constructor (opts) {
@@ -16,7 +16,6 @@ export class Schema {
     this[struct.name] = struct
   }
   declare (opts, root) {
-    opts = convertOpts(opts)
     if (isArray(opts)) {
       return opts.map(it => this.declare(it))
     } else if (isObject(opts)) {

@@ -1,6 +1,5 @@
 import {SchemaNoRuleError} from './SchemaError.js'
 import {isObject, isArray} from 'sav-util'
-import {SchemaType} from './SchemaType.js'
 
 const defaultTypes = []
 
@@ -13,7 +12,7 @@ export function registerType (opts) {
 }
 
 export function declareTypes (schema) {
-  defaultTypes.forEach((it) => new SchemaType(schema, it))
+  schema.declare(defaultTypes)
 }
 
 const defaultCheckes = {}

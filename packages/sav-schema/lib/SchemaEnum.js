@@ -66,10 +66,10 @@ export class SchemaEnum {
     }
   }
   create (val) {
-    if (this.hasValue(val)) {
+    if (arguments.length) {
       return val
     }
-    return this.parse(this.default)
+    return this.default
   }
   check (val) {
     return this.hasValue(val)

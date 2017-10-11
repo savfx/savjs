@@ -7,13 +7,168 @@
 <body>
   <script type="text/javascript" src="sav-schema-umd.js"></script>
   <script type="text/javascript">
-    console.log(schema)
-    console.log(schema.declare({
+  {
+    let Int = schema.Int
+    console.group('Type-Int')
+    console.log(Int.create())
+    console.log(Int.create(1.2))
+    console.log(Int.create(2))
+    console.log(Int.check(2))
+    console.groupEnd('Type-Int')
+  }
+  </script>
+
+  <script type="text/javascript">
+  {
+    console.group('Enum-Sex')
+    let Sex = schema.declare({
+      name: 'Sex',
       enums: [
         {key: 'male', value: 1},
         {key: 'female', value: 2}
-      ]
-    }))
+      ],
+      default: 1
+    })
+    console.log(Sex)
+    console.log(Sex.create())
+    console.log(Sex.create(3))
+    console.log(Sex.check(3))
+    console.log(Sex.check(1))
+    console.log(Sex.check(2))
+    console.groupEnd('Enum-Sex')
+  }
+  </script>
+
+  <script type="text/javascript">
+  {
+    console.group('Struct-Basic')
+    let User = schema.declare({
+      props: {
+        name: String,
+        id: {
+          type: Number,
+          optional: true
+        },
+        sex: {
+          type: 'Sex',
+          required: false
+        }
+      }
+    })
+    console.log(User)
+    console.log(User.create())
+    console.log(User.create({id: '10'}))
+    console.log(User.create({id: '10', name: 1}))
+    console.log(User.check({name: 'jetiny', id: '10'}))
+    console.groupEnd('Struct-Basic')
+  }
+  </script>
+
+  <script type="text/javascript">
+  {
+    console.group('Array-Basic')
+    let Users = schema.declare({
+      array: Number
+    })
+    console.log(Users)
+    console.log(Users.create())
+    console.log(Users.create([1]))
+    console.log(Users.create(['10']))
+    console.log(Users.check([1, '10']))
+    console.groupEnd('Array-Basic')
+  }
+  </script>
+
+  <script type="text/javascript">
+  {
+    console.group('Array-Ref')
+    let UserList = schema.declare({
+      array: 'User',
+      refs: {
+        User: {
+          props: {
+            id: Number
+          }
+        }
+      }
+    })
+    console.log(UserList)
+    console.log(UserList.create())
+    console.log(UserList.create([{id: 1}]))
+    console.log(UserList.create([{id: '10'}]))
+    console.log(UserList.check([{id: 1}, {id: '10'}]))
+    console.groupEnd('Array-Ref')
+  }
+  </script>
+  <script type="text/javascript">
+  {
+    console.group('Array-Struct')
+    let UserList = schema.declare({
+      array: {
+        props: {
+          id: Number
+        }
+      }
+    })
+    console.log(UserList)
+    console.log(UserList.create())
+    console.log(UserList.create([{id: 1}]))
+    console.log(UserList.create([{id: '10'}]))
+    console.log(UserList.check([{id: 1}, {id: '10'}]))
+    console.groupEnd('Array-Struct')
+  }
+  </script>
+  <script type="text/javascript">
+  {
+    console.group('Array-Array-Struct')
+    let UserList = schema.declare({
+      array: {
+        array: {
+          props: {
+            id: Number
+          }
+        }
+      }
+    })
+    console.log(UserList)
+    console.log(UserList.create())
+    console.log(UserList.create([[{id: 1}]]))
+    console.log(UserList.create([[{id: '10'}]]))
+    console.log(UserList.check([[{id: 1}], [{id: '10'}]]))
+    console.groupEnd('Array-Array-Struct')
+  }
+  </script>
+  <script type="text/javascript">
+  {
+    console.group('Array-Array-Type')
+    let Users = schema.declare({
+      array: {
+        array: Number
+      }
+    })
+    console.log(Users)
+    console.log(Users.create())
+    console.log(Users.create([[1]]))
+    console.log(Users.create([['10']]))
+    console.log(Users.check([[1], ['10']]))
+    console.groupEnd('Array-Array-Type')
+  }
+  </script>
+  <script type="text/javascript">
+  {
+    console.group('Array-Array-Enum')
+    let Users = schema.declare({
+      array: {
+        array: 'Sex'
+      }
+    })
+    console.log(Users)
+    console.log(Users.create())
+    console.log(Users.create([[1]]))
+    console.log(Users.create([['2']]))
+    console.log(Users.check([[1], ['2']]))
+    console.groupEnd('Array-Array-Enum')
+  }
   </script>
   <script type="text/javascript/xxx">
     // {name: 'jetiny'}

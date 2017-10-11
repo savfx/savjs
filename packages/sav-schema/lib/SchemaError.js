@@ -1,7 +1,7 @@
 
 let errors = {
   type: '{value} 不是合法的 {type} 类型',
-  enum: '{value} 不是合法的 {type} 枚举',
+  enum: '{value} 不是合法的 {type} 类型',
   require: '字段 {field} 不存在',
   check: '字段 {field} 校验失败, 不符合规则 {rule}',
   rule: '校验规则 {rule} 不存在',

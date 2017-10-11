@@ -28,18 +28,21 @@ export function convertFunctionToName (obj) {
   return obj
 }
 
-export function convertOpts (opts) {
-  return JSON.parse(JSON.stringify(convertFunctionToName(opts)))
+let maps = {
+  props: SchemaStruct,
+  enums: SchemaEnum,
+  array: SchemaArray
 }
+
+let keys = Object.keys(maps)
 
 export function createSchema (schema, opts, root) {
   let ref
-  if (opts.enums) {
-    ref = new SchemaEnum(schema, opts)
-  } else if (opts.props) {
-    ref = new SchemaStruct(schema, opts, root)
-  } else if (opts.array) {
-    ref = new SchemaArray(schema, opts, root)
+  let Factory = keys.filter((key) => opts[key]).shift()
+  if (Factory) {
+    opts = JSON.parse(JSON.stringify(convertFunctionToName(opts)))
   }
+  Factory = maps[Factory] || SchemaType
+  ref = new Factory(schema, opts, root)
   return ref
 }

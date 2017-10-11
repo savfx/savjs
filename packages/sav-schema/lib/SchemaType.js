@@ -1,7 +1,7 @@
 /**
  * 简单类型
  */
-import {isFunction, prop} from 'sav-util'
+import {isFunction} from 'sav-util'
 import {SCHEMA_TYPE} from './consts.js'
 
 export class SchemaType {
