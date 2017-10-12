@@ -11,8 +11,8 @@ export class SchemaArray {
     })
     this.opts = opts
     let {array, refs} = opts
-    for (let ref in refs) {
-      this.addRef(refs[ref], ref)
+    if (refs) {
+      this.addRefs(refs)
     }
     if (isString(array)) {
       this.ref = this.refs[array] || schema[array]
@@ -65,6 +65,11 @@ export class SchemaArray {
         err.message = this.message
       }
       throw err
+    }
+  }
+  addRefs (refs) {
+    for (let ref in refs) {
+      this.addRef(refs[ref], ref)
     }
   }
   addRef (ref, name) {

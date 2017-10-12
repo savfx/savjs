@@ -1,7 +1,7 @@
 import test from 'ava'
 import {expect} from 'chai'
 
-import {Schema, registerType} from '../src'
+import {Schema, registerType} from '../lib'
 
 test('Schema.api', ava => {
   expect(registerType).to.be.a('function')
@@ -29,84 +29,6 @@ test('Schema.api', ava => {
     ]
   })
   expect(schema.Sex).to.be.a('object')
-
-  let UserInfo = schema.declare({
-    props: {
-      userName: 'String|minLength,2|maxLength,5',
-      test: 'Number|isBaby,true,0.21,1,on,off,false,hehe',
-      profile: 'UserProfile|@optional|@comment:用户信息',
-      parent: {
-        type: {
-          name: 'UserParent',
-          props: {
-            uid: Number,
-            uname: String
-          }
-        },
-        optional: true
-      }
-    },
-    refs: {
-      UserProfile: {
-        export: true,
-        props: {
-          sex: 'Sex',
-          age: 'Age'
-        }
-      }
-    }
-  })
-  expect(UserInfo).to.be.a('object')
-  expect(schema.UserInfo).to.be.not.a('object')
-  expect(schema.UserProfile).to.be.a('object')
-  expect(schema.UserParent).to.be.a('object')
-  // console.log(UserInfo.fields)
-})
-
-test('Schema.structFields', ava => {
-  let schema = new Schema()
-  let UserTest = schema.declare({
-    props: {
-      userName: 'String|minLength,2|maxLength,5'
-    }
-  })
-  expect(UserTest).to.be.a('object')
-  let UserTest2 = schema.declare({
-    props: {
-      userName: 'String|minLength,2|maxLength,5',
-      userTest: UserTest,
-      test: {
-        type: UserTest
-      },
-      testNumber: {
-        type: 'Number|@comment:测试数字'
-      },
-      testString: {
-        type: String
-      }
-    }
-  })
-  expect(UserTest2).to.be.a('object')
-})
-
-test('Schema.subRef', ava => {
-  let schema = new Schema()
-  let UserTest2 = schema.declare({
-    props: {
-      userTest: 'UserTest',
-      test: {
-        type: 'UserTest'
-      }
-    },
-    refs: {
-      UserTest: {
-        props: {
-          userName: 'String|minLength,2|maxLength,5'
-        }
-      }
-    }
-  })
-  expect(UserTest2).to.be.a('object')
 })
 
 test('Schema.create', ava => {
@@ -115,10 +37,8 @@ test('Schema.create', ava => {
     props: {
       name: String,
       profile: {
-        type: {
-          props: {
-            age: Number
-          }
+        props: {
+          age: Number
         }
       }
     }
@@ -143,8 +63,12 @@ test('Schema.create', ava => {
   const UserSchema = schema.declare({
     props: {
       profile: 'Profile',
-      students: 'Array<Profile>',
-      articleIds: 'Array<Number>'
+      students: {
+        array: 'Profile'
+      },
+      articleIds: {
+        array: Number
+      }
     },
     refs: {
       Profile: {
@@ -157,17 +81,14 @@ test('Schema.create', ava => {
             optional: true
           },
           meta: {
-            type: {
-              props: {
-                m1: 'Something',
-                m2: 'Array<Number>'
-              },
-              refs: {
-                Something: {
-                  props: {
-                    s1: String
-                  }
+            props: {
+              m1: {
+                props: {
+                  s1: String
                 }
+              },
+              m2: {
+                array: Number
               }
             },
             optional: true
@@ -225,17 +146,4 @@ test('schema#type', ava => {
   })
   expect(UserInfo).to.be.a('object')
   expect(schema.Sex).to.be.not.a('object')
-})
-
-test('schema with raw type', ava => {
-  const schema = new Schema()
-  const struct = schema.declare({
-    props: {
-      name: String,
-      age: {
-        type: Number
-      }
-    }
-  })
-  expect(struct).to.be.a('object')
 })

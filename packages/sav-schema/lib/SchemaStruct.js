@@ -16,8 +16,8 @@ export class SchemaStruct {
       schema.export(this)
     }
     let {refs, props} = opts
-    for (let ref in refs) {
-      this.addRef(refs[ref], ref)
+    if (refs) {
+      this.addRefs(refs)
     }
     if (isArray(props)) {
       props.forEach((it) => this.addField(it))
@@ -36,7 +36,15 @@ export class SchemaStruct {
     if (name) {
       value.name = name
     }
+    if (value.refs) {
+      this.addRefs(value.refs)
+    }
     this.fields.push(new SchemaField(this.schema, value, this))
+  }
+  addRefs (refs) {
+    for (let ref in refs) {
+      this.addRef(refs[ref], ref)
+    }
   }
   addRef (ref, name) {
     if ((!ref.name) && ref.export && name) {

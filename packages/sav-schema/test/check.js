@@ -23,7 +23,7 @@ test('check.registerCheck', ava => {
   {
     let exp
     try {
-      ret = UserInfo.check({age: 300})
+      UserInfo.check({age: 300})
     } catch (err) {
       exp = err
       expect(err.field).to.eql('age')

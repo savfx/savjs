@@ -1,9 +1,9 @@
 import test from 'ava'
 import {expect} from 'chai'
 
-import {SchemaType} from '../src/SchemaType.js'
+import {SchemaType} from '../lib/SchemaType.js'
 import {isNumber} from 'sav-util'
-import {Schema} from '../src'
+import {Schema} from '../lib'
 
 test('SchemaType', ava => {
   expect(SchemaType).to.be.a('function')

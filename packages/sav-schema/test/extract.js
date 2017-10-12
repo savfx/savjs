@@ -82,9 +82,9 @@ test('schema extract deep', (ava) => {
   const UserSchema = schema.declare({
     props: {
       profile: 'Profile',
-      // students: {
-      //   array: 'Profile'
-      // },
+      students: {
+        array: 'Profile'
+      },
       articleIds: {
         array: Number
       }

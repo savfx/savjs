@@ -6,7 +6,7 @@ import {SchemaTypeError,
   SchemaCheckedError,
   SchemaNoRuleError,
   setErrors,
-  getErrors,
+  getErrors
 } from '../lib/SchemaError.js'
 
 function getError (err, {msg} = {}) {
