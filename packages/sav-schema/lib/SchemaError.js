@@ -1,24 +1,16 @@
 
 let errors = {
-  type: '{value} 不是合法的 {type} 类型',
-  enum: '{value} 不是合法的 {type} 类型',
-  require: '字段 {field} 不存在',
-  check: '字段 {field} 校验失败, 不符合规则 {rule}',
-  rule: '校验规则 {rule} 不存在',
-  regexp: '错误的正则表达式 {regexp}'
+  type: 'Value [{value}] is not of [{type}] type',
+  require: 'Field [{field}] not found',
+  check: 'Field [{field}] can not matched [{rule}] rule',
+  rule: 'Rule [{rule}] not found',
+  regexp: 'Can not parse RegExp [{regexp}]'
 }
 
 export class SchemaTypeError extends Error {
   constructor (type, value, message = errors.type) {
-    super(message.replace('{type}', type).replace('{value}', String(value)))
-    this.type = type
-    this.value = value
-  }
-}
-
-export class SchemaEnumError extends Error {
-  constructor (type, value, message = errors.enum) {
-    super(message.replace('{type}', type).replace('{value}', String(value)))
+    let val = String(value)
+    super(message.replace('{type}', type).replace('{value}', val))
     this.type = type
     this.value = value
   }
@@ -55,4 +47,8 @@ export class SchemaInvalidRegexpError extends Error {
 
 export function setErrors (errs) {
   Object.assign(errors, errs)
+}
+
+export function getErrors () {
+  return errors
 }

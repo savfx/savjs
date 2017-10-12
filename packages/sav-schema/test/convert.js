@@ -1,7 +1,7 @@
 import test from 'ava'
 import {expect} from 'chai'
 
-import {stringVal, boolVal, numberVal, arrayVal, objectVal} from '../src/defaultSchema.js'
+import {stringVal, boolVal, numberVal, arrayVal, objectVal} from '../lib/types.js'
 
 test('defaultSchema.convert', ava => {
   expect(stringVal()).to.eql(undefined)

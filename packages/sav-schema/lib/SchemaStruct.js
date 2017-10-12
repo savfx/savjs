@@ -6,7 +6,7 @@ export class SchemaStruct {
   constructor (schema, opts, root) {
     this.schemaType = SCHEMA_STURCT
     this.fields = []
-    this.props = opts
+    this.opts = opts
     prop(this, {
       schema,
       root: root || this,

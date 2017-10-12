@@ -1,4 +1,4 @@
-import {isArray, isObject, isFunction} from 'sav-util'
+import {isArray, isObject, isFunction, isRegExp} from 'sav-util'
 
 import {SchemaType} from './SchemaType.js'
 import {SchemaArray} from './SchemaArray.js'
@@ -9,20 +9,23 @@ export function convertFunctionToName (obj) {
   if (isObject(obj)) {
     for (let name in obj) {
       let value = obj[name]
-      if (isFunction(value)) {
+      if (isRegExp(value)) {
+        value = value.toString()
+      } else if (isFunction(value)) {
         obj[name] = value.name
       } else if (isObject(value) || isArray(value)) {
         convertFunctionToName(value)
       }
     }
   } else if (isArray(obj)) {
-    obj.map((value) => {
-      if (isFunction(value)) {
-        return value.name
+    obj.forEach((value, id) => {
+      if (isRegExp(value)) {
+        obj[id] = value.toString()
+      } else if (isFunction(value)) {
+        obj[id] = value.name
       } else if (isObject(value) || isArray(value)) {
-        return convertFunctionToName(value)
+        obj[id] = convertFunctionToName(value)
       }
-      return value
     })
   }
   return obj
@@ -40,7 +43,9 @@ export function createSchema (schema, opts, root) {
   let ref
   let Factory = keys.filter((key) => opts[key]).shift()
   if (Factory) {
-    opts = JSON.parse(JSON.stringify(convertFunctionToName(opts)))
+    let str = JSON.stringify(convertFunctionToName(opts))
+    // console.log(str)
+    opts = JSON.parse(str)
   }
   Factory = maps[Factory] || SchemaType
   ref = new Factory(schema, opts, root)

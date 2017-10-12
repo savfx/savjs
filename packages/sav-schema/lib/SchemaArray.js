@@ -3,14 +3,14 @@ import {SchemaTypeError} from './SchemaError.js'
 import {arrayVal} from './types.js'
 
 export class SchemaArray {
-  constructor (schema, props, root) {
+  constructor (schema, opts, root) {
     prop(this, {
       schema,
       root: root || this,
       refs: root ? root.refs : {}
     })
-    this.props = props
-    let {array, refs} = props
+    this.opts = opts
+    let {array, refs} = opts
     for (let ref in refs) {
       this.addRef(refs[ref], ref)
     }
@@ -36,8 +36,8 @@ export class SchemaArray {
     return []
   }
   validate (obj, inPlace) {
-    let {required, ref, props} = this
-    let {name, nullable} = props
+    let {required, ref, opts} = this
+    let {name, nullable} = opts
     if (!required && !obj) {
       return
     }
@@ -78,11 +78,11 @@ export class SchemaArray {
     return target
   }
   get required () {
-    let {required, optional} = this.props
+    let {required, optional} = this.opts
     return isUndefined(required) ? !optional : required
   }
   get name () {
-    return this.props.name
+    return this.opts.name
   }
   check (obj) {
     return this.validate(obj, true)

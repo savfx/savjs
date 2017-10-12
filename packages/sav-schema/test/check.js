@@ -1,12 +1,15 @@
 import test from 'ava'
 import {expect} from 'chai'
-import schema, {registerCheck} from '../src'
-import {SchemaNoRuleError, SchemaCheckedError, SchemaInvalidRegexpError} from '../src/SchemaError.js'
+import schema, {registerCheck} from '../lib'
+import {SchemaNoRuleError, SchemaCheckedError, SchemaInvalidRegexpError} from '../lib/SchemaError.js'
 
-test('check.registerCheck', ava => {
+test.before(() => {
   registerCheck('isBaby', (value) => {
     return value >= 0 && value <= 6
   })
+})
+
+test('check.registerCheck', ava => {
   let UserInfo = schema.declare({
     props: {
       age: {
@@ -20,11 +23,12 @@ test('check.registerCheck', ava => {
   {
     let exp
     try {
-      UserInfo.check({age: 300})
+      ret = UserInfo.check({age: 300})
     } catch (err) {
       exp = err
       expect(err.field).to.eql('age')
       expect(err.rule).to.eql('isBaby')
+      expect(err.path).to.eql('age')
     } finally {
       expect(exp instanceof SchemaCheckedError).to.eql(true)
     }

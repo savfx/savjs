@@ -3,21 +3,28 @@ import {SchemaRequiredError, SchemaTypeError, SchemaCheckedError} from './Schema
 import {applyCheckValue} from './register.js'
 
 export class SchemaField {
-  constructor (schema, props, root) {
-    this.props = props
+  constructor (schema, opts, root) {
+    this.opts = opts
     let ref
-    let {type} = props
+    let {type, array, props} = opts
     if (isString(type)) {
       ref = root.refs[type] || schema[type]
+    } else if (array) {
+      ref = schema.declare({array}, root)
+    } else if (props) {
+      ref = schema.declare({props}, root)
     }
     prop(this, {
       root,
       ref
     })
-    if ((!this.ref) && type) {
-      schema.delay(() => {
-        prop(this, 'ref', schema[type])
-      })
+    // 延时加载
+    if (!this.ref) {
+      if (type) {
+        schema.delay(() => {
+          prop(this, 'ref', schema[type])
+        })
+      }
     }
   }
   create (value) {
@@ -25,8 +32,8 @@ export class SchemaField {
     return ret
   }
   validate (obj, inPlace) {
-    let {required, ref, props} = this
-    let {name, nullable} = props
+    let {required, ref, opts} = this
+    let {name, nullable} = opts
     if (!required && !(name in obj)) {
       return
     }
@@ -56,11 +63,14 @@ export class SchemaField {
     }
   }
   get required () {
-    let {required, optional} = this.props
+    let {required, optional} = this.opts
     return isUndefined(required) ? !optional : required
   }
   get name () {
-    return this.props.name
+    return this.opts.name
+  }
+  get checkes () {
+    return this.opts.checkes
   }
 }
 

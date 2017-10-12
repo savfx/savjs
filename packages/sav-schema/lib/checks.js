@@ -51,7 +51,8 @@ function re (value, [, regexp]) {
       regexpMaps[regexp] = toRegExp(regexp)
     }
   }
-  return (regexpMaps[regexp] || regexp).test(value)
+  let ref = (regexpMaps[regexp] || regexp)
+  return ref.test(value)
 }
 
 // https://github.com/borela/str-to-regexp/blob/master/src/index.js

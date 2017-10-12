@@ -1,5 +1,5 @@
 import test from 'ava'
-import {Schema} from '../src'
+import {Schema} from '../lib'
 
 test('schema#extract', (ava) => {
   let schema = new Schema()
@@ -42,7 +42,22 @@ test('schema#extract', (ava) => {
       account: 'String'
     },
     refs: {
-      UserProfile
+      UserProfile: {
+        props: {
+          name: 'String',
+          age: 'Number',
+          sex: 'Sex'
+        },
+        refs: {
+          Sex: {
+            default: 1,
+            enums: { // no order
+              male: 1,
+              female: 2
+            }
+          }
+        }
+      }
     }
   })
 
@@ -67,8 +82,12 @@ test('schema extract deep', (ava) => {
   const UserSchema = schema.declare({
     props: {
       profile: 'Profile',
-      students: 'Array<Profile>',
-      articleIds: 'Array<Number>'
+      // students: {
+      //   array: 'Profile'
+      // },
+      articleIds: {
+        array: Number
+      }
     },
     refs: {
       Profile: {
@@ -81,22 +100,16 @@ test('schema extract deep', (ava) => {
             optional: true
           },
           meta: {
-            type: {
-              props: {
-                m1: 'Something'
-              },
-              refs: {
-                Something: {
-                  props: {
-                    s1: String
-                  }
+            props: {
+              m1: {
+                props: {
+                  s1: String
                 }
               }
             },
             optional: true
           }
-        },
-        strict: false
+        }
       }
     }
   })

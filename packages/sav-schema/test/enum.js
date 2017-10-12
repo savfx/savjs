@@ -1,9 +1,9 @@
 import test from 'ava'
 import {expect} from 'chai'
-import {SchemaEnum} from '../src/SchemaEnum.js'
+import {SchemaEnum} from '../lib/SchemaEnum.js'
 
 test('schema#enum', ava => {
-  const Sex = new SchemaEnum({
+  const Sex = new SchemaEnum(null, {
     enums: [
       {key: 'male', value: 1},
       {key: 'female', value: 2}
@@ -27,14 +27,14 @@ test('schema#enum', ava => {
 
 test('schema#object', ava => {
   const Sex = new SchemaEnum({
+    export (obj) {
+      expect(obj.name).to.eql('SexEnum')
+    }
+  }, {
     name: 'SexEnum',
     enums: {
       male: 1,
       female: {key: 'female', value: 2}
-    }
-  }, {
-    export (obj) {
-      expect(obj.name).to.eql('SexEnum')
     }
   })
   expect(Sex.keys).to.eql(['male', 'female'])
@@ -42,7 +42,7 @@ test('schema#object', ava => {
 })
 
 test('schema#create', ava => {
-  const Sex = new SchemaEnum({
+  const Sex = new SchemaEnum(null, {
     enums: [
       {key: 'male', value: 1},
       {key: 'female', value: 2}
@@ -52,20 +52,19 @@ test('schema#create', ava => {
 
   expect(Sex.create()).to.eql(1)
   expect(Sex.create(2)).to.eql(2)
-  expect(Sex.create(() => 3)).to.eql(3)
 })
 
 test('schema#strict', ava => {
   const Sex = new SchemaEnum({
+    export (obj) {
+      expect(obj.name).to.eql('SexEnum')
+    }
+  }, {
+    strict: true,
     enums: [
       {key: 'male', value: 1},
       {key: 2, value: 'female'}
     ]
-  }, {
-    export (obj) {
-      expect(obj.name).to.eql('SexEnum')
-    },
-    isStrict: true
   })
   expect(Sex.hasKey('2')).to.eql(false)
   expect(Sex.hasKey(2)).to.eql(true)

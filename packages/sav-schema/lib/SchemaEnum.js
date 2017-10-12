@@ -17,16 +17,16 @@ import {SCHEMA_ENUM} from './consts.js'
  */
 
 export class SchemaEnum {
-  constructor (schema, props) {
+  constructor (schema, opts) {
     this.schemaType = SCHEMA_ENUM
     this.enums = []
     this.keyMaps = {}
     this.keys = []
     this.values = []
     this.valueMaps = {}
-    this.props = props
-    let enums = isObject(props.enums) ? toArray(props.enums)
-      : (isArray(props.enums) ? props.enums : [])
+    this.opts = opts
+    let enums = isObject(opts.enums) ? toArray(opts.enums)
+      : (isArray(opts.enums) ? opts.enums : [])
     enums.forEach((item) => this.addEnum(item))
     if (this.name) {
       schema.export(this)
@@ -82,13 +82,13 @@ export class SchemaEnum {
     }
   }
   get isStrict () {
-    return this.props.strict
+    return this.opts.strict
   }
   get name () {
-    return this.props.name
+    return this.opts.name
   }
   get default () {
-    return this.props.default
+    return this.opts.default
   }
 }
 
