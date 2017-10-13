@@ -14,16 +14,22 @@ export class SchemaArray {
     if (refs) {
       this.addRefs(refs)
     }
-    if (isString(array)) {
-      this.ref = this.refs[array] || schema[array]
-    } else if (isObject(array)) {
-      this.ref = this.addRef(array)
+    let ref
+    if (isObject(array)) {
+      ref = this.addRef(array)
+    } else if (isString(array)) {
+      ref = this.refs[array] || schema[array]
     }
-    if ((!this.ref) && array) {
+    if (ref) {
+      this.setRef(ref)
+    } else {
       schema.delay(() => {
-        prop(this, 'ref', schema[array])
+        this.setRef(schema[array])
       })
     }
+  }
+  setRef (ref) {
+    prop(this, 'ref', ref)
   }
   parse (val) {
     return arrayVal(val)
@@ -38,10 +44,10 @@ export class SchemaArray {
   validate (obj, inPlace) {
     let {required, ref, opts} = this
     let {name, nullable} = opts
-    if (!required && !obj) {
+    if (nullable && isNull(obj)) {
       return
     }
-    if (nullable && isNull(obj)) {
+    if (!required && !obj) {
       return
     }
     try {
@@ -61,8 +67,8 @@ export class SchemaArray {
       }
       return inPlace ? obj : ret
     } catch (err) {
-      if (this.message) {
-        err.message = this.message
+      if (this.opts.message) {
+        err.message = this.opts.message
       }
       throw err
     }

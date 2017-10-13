@@ -147,3 +147,12 @@ test('schema#type', ava => {
   expect(UserInfo).to.be.a('object')
   expect(schema.Sex).to.be.not.a('object')
 })
+
+test('schema.lazy', ava => {
+  const schema = new Schema()
+  expect(schema.isStrict).to.eql(true)
+  schema.ready(() => {})
+  schema.delay(() => {})
+  schema.delay(() => {})
+  schema.ready().then(() => {})
+})

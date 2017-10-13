@@ -97,4 +97,7 @@ export class SchemaStruct {
   extractThen (obj) {
     return Promise.resolve().then(() => this.extract(obj))
   }
+  get name () {
+    return this.opts.name
+  }
 }

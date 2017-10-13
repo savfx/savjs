@@ -1,5 +1,5 @@
 import test from 'ava'
-import schema, { Schema, registerCheck, registerType } from '../src'
+import schema, { Schema, registerCheck, registerType } from '../lib'
 import { isFunction, isObject, isArray } from 'sav-util'
 
 test('schema#api', (ava) => {

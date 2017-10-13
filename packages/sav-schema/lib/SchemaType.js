@@ -1,7 +1,7 @@
 /**
  * 简单类型
  */
-import {isFunction} from 'sav-util'
+import {isFunction, isUndefined} from 'sav-util'
 import {SCHEMA_TYPE} from './consts.js'
 
 export class SchemaType {
@@ -26,7 +26,11 @@ export class SchemaType {
     if (arguments.length) {
       return this.parse(val)
     }
-    let fn = this.opts.default || this.opts.name
+    let defaultVal = this.opts.default
+    if (!(isUndefined(defaultVal) || isFunction(defaultVal))) {
+      return defaultVal
+    }
+    let fn = defaultVal || this.opts.name
     return fn()
   }
 }

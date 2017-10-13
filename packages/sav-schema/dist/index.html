@@ -179,7 +179,7 @@
     lists.forEach(({caseName, declares, createCases, checkCases}) => {
       console.group(caseName)
       let Item = schema.declare(declares)
-      console.log('declare', JSON.stringify(Item.props))
+      console.log('declare', JSON.stringify(Item.opts))
       console.log('create -', JSON.stringify(Item.create()))
       createCases.forEach((val, id) => {
         console.log('create', id, JSON.stringify(Item.create(val)))
@@ -203,6 +203,22 @@
       }
     })
     UserInfo.check({age: 300})
+  </script>
+  <script type="text/javascript">
+    let SchemaType = schema.Array.constructor
+    let Age = new SchemaType({
+      export (obj) {
+        console.log(obj.name)
+      }
+    }, {
+      name: Number,
+      default: 1,
+      check: function (val) {
+        return typeof val === 'number'
+      },
+      parse: Number
+    })
+    Age.create()
   </script>
 </body>
 </html>
