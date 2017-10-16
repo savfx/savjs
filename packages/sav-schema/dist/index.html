@@ -5,6 +5,7 @@
   <title>Document</title>
 </head>
 <body>
+  <script type="text/javascript" src="https://unpkg.com/json5"></script>
   <script type="text/javascript" src="sav-schema-umd.js"></script>
   <script type="text/javascript">
   {
@@ -266,7 +267,7 @@
   <script type="text/javascript">
     inputText.onchange = function () {
       try {
-        let jsonValue = JSON.parse(this.value)
+        let jsonValue = JSON5.parse(this.value)
         outputText.value = JSON.stringify(schema.toSchema(jsonValue), null, 2)
       } catch (err) {
         outputText.value = err.message
