@@ -4,6 +4,7 @@ import types from './types.js'
 import checks from './checks.js'
 import {setErrors} from './SchemaError.js'
 import {prop} from 'sav-util'
+import {toSchema} from './convert.js'
 
 registerType(types)
 registerCheck(checks)
@@ -14,7 +15,8 @@ prop(ret, {
   Schema,
   registerCheck,
   registerType,
-  setErrors
+  setErrors,
+  toSchema
 })
 
 export default ret
