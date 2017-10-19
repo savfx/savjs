@@ -1,6 +1,3 @@
-/**
- * 简单类型
- */
 import {isFunction, isUndefined} from 'sav-util'
 import {SCHEMA_TYPE} from './consts.js'
 

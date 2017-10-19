@@ -1,4 +1,4 @@
-import {isNumber, isBoolean, isObject, isArray, isString, isInt, isUint} from 'sav-util'
+import {isNumber, isBoolean, isObject, isArray, isString} from 'sav-util'
 
 export function stringVal (val) {
   if (isNumber(val) || isBoolean(val)) {
@@ -55,12 +55,46 @@ export function objectVal (val) {
   return val
 }
 
-export default [
+let rangs = {
+  // 0xFF byte 的取值范围为-128~127，占用1个字节 -2的7次方到2的7次方-1
+  Int8: [-128, 127],
+  UInt8: [0, 255],
+  Byte: [-128, 255],
+  // 0xFFFF short 的取值范围为-32768~32767，占用2个字节 -2的15次方到2的15次方-1
+  Int16: [-32768, 32767],
+  UInt16: [0, 65535],
+  Short: [-32768, 65535],
+  // 0xFFFFFFFF int的取值范围为-2147483648~2147483647，占用4个字节 -2的31次方到2的31次方-1
+  Int32: [-2147483648, 2147483647],
+  UInt32: [0, 4294967295],
+  Integer: [-2147483648, 4294967295],
+  // -0X1FFFFFFFFFFFFF ~ 0X1FFFFFFFFFFFFF, Number.MAX_SAFE_INTEGER ~ Number.MAX_SAFE_INTEGER
+  // 占用8个字节 -2的53次方到2的53次方-1 Math.pow(2, 53)
+  Long: [-9007199254740991, 9007199254740991]
+}
+
+export function isNatural (val) {
+  return isNumber(val) && parseInt(val) === val
+}
+
+let types = [
   {name: String, check: isString, parse: stringVal},
   {name: Number, check: isNumber, parse: numberVal},
   {name: Boolean, check: isBoolean, parse: boolVal},
   {name: Array, check: isArray, parse: arrayVal},
-  {name: Object, check: isObject, parse: objectVal},
-  {name: 'Int', default: Number, check: isInt, parse: numberVal},
-  {name: 'Uint', default: Number, check: isUint, parse: numberVal}
+  {name: Object, check: isObject, parse: objectVal}
 ]
+
+Object.keys(rangs).forEach(name => {
+  let [min, max] = rangs[name]
+  types.push({
+    name,
+    default: Number,
+    check: (val) => {
+      return isNatural(val) && val >= min && val <= max
+    },
+    parse: numberVal
+  })
+})
+
+export default types

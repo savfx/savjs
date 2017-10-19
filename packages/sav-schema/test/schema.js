@@ -15,8 +15,20 @@ test('Schema.api', ava => {
   expect(schema.String).to.be.a('object')
   expect(schema.Number).to.be.a('object')
   expect(schema.Boolean).to.be.a('object')
-  expect(schema.Int).to.be.a('object')
-  expect(schema.Uint).to.be.a('object')
+
+  expect(schema.Long).to.be.a('object')
+  expect(schema.Integer).to.be.a('object')
+  expect(schema.Short).to.be.a('object')
+  expect(schema.Byte).to.be.a('object')
+
+  expect(schema.UInt8).to.be.a('object')
+  expect(schema.UInt16).to.be.a('object')
+  expect(schema.UInt32).to.be.a('object')
+
+  expect(schema.Int8).to.be.a('object')
+  expect(schema.Int16).to.be.a('object')
+  expect(schema.Int32).to.be.a('object')
+
   expect(schema.Array).to.be.a('object')
   expect(schema.Object).to.be.a('object')
 

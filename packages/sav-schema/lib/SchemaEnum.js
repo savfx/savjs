@@ -4,18 +4,6 @@
 import {isObject, isArray} from 'sav-util'
 import {SCHEMA_ENUM} from './consts.js'
 
-/*
-{
-  name: 'Sex',
-  enums: [
-    {key: 'male', value: 1},
-    {key: 'female', value: 2}
-  ],
-  strict: true,
-  default: 'male'
-}
- */
-
 export class SchemaEnum {
   constructor (schema, opts) {
     this.schemaType = SCHEMA_ENUM

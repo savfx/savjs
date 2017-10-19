@@ -1,6 +1,7 @@
 import {isString, isObject, isArray, isNull, isUndefined, prop} from 'sav-util'
 import {SchemaTypeError} from './SchemaError.js'
 import {arrayVal} from './types.js'
+import {SCHEMA_ARRAY} from './consts.js'
 
 export class SchemaArray {
   constructor (schema, opts, root) {
@@ -9,6 +10,7 @@ export class SchemaArray {
       root: root || this,
       refs: root ? root.refs : {}
     })
+    this.schemaType = SCHEMA_ARRAY
     this.opts = opts
     let {array, refs} = opts
     if (refs) {

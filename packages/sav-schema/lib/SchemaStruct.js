@@ -55,7 +55,7 @@ export class SchemaStruct {
       this.refs[name] = target
     }
   }
-  create (obj = {}) {
+  create (obj) {
     let struct = {}
     let isObj = isObject(obj)
     this.fields.forEach((it) => {

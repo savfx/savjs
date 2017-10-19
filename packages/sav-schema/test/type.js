@@ -34,8 +34,18 @@ test('SchemaType.create', ava => {
   expect(schema.Object.create()).to.eql({})
   expect(schema.Object.create({a: 1})).to.eql({a: 1})
 
-  expect(schema.Int.create()).to.eql(0)
-  expect(schema.Uint.create()).to.eql(0)
+  expect(schema.Long.create()).to.eql(0)
+  expect(schema.Integer.create()).to.eql(0)
+  expect(schema.Short.create()).to.eql(0)
+  expect(schema.Byte.create()).to.eql(0)
+
+  expect(schema.UInt8.create()).to.eql(0)
+  expect(schema.UInt16.create()).to.eql(0)
+  expect(schema.UInt32.create()).to.eql(0)
+
+  expect(schema.Int8.create()).to.eql(0)
+  expect(schema.Int16.create()).to.eql(0)
+  expect(schema.Int32.create()).to.eql(0)
 })
 
 test('SchemaType.export', ava => {
