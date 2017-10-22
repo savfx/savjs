@@ -18,8 +18,8 @@ export function declareTypes (schema) {
 const defaultCheckes = {}
 
 export function registerCheck (name, func) {
-  if (isObject(name, func)) {
-    Object.assign(defaultCheckes, name, func)
+  if (isObject(name)) {
+    Object.assign(defaultCheckes, name)
   } else {
     defaultCheckes[name] = func
   }

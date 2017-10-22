@@ -5,6 +5,7 @@ import checks from './checks.js'
 import {setErrors} from './SchemaError.js'
 import {prop} from 'sav-util'
 import {toSchema} from './convert.js'
+import './Inject.js'
 
 registerType(types)
 registerCheck(checks)

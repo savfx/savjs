@@ -274,5 +274,24 @@
       }
     }
   </script>
+  <script type="text/javascript">
+    let s = new schema.Schema()
+    {
+      let User = s.declare({
+        props: {
+          uid: Number
+        }
+      })
+      console.log(User.createRequest())
+      console.log(User.createRequest({uid: 10, s: 1}))
+    }
+    {
+      let User = s.declare({
+        array: Number
+      })
+      console.log(User.createRequest([]))
+      console.log(User.createRequest([1, 2]))
+    }
+  </script>
 </body>
 </html>

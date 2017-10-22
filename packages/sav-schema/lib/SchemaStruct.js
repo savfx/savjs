@@ -56,8 +56,8 @@ export class SchemaStruct {
     }
   }
   create (obj) {
-    let struct = {}
     let isObj = isObject(obj)
+    let struct = isObj ? obj : {}
     this.fields.forEach((it) => {
       struct[it.name] = isObj && (it.name in obj) ? it.create(obj[it.name]) : it.create()
     })
@@ -84,18 +84,6 @@ export class SchemaStruct {
       }
       throw err
     }
-  }
-  check (obj) {
-    return this.validate(obj, true)
-  }
-  checkThen (obj) {
-    return Promise.resolve().then(() => this.check(obj))
-  }
-  extract (obj) {
-    return this.validate(obj, false)
-  }
-  extractThen (obj) {
-    return Promise.resolve().then(() => this.extract(obj))
   }
   get name () {
     return this.opts.name

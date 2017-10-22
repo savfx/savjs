@@ -93,7 +93,9 @@ Object.keys(rangs).forEach(name => {
     check: (val) => {
       return isNatural(val) && val >= min && val <= max
     },
-    parse: numberVal
+    parse: numberVal,
+    min,
+    max
   })
 })
 

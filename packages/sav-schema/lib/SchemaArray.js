@@ -97,18 +97,6 @@ export class SchemaArray {
   get name () {
     return this.opts.name
   }
-  check (obj) {
-    return this.validate(obj, true)
-  }
-  checkThen (obj) {
-    return Promise.resolve().then(() => this.check(obj))
-  }
-  extract (obj) {
-    return this.validate(obj, false)
-  }
-  extractThen (obj) {
-    return Promise.resolve().then(() => this.extract(obj))
-  }
 }
 
 function checkValue (val, ref) {
