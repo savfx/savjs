@@ -45,7 +45,7 @@ export class SchemaField {
         throw new SchemaRequiredError(name)
       }
       let val = obj[name]
-      let rule = applyCheckValue(val, this.checkes)
+      let rule = applyCheckValue(val, this.checks)
       if (rule) {
         throw new SchemaCheckedError(name, rule[0])
       }
@@ -69,8 +69,8 @@ export class SchemaField {
   get name () {
     return this.opts.name
   }
-  get checkes () {
-    return this.opts.checkes
+  get checks () {
+    return this.opts.checks
   }
 }
 

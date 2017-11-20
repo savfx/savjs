@@ -14,7 +14,7 @@ test('check.registerCheck', ava => {
     props: {
       age: {
         type: Number,
-        checkes: [
+        checks: [
           ['isBaby']
         ]
       }
@@ -40,7 +40,7 @@ test('check.SchemaNoRuleError', ava => {
     props: {
       age: {
         type: Number,
-        checkes: [
+        checks: [
           ['noexists']
         ]
       }
@@ -64,7 +64,7 @@ test('check.Number', ava => {
     props: {
       age: {
         type: Number,
-        checkes: [
+        checks: [
           ['gt', 0],
           ['lt', 200],
           ['gte', 2],
@@ -134,7 +134,7 @@ test('check.in', ava => {
     props: {
       sex: {
         type: String,
-        checkes: [
+        checks: [
           ['in', 'male', 'female'],
           ['nin', 'female', 'unknown']
         ]
@@ -176,7 +176,7 @@ test('check.Length', ava => {
     props: {
       userName: {
         type: String,
-        checkes: [
+        checks: [
           ['lgt', 0],
           ['llt', 10],
           ['lgte', 2],
@@ -246,7 +246,7 @@ test('check.regexp', ava => {
     props: {
       userName: {
         type: String,
-        checkes: [
+        checks: [
           ['re', '\\w+'],
           ['re', /\w+/],
           ['re', '/^[a-z]+/i'], // a-z ignore case
@@ -311,7 +311,7 @@ test('check.math', ava => {
     props: {
       age: {
         type: Number,
-        checkes: [
+        checks: [
           ['>', 0],
           ['<', 200],
           ['>=', 2],
