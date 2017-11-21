@@ -1,14 +1,15 @@
 {
   "name": "sav-util",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "util library for savjs",
   "main": "dist/sav-util.cjs.js",
   "module": "dist/sav-util.es.js",
   "jsnext:main": "src/index.js",
   "scripts": {
-    "start": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && npm test\"",
+    "start": "watch -p \"+(test|src|lib)/*.js\" -c \"npm run lint -- --fix && npm test\"",
     "build": "rollup -c",
-    "lint": "standard rollup.config.js test/** src/**",
+    "lint": "standard rollup.config.js test/** src/** lib/**",
+    "fix": "npm run lint -- --fix",
     "na": "nyc ava ./test",
     "pretest": "npm run lint",
     "test": "npm run na",
