@@ -1,16 +1,16 @@
 {
   "name": "sav-schema",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "schema for savjs",
   "main": "dist/sav-schema.cjs.js",
   "browser": "dist/sav-schema.min.js",
-  "jsnext:main": "src/index.js",
+  "jsnext:main": "lib/index.js",
   "scripts": {
     "build": "node ./rollup.config.js",
     "lint": "standard rollup.* test/** lib/**",
     "fix": "npm run lint -- --fix",
-    "start": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && npm run build && nyc ava ./test\"",
-    "watch": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && nyc ava ./test/schema.js\"",
+    "start": "watch -p \"+(test|lib)/*.js\" -c \"npm run lint -- --fix && npm run build && nyc ava ./test\"",
+    "watch": "watch -p \"+(test|lib)/*.js\" -c \"npm run lint -- --fix && nyc ava ./test/schema.js\"",
     "test": "npm run lint && npm run build && nyc ava ./test",
     "t": "nyc ava ./test/schema.js"
   },
@@ -60,7 +60,7 @@
         "resolver",
         {
           "resolveDirs": [
-            "src"
+            "lib"
           ]
         }
       ],

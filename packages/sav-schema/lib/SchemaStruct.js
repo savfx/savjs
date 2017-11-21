@@ -6,6 +6,7 @@ export class SchemaStruct {
   constructor (schema, opts, root) {
     this.schemaType = SCHEMA_STURCT
     this.fields = []
+    this.fieldMap = {}
     this.opts = opts
     prop(this, {
       schema,
@@ -39,7 +40,12 @@ export class SchemaStruct {
     if (value.refs) {
       this.addRefs(value.refs)
     }
-    this.fields.push(new SchemaField(this.schema, value, this))
+    let field = new SchemaField(this.schema, value, this)
+    this.fields.push(field)
+    this.fieldMap[field.name] = field
+  }
+  getField (name) {
+    return this.fieldMap[name]
   }
   addRefs (refs) {
     for (let ref in refs) {

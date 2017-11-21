@@ -1,5 +1,5 @@
 import {isString, isNull, isUndefined, prop} from 'sav-util'
-import {SchemaRequiredError, SchemaTypeError, SchemaCheckedError} from './SchemaError.js'
+import {SchemaRequiredError, SchemaTypeError, SchemaCheckedError, SchemaEqlError, SchemaEmptyError} from './SchemaError.js'
 import {applyCheckValue} from './register.js'
 
 export class SchemaField {
@@ -33,7 +33,7 @@ export class SchemaField {
   }
   validate (obj, inPlace) {
     let {required, ref, opts} = this
-    let {name, nullable} = opts
+    let {name, nullable, empty} = opts
     if (!required && !(name in obj)) {
       return
     }
@@ -45,6 +45,18 @@ export class SchemaField {
         throw new SchemaRequiredError(name)
       }
       let val = obj[name]
+      if (!empty && !isNull(val)) {
+        if (val === "") {
+          throw new SchemaEmptyError(name)
+        }
+      }
+      let {eql} = this.opts
+      if (eql) {
+        let eqlVal = obj[eql]
+        if (eqlVal !== val) {
+          throw new SchemaEqlError(name, eql)  
+        }
+      }
       let rule = applyCheckValue(val, this.checks)
       if (rule) {
         throw new SchemaCheckedError(name, rule[0])
@@ -56,8 +68,8 @@ export class SchemaField {
       }
       return val
     } catch (err) {
-      if (this.message) {
-        err.message = this.message
+      if (this.opts.message) {
+        err.message = this.opts.message
       }
       throw err
     }
@@ -71,6 +83,9 @@ export class SchemaField {
   }
   get checks () {
     return this.opts.checks
+  }
+  getOpt (name) {
+    return this.opts[name]
   }
 }
 

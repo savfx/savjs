@@ -2,8 +2,10 @@
 let errors = {
   type: 'Value [{value}] is not of [{type}] type',
   require: 'Field [{field}] not found',
+  empty: 'Field [{field}] can not be empty',
   check: 'Field [{field}] can not matched [{rule}] rule',
   rule: 'Rule [{rule}] not found',
+  eql: 'Fields [{field}] and [{field_eql}] not equal',
   regexp: 'Can not parse RegExp [{regexp}]'
 }
 
@@ -23,11 +25,26 @@ export class SchemaRequiredError extends Error {
   }
 }
 
+export class SchemaEmptyError extends Error {
+  constructor (field, message = errors.empty) {
+    super(message.replace('{field}', field))
+    this.field = field
+  }
+}
+
 export class SchemaCheckedError extends Error {
   constructor (field, rule, message = errors.check) {
     super(message.replace('{field}', field).replace('{rule}', rule))
     this.field = field
     this.rule = rule
+  }
+}
+
+export class SchemaEqlError extends Error {
+  constructor (field, field_eql, message = errors.eql) {
+    super(message.replace('{field}', field).replace('{field_eql}', field_eql))
+    this.field = field
+    this.field_eql = field_eql
   }
 }
 

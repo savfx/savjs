@@ -169,6 +169,19 @@ test('schema.lazy', ava => {
   schema.ready().then(() => {})
 })
 
+test('schema.getOpt', ava => {
+  const schema = new Schema()
+  let User = schema.declare({
+    props: {
+      uid: {
+        type: Number,
+        text: 'UserId'
+      }
+    }
+  })
+  expect(User.getField('uid').getOpt('text')).to.eql('UserId')
+})
+
 test('schema.createRequest', ava => {
   const schema = new Schema()
   let User = schema.declare({
