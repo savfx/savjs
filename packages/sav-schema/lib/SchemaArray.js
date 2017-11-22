@@ -43,7 +43,7 @@ export class SchemaArray {
     }
     return []
   }
-  validate (obj, inPlace) {
+  validate (obj, inPlace, fields) {
     let {required, ref, opts} = this
     let {name, nullable} = opts
     if (nullable && isNull(obj)) {
@@ -60,7 +60,7 @@ export class SchemaArray {
       let ret = []
       for (let i = 0, l = val.length; i < l; ++i) {
         try {
-          let newIt = ref.validate ? ref.validate(val[i], inPlace) : checkValue(val[i], ref)
+          let newIt = ref.validate ? ref.validate(val[i], inPlace, fields) : checkValue(val[i], ref)
           ret.push(isUndefined(newIt) ? val[i] : newIt)
         } catch (err) {
           (err.keys || (err.keys = [])).unshift(i)

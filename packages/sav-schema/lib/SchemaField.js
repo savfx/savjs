@@ -1,6 +1,7 @@
 import {isString, isNull, isUndefined, prop} from 'sav-util'
 import {SchemaRequiredError, SchemaTypeError, SchemaCheckedError, SchemaEqlError, SchemaEmptyError} from './SchemaError.js'
 import {applyCheckValue} from './register.js'
+import {stringVal} from './types.js'
 
 export class SchemaField {
   constructor (schema, opts, root) {
@@ -33,7 +34,7 @@ export class SchemaField {
   }
   validate (obj, inPlace) {
     let {required, ref, opts} = this
-    let {name, nullable, empty} = opts
+    let {name, nullable, empty, space} = opts
     if (!required && !(name in obj)) {
       return
     }
@@ -45,8 +46,14 @@ export class SchemaField {
         throw new SchemaRequiredError(name)
       }
       let val = obj[name]
+      if (!space) { // trim
+        val = stringVal(val)
+        if (isString(val)) {
+          val = val.trim()
+        }
+      }
       if (!empty && !isNull(val)) {
-        if (val === "") {
+        if (val === '') {
           throw new SchemaEmptyError(name)
         }
       }
@@ -54,7 +61,7 @@ export class SchemaField {
       if (eql) {
         let eqlVal = obj[eql]
         if (eqlVal !== val) {
-          throw new SchemaEqlError(name, eql)  
+          throw new SchemaEqlError(name, eql)
         }
       }
       let rule = applyCheckValue(val, this.checks)

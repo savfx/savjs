@@ -80,3 +80,30 @@ test('SchemaArray.delay', ava => {
     Users.checkThen([{id: 1}]).then(reached, (err) => console.log(err))
   })
 })
+
+test('SchemaArray.createRequest&createResponse', ava => {
+  let Users = schema.declare({
+    array: {
+      props: {
+        id: Number
+      }
+    },
+    req: [{id: 1}],
+    res: [{id: 2}]
+  })
+  expect(Users.createRequest()).to.eql([{id: 1}])
+  expect(Users.createResponse()).to.eql([{id: 2}])
+})
+
+test('SchemaArray.checkField', ava => {
+  let Users = schema.declare({
+    array: {
+      props: {
+        id: Number,
+        name: String
+      }
+    }
+  })
+  Users.check([{id: 1}], ['id'])
+  Users.check([{name: '1'}], ['name'])
+})

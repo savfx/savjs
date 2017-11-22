@@ -41,10 +41,10 @@ export class SchemaCheckedError extends Error {
 }
 
 export class SchemaEqlError extends Error {
-  constructor (field, field_eql, message = errors.eql) {
-    super(message.replace('{field}', field).replace('{field_eql}', field_eql))
+  constructor (field, fieldEql, message = errors.eql) {
+    super(message.replace('{field}', field).replace('{field_eql}', fieldEql))
     this.field = field
-    this.field_eql = field_eql
+    this.field_eql = fieldEql
   }
 }
 

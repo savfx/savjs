@@ -176,6 +176,7 @@ test('check.Length', ava => {
     props: {
       userName: {
         type: String,
+        empty: true,
         checks: [
           ['lgt', 0],
           ['llt', 10],
@@ -246,6 +247,7 @@ test('check.regexp', ava => {
     props: {
       userName: {
         type: String,
+        empty: true,
         checks: [
           ['re', '\\w+'],
           ['re', /\w+/],

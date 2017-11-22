@@ -69,10 +69,15 @@ export class SchemaStruct {
     })
     return struct
   }
-  validate (obj, inPlace) {
+  validate (obj, inPlace, fields) {
     try {
       let ret = inPlace ? obj : {}
       for (let field of this.fields) {
+        if (fields && fields.length) {
+          if (fields.indexOf(field.name) === -1) {
+            continue
+          }
+        }
         try {
           let val = field.validate(obj, inPlace)
           if (!(inPlace || isUndefined(val))) {
