@@ -11,3 +11,4 @@ registerCheck(checks)
 
 export {Schema, registerCheck, registerType, setErrors, toSchema}
 export default new Schema()
+export * from './consts.js'

@@ -6,12 +6,13 @@ import {setErrors} from './SchemaError.js'
 import {prop} from 'sav-util'
 import {toSchema} from './convert.js'
 import './Inject.js'
-
+import * as consts from './consts.js'
 registerType(types)
 registerCheck(checks)
 
 let ret = new Schema()
 
+prop(ret, consts)
 prop(ret, {
   Schema,
   registerCheck,

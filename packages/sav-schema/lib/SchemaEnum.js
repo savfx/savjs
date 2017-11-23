@@ -1,7 +1,7 @@
 /**
  * 枚举类型
  */
-import {isObject, isArray} from 'sav-util'
+import {isObject, isArray, clone} from 'sav-util'
 import {SCHEMA_ENUM} from './consts.js'
 
 export class SchemaEnum {
@@ -19,6 +19,9 @@ export class SchemaEnum {
     if (this.name) {
       schema.export(this)
     }
+  }
+  getEnums () {
+    return clone(this.enums)
   }
   addEnum (item) {
     this.keyMaps[item.key] = item
