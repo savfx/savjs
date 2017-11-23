@@ -100,6 +100,7 @@ export function ajax (opts, next) {
             // if(req.readyState != 4) return;
       if ([
         200,
+        204,
         304,
         206,
         0
@@ -107,23 +108,26 @@ export function ajax (opts, next) {
         emit(new Error('error_status_' + req.status))
       } else {
         let data = req.response
-        try {
-          if (dataType === 'JSON') {
-            data = JSON.parse(req.responseText)
-          } else if (dataType === 'XML') {
-            data = req.responseXML
-          } else if (dataType === 'TEXT') {
-            data = req.responseText
-          } else if (dataType === 'BINARY') {
-            let arrayBuffer = new Uint8Array(data)
-            let str = ''
-            for (let i = 0; i < arrayBuffer.length; i++) {
-              str += String.fromCharCode(arrayBuffer[i])
+        let parse = (req.status !== 204)
+        if (parse) {
+          try {
+            if (dataType === 'JSON') {
+              data = JSON.parse(req.responseText)
+            } else if (dataType === 'XML') {
+              data = req.responseXML
+            } else if (dataType === 'TEXT') {
+              data = req.responseText
+            } else if (dataType === 'BINARY') {
+              let arrayBuffer = new Uint8Array(data)
+              let str = ''
+              for (let i = 0; i < arrayBuffer.length; i++) {
+                str += String.fromCharCode(arrayBuffer[i])
+              }
+              data = str
             }
-            data = str
+          } catch (err) {
+            return emit(err)
           }
-        } catch (err) {
-          return emit(err)
         }
         emit(null, data, parseHeaders(req.getAllResponseHeaders(), opts.camelHeaders))
       }
