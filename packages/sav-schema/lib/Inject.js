@@ -21,6 +21,9 @@ let injects = {
   },
   createResponse (obj) {
     return this.create(createInput(this, obj || this.opts.res))
+  },
+  getOpt (name) {
+    return this.opts[name]
   }
 }
 
