@@ -77,8 +77,15 @@ export function isNatural (val) {
   return isNumber(val) && parseInt(val) === val
 }
 
+export function isStringObject (val) {
+  if (isString(val)) {
+    return true
+  }
+  return (typeof val === 'object') && (val !== null) && (val.constructor.name === 'ObjectID')
+}
+
 let types = [
-  {name: String, check: isString, parse: stringVal},
+  {name: String, check: isStringObject, parse: stringVal},
   {name: Number, check: isNumber, parse: numberVal},
   {name: Boolean, check: isBoolean, parse: boolVal},
   {name: Array, check: isArray, parse: arrayVal},
