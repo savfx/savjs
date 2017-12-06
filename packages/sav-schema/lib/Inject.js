@@ -4,17 +4,21 @@ import {isObject, isArray} from 'sav-util'
 import {SCHEMA_ARRAY} from './consts.js'
 
 let injects = {
-  check (obj, fields) {
-    return this.validate(obj, true, fields)
+  check (obj, opts) {
+    return this.validate(obj, opts || {})
   },
-  checkThen (obj, fields) {
-    return Promise.resolve().then(() => this.check(obj, fields))
+  checkThen (obj, opts) {
+    return Promise.resolve().then(() => this.check(obj, opts))
   },
-  extract (obj, fields) {
-    return this.validate(obj, false, fields)
+  extract (obj, opts) {
+    if (!opts) {
+      opts = {}
+    }
+    opts.extract = true
+    return this.validate(obj, opts)
   },
-  extractThen (obj, fields) {
-    return Promise.resolve().then(() => this.extract(obj, fields))
+  extractThen (obj, opts) {
+    return Promise.resolve().then(() => this.extract(obj, opts))
   },
   createRequest (obj) {
     return this.create(createInput(this, obj || this.opts.req))

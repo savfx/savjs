@@ -69,9 +69,10 @@ export class SchemaStruct {
     })
     return struct
   }
-  validate (obj, inPlace, fields) {
+  validate (obj, opts) {
     try {
-      let ret = inPlace ? obj : {}
+      let {extract, replace, fields} = opts
+      let ret = extract ? {} : obj
       for (let field of this.fields) {
         if (fields && fields.length) {
           if (fields.indexOf(field.name) === -1) {
@@ -79,9 +80,11 @@ export class SchemaStruct {
           }
         }
         try {
-          let val = field.validate(obj, inPlace)
-          if (!(inPlace || isUndefined(val))) {
-            ret[field.name] = val
+          let val = field.validate(obj, opts)
+          if (!isUndefined(val)) {
+            if (extract || replace) {
+              ret[field.name] = val
+            }
           }
         } catch (err) {
           (err.keys || (err.keys = [])).unshift(field.name)

@@ -377,3 +377,51 @@ test('check.math', ava => {
     }
   }
 })
+
+test('check.replace.struct', ava => {
+  let UserInfo = schema.declare({
+    props: {
+      age: Number,
+      male: Boolean,
+      female: Boolean
+    }
+  })
+  let src = {age: '30', male: 'false', female: 'true'}
+  UserInfo.check(src, {replace: true})
+  expect(src).to.eql({age: 30, male: false, female: true})
+})
+
+test('check.replace.array', ava => {
+  let UserInfo = schema.declare({
+    array: 'Number'
+  })
+  let src = ['1', '2', '3']
+  UserInfo.check(src, {replace: true})
+  expect(src).to.eql([1, 2, 3])
+})
+
+test('check.replace.deepth', ava => {
+  let UserInfo = schema.declare({
+    array: {
+      props: {
+        age: Number,
+        followers: {
+          array: {
+            props: {
+              age: Number
+            }
+          }
+        }
+      }
+    }
+  })
+  let src = [
+    {age: '10', followers: [{age: '20'}]},
+    {age: '30', followers: [{age: '30'}, {age: '40'}]}
+  ]
+  UserInfo.check(src, {replace: true})
+  expect(src).to.eql([
+    {age: 10, followers: [{age: 20}]},
+    {age: 30, followers: [{age: 30}, {age: 40}]}
+  ])
+})

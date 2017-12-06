@@ -32,9 +32,9 @@ export class SchemaField {
     let ret = arguments.length ? this.ref.create(value) : this.ref.create()
     return ret
   }
-  validate (obj, inPlace) {
-    let {required, ref, opts} = this
-    let {name, nullable, empty, space} = opts
+  validate (obj, opts) {
+    let {required, ref} = this
+    let {name, nullable, empty, space, eql} = this.opts
     if (!required && !(name in obj)) {
       return
     }
@@ -57,7 +57,6 @@ export class SchemaField {
           throw new SchemaEmptyError(name)
         }
       }
-      let {eql} = this.opts
       if (eql) {
         let eqlVal = obj[eql]
         if (eqlVal !== val) {
@@ -69,7 +68,7 @@ export class SchemaField {
         throw new SchemaCheckedError(name, rule[0])
       }
       if (ref.validate) {
-        val = ref.validate(val, inPlace)
+        val = ref.validate(val, opts)
       } else {
         val = checkValue(val, ref)
       }

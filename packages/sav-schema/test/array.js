@@ -104,6 +104,6 @@ test('SchemaArray.checkField', ava => {
       }
     }
   })
-  Users.check([{id: 1}], ['id'])
-  Users.check([{name: '1'}], ['name'])
+  Users.check([{id: 1}], {fields: ['id']})
+  Users.check([{name: '1'}], {fields: ['name']})
 })

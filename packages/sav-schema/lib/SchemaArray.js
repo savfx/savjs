@@ -43,9 +43,9 @@ export class SchemaArray {
     }
     return []
   }
-  validate (obj, inPlace, fields) {
-    let {required, ref, opts} = this
-    let {name, nullable} = opts
+  validate (obj, opts) {
+    let {required, ref} = this
+    let {name, nullable} = this.opts
     if (nullable && isNull(obj)) {
       return
     }
@@ -57,17 +57,25 @@ export class SchemaArray {
       if (!isArray(val)) {
         throw new SchemaTypeError(name || 'Array', val)
       }
+      let {extract, replace} = opts
       let ret = []
       for (let i = 0, l = val.length; i < l; ++i) {
         try {
-          let newIt = ref.validate ? ref.validate(val[i], inPlace, fields) : checkValue(val[i], ref)
-          ret.push(isUndefined(newIt) ? val[i] : newIt)
+          let newIt = ref.validate ? ref.validate(val[i], opts) : checkValue(val[i], ref)
+          if (extract) {
+            ret.push(!isUndefined(newIt) ? val[i] : newIt)
+          }
+          if (replace) {
+            if (!isUndefined(newIt)) {
+              val[i] = newIt
+            }
+          }
         } catch (err) {
           (err.keys || (err.keys = [])).unshift(i)
           throw err
         }
       }
-      return inPlace ? obj : ret
+      return extract ? ret : obj
     } catch (err) {
       if (this.opts.message) {
         err.message = this.opts.message
