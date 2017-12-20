@@ -95,3 +95,7 @@ export function formatDate (fmt, date) {
   }
   return fmt
 }
+
+export function ObjectValues (obj) {
+  return Object.keys(obj).map(i => obj[i])
+}
