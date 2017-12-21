@@ -60,7 +60,10 @@ export class SchemaEnum {
     if (arguments.length) {
       return val
     }
-    return this.default
+    if ('default' in this.opts) {
+      return this.default
+    }
+    return this.values[0]
   }
   check (val) {
     return this.hasValue(val)
