@@ -181,27 +181,3 @@ test('schema.getOpt', ava => {
   })
   expect(User.getField('uid').getOpt('text')).to.eql('UserId')
 })
-
-test('schema.createRequest', ava => {
-  const schema = new Schema()
-  let User = schema.declare({
-    props: {
-      uid: Number
-    },
-    req: {
-      uid: 10
-    }
-  })
-  expect(User.createRequest()).to.eql({uid: 10})
-  expect(User.createRequest({uid: 10, s: 1})).to.eql({uid: 10, s: 1})
-})
-
-test('schema.createResponse', ava => {
-  const schema = new Schema()
-  let User = schema.declare({
-    array: Number,
-    res: [1]
-  })
-  expect(User.createResponse()).to.eql([1])
-  expect(User.createResponse([1, 2])).to.eql([1, 2])
-})

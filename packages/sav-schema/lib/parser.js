@@ -4,6 +4,7 @@ import {SchemaType} from './SchemaType.js'
 import {SchemaArray} from './SchemaArray.js'
 import {SchemaEnum} from './SchemaEnum.js'
 import {SchemaStruct} from './SchemaStruct.js'
+import {SchemaRefer} from './SchemaRefer.js'
 
 export function convertFunctionToName (obj) {
   if (isObject(obj)) {
@@ -34,7 +35,8 @@ export function convertFunctionToName (obj) {
 let maps = {
   props: SchemaStruct,
   enums: SchemaEnum,
-  array: SchemaArray
+  array: SchemaArray,
+  refer: SchemaRefer
 }
 
 let keys = Object.keys(maps)

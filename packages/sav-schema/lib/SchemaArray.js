@@ -12,6 +12,9 @@ export class SchemaArray {
     })
     this.schemaType = SCHEMA_ARRAY
     this.opts = opts
+    if (this.name) {
+      schema.export(this)
+    }
     let {array, refs} = opts
     if (refs) {
       this.addRefs(refs)
