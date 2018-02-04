@@ -7,11 +7,11 @@
   "jsnext:main": "lib/index.js",
   "scripts": {
     "build": "node ./rollup.config.js",
-    "lint": "standard rollup.* test/** lib/**",
+    "lint": "standard rollup.* test/** src/**",
     "fix": "npm run lint -- --fix",
     "start": "watch -p \"+(test|lib)/*.js\" -c \"npm run lint -- --fix && npm run build && nyc ava ./test\"",
     "watch": "watch -p \"+(test|lib)/*.js\" -c \"npm run lint -- --fix && nyc ava ./test/schema.js\"",
-    "test": "npm run lint && npm run build && nyc ava ./test",
+    "test": "nyc ava ./test",
     "t": "nyc ava ./test/refer.js"
   },
   "repository": {

@@ -2,14 +2,10 @@ import test from 'ava'
 import {expect} from 'chai'
 import {Schema} from '../src/Schema.js'
 
-test('SchemaRefer', async ava => {
+test('SchemaList', async ava => {
   let schema = new Schema()
-  schema.declare({
-    name: 'StringList',
-    list: 'String'
-  })
   let StringList = schema.declare({
-    refer: 'StringList'
+    list: 'String'
   })
   expect(StringList.create()).to.eql([])
   expect(StringList.create('a,b')).to.eql(['a', 'b'])

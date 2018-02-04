@@ -1,18 +1,13 @@
 import test from 'ava'
 import {expect} from 'chai'
 
-import {SchemaType} from '../lib/SchemaType.js'
-import {isNumber} from 'sav-util'
-import {Schema} from '../lib'
+import {SchemaType} from '../src/SchemaType.js'
+import {Schema} from '../src/Schema.js'
 
 test('SchemaType', ava => {
   expect(SchemaType).to.be.a('function')
-  let Age = new SchemaType({
-    export (obj) {
-      expect(obj.name).to.eql('Number')
-    }
-  }, {
-    name: Number
+  let Age = new SchemaType(null, {
+    default: Number
   })
   expect(Age.create()).to.eql(0)
 })
@@ -48,21 +43,29 @@ test('SchemaType.create', ava => {
   expect(schema.Int32.create()).to.eql(0)
 })
 
-test('SchemaType.export', ava => {
-  let Age = new SchemaType({
-    export (obj) {
-      expect(obj.name).to.eql('Number')
-    }
-  }, {
-    name: Number,
-    default: 1,
-    check: isNumber,
-    parse: Number
-  })
-  expect(Age.create()).to.eql(1)
-  expect(Age.create(2)).to.eql(2)
-  expect(Age.create('2')).to.eql(2)
-  expect(Age.create('x')).to.eql(NaN)
-  expect(Age.check).to.be.a('function')
-  expect(Age.parse).to.be.a('function')
+test('SchemaType.parse', ava => {
+  let schema = new Schema()
+  expect(schema.String.parse()).to.eql(undefined)
+  expect(schema.String.parse(1)).to.eql('1')
+  expect(schema.String.parse('2')).to.eql('2')
+
+  expect(schema.Number.parse()).to.eql(undefined)
+  expect(schema.Number.parse(2.0)).to.eql(2.0)
+  expect(schema.Number.parse('2.0')).to.eql(2.0)
+
+  expect(schema.Boolean.parse()).to.eql(undefined)
+  expect(schema.Boolean.parse(true)).to.eql(true)
+  expect(schema.Boolean.parse('true')).to.eql(true)
+  expect(schema.Boolean.parse('on')).to.eql(true)
+  expect(schema.Boolean.parse('false')).to.eql(false)
+  expect(schema.Boolean.parse('x')).to.eql(false)
+
+  expect(schema.Array.parse()).to.eql(undefined)
+  expect(schema.Array.parse([1])).to.eql([1])
+  expect(schema.Array.parse('1,2')).to.eql(['1', '2'])
+  expect(schema.Array.parse('[1,2]')).to.eql([1, 2])
+
+  expect(schema.Object.parse()).to.eql(undefined)
+  expect(schema.Object.parse({a: 1})).to.eql({a: 1})
+  expect(schema.Object.parse('{"a": 1}')).to.eql({a: 1})
 })
