@@ -55,6 +55,10 @@ function re (value, [, regexp]) {
   return ref.test(value)
 }
 
+function nre(value, argv) {
+  return !re(value, argv)
+}
+
 // https://github.com/borela/str-to-regexp/blob/master/src/index.js
 const COMPLEX_BEGIN = /^\s*\//
 const COMPLEX_REGEX = /^\s*\/(.+)\/(\w*)\s*$/
@@ -76,24 +80,21 @@ function toRegExp (pattern) {
     : new RegExp(pattern)
 }
 
-export default {
-// math
-  gt,
-  '>': gt,
-  gte,
-  '>=': gte,
-  lt,
-  '<': lt,
-  lte,
-  '<=': lte,
-// in
-  in: $in,
-  nin,
-// length
-  lgt,
-  lgte,
-  llt,
-  llte,
-// regexp
-  re
+let checks = [
+  {name: 'gt', alias: '>', check: gt},
+  {name: 'gte', alias: '>=', check: gte},
+  {name: 'lt', alias: '<', check: lt},
+  {name: 'lte', alias: '<=', check: lte},
+  {name: 'in', check: $in},
+  {name: 'nin', check: nin},
+  {name: 'lgt', check: lgt},
+  {name: 'lgte', check: lgte},
+  {name: 'llt', check: llt},
+  {name: 'llte', check: llte},
+  {name: 're', check: re},
+  {name: 'nre', check: nre},
+]
+
+export function registerChecks (schema) {
+  checks.forEach(it => schema.registerCheck(it))
 }

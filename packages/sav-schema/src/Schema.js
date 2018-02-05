@@ -6,7 +6,9 @@ import {SchemaList} from './SchemaList.js'
 import {SchemaField} from './SchemaField.js'
 import {SchemaRefer} from './SchemaRefer.js'
 import {SchemaStruct} from './SchemaStruct.js'
+import {SchemaCheck} from './SchemaCheck.js'
 import {registerTypes} from './types.js'
+import {registerChecks} from './checks.js'
 
 const SCHEMA_TYPE = 1
 const SCHEMA_ENUM = 2
@@ -22,7 +24,9 @@ export class Schema {
     }, opts)
     this.idMap = {}
     this.nameMap = {}
+    this.checks = {}
     registerTypes(this)
+    registerChecks(this)
   }
   declare (data, opts = {}) {
     if (isArray(data)) {
@@ -37,6 +41,28 @@ export class Schema {
     ret.schemaType = SCHEMA_TYPE
     exportSchema(this, ret)
     return ret
+  }
+  registerCheck (opts) {
+    let ret = new SchemaCheck(this, opts)
+    let {name, alias} = ret
+    this.checks[name] = ret
+    if (alias) {
+      this.checks[alias] = ret
+    }
+    return ret
+  }
+  applyChecks (value, rules) {
+    if (isArray(rules)) {
+      for (let rule of rules) {
+        let [name] = rule
+        let ruller = this.checks[name]
+        if (ruller) {
+          if (!ruller.check(value, rule)) {
+            return rule
+          }
+        }
+      }
+    }
   }
   getRef (ret) {
     let {opts} = ret

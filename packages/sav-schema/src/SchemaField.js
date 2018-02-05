@@ -21,7 +21,7 @@ export class SchemaField extends SchemaBase {
   }
   validate (obj, opts) {
     let {ref} = this
-    let {name, nullable, empty, eql, optional, message} = this.opts
+    let {name, nullable, empty, eql, optional, message, checks} = this.opts
     if (optional && !(name in obj)) {
       return
     }
@@ -44,10 +44,10 @@ export class SchemaField extends SchemaBase {
           throw new SchemaEqlError(name, eql)
         }
       }
-      // let rule = applyCheckValue(val, this.checks)
-      // if (rule) {
-      //   throw new SchemaCheckedError(name, rule[0])
-      // }
+      let rule = this.schema.applyChecks(val, checks)
+      if (rule) {
+        throw new SchemaCheckedError(name, rule[0])
+      }
       val = checkValue(val, opts, ref)
       return val
     } catch (err) {

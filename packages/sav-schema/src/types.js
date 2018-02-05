@@ -37,8 +37,12 @@ export function numberVal (val) {
 
 export function arrayVal (val) {
   if (isString(val)) {
-    if (val[0] === '[') {
-      return JSON.parse(val)
+    if (val[0] === '[' && val[val.length -1] === ']') {
+      try {
+        return JSON.parse(val)
+      } catch (err) {
+        return val
+      }
     } else if (val.indexOf(',') !== -1) {
       return val.split(',')
     }
@@ -48,8 +52,12 @@ export function arrayVal (val) {
 
 export function objectVal (val) {
   if (isString(val)) {
-    if (val[0] === '{') {
-      return JSON.parse(val)
+    if (val[0] === '{' && val[val.length -1] === '}') {
+      try {
+        return JSON.parse(val)
+      } catch (err) {
+        return val
+      }
     }
   }
   return val
