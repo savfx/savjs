@@ -60,11 +60,11 @@ export class SchemaField extends SchemaBase {
 }
 
 function checkValue (val, opts, ref) {
-  if (ref.validate) {
-    return ref.validate(val, opts)
-  }
   if (ref.parse) {
     val = ref.parse(val)
+  }
+  if (ref.validate) {
+    return ref.validate(val, opts)
   }
   if (!ref.check(val)) {
     throw new SchemaTypeError(ref.name, val)

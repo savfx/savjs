@@ -9,6 +9,7 @@ import {SchemaStruct} from './SchemaStruct.js'
 import {SchemaCheck} from './SchemaCheck.js'
 import {registerTypes} from './types.js'
 import {registerChecks} from './checks.js'
+import {SchemaNoRuleError} from './SchemaError.js'
 
 const SCHEMA_TYPE = 1
 const SCHEMA_ENUM = 2
@@ -36,6 +37,14 @@ export class Schema {
       return ret
     }
   }
+  load (data, opts = {}) {
+    // 从suite加载
+    ['fields', 'enums', 'lists', 'structs', 'schemas'].forEach(it => {
+      if (data[it]) {
+        this.declare(data[it], opts)
+      }
+    })
+  }
   registerType (opts) {
     let ret = new SchemaType(this, opts)
     ret.schemaType = SCHEMA_TYPE
@@ -60,6 +69,8 @@ export class Schema {
           if (!ruller.check(value, rule)) {
             return rule
           }
+        } else {
+          throw new SchemaNoRuleError(name)
         }
       }
     }
@@ -68,17 +79,17 @@ export class Schema {
     let {opts} = ret
     switch (ret.schemaType) {
       case SCHEMA_REFER:
-        return this.idMap[opts.refId] || this.nameMap[opts.refer]
+        return this.idMap[opts.refer] || this.nameMap[opts.refer]
       case SCHEMA_LIST:
-        return this.idMap[opts.refId] || this.nameMap[opts.list]
+        return this.idMap[opts.list] || this.nameMap[opts.list]
       case SCHEMA_FIELD:
-        return this.idMap[opts.refId] || this.nameMap[opts.type]
+        return this.idMap[opts.type] || this.nameMap[opts.type]
     }
   }
 }
 
 function createSchema (schema, data, opts) {
-  let {enums, props, refer, list} = data
+  let {enums, props, refer, list, type} = data
   let ret
   if (props) {
     if (isObject(props)) {
@@ -120,6 +131,13 @@ function createSchema (schema, data, opts) {
   } else if (enums) {
     ret = new SchemaEnum(schema, data)
     ret.schemaType = SCHEMA_ENUM
+  } else if (type) {
+    ret = new SchemaField(schema, data)
+    ret.schemaType = SCHEMA_FIELD
+    if (ret.id) {
+      schema.idMap[ret.id] = ret
+    }
+    return ret
   }
   exportSchema(schema, ret)
   return ret

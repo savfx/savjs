@@ -24,13 +24,14 @@ export function numberVal (val) {
   if (isBoolean(val)) {
     return Number(val)
   } else if (isString(val)) {
-    if (val === 'true' || val === 'on') {
-      return Number(true)
-    } else if (val === 'false' || val === 'off') {
-      return Number(false)
-    } else {
-      return Number(val)
+    let it = parseFloat(val)
+    if (isNaN(it)) {
+      if (val === 'true' || val === 'on') {
+        return 1
+      }
+      return 0
     }
+    return it
   }
   return val
 }
