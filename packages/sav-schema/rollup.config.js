@@ -10,7 +10,7 @@ const banner = `/*!
 
 Promise.all([
   executeRollup({
-    entry: 'lib/index.js',
+    entry: 'src/index.js',
     dest: 'dist/sav-schema.cjs.js',
     external: [
       'sav-util'
@@ -18,7 +18,7 @@ Promise.all([
     format: 'cjs'
   }),
   executeRollup({
-    entry: 'lib/index-umd.js',
+    entry: 'src/index-umd.js',
     dest: 'dist/sav-schema.min.js',
     format: 'umd',
     exports: 'named',
@@ -36,7 +36,7 @@ Promise.all([
     res.code = banner + res.code
   }),
   executeRollup({
-    entry: 'lib/index-umd.js',
+    entry: 'src/index-umd.js',
     dest: 'dist/sav-schema-umd.js',
     format: 'umd',
     exports: 'named',
