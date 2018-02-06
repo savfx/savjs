@@ -1,6 +1,6 @@
 {
   "name": "sav-schema",
-  "version": "1.0.30",
+  "version": "1.0.31",
   "description": "schema for savjs",
   "main": "dist/sav-schema.cjs.js",
   "browser": "dist/sav-schema.min.js",
@@ -11,7 +11,7 @@
     "fix": "npm run lint -- --fix",
     "start": "watch -p \"+(test|lib)/*.js\" -c \"npm run lint -- --fix && npm run build && nyc ava ./test\"",
     "watch": "watch -p \"+(test|lib)/*.js\" -c \"npm run lint -- --fix && nyc ava ./test/schema.js\"",
-    "test": "npm run build && nyc ava ./test",
+    "test": "npm run lint && npm run build && nyc ava ./test",
     "t": "nyc ava ./test/refer.js"
   },
   "repository": {

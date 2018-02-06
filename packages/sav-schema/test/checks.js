@@ -7,7 +7,7 @@ let schema = new Schema()
 
 test.before(() => {
   schema.registerCheck({
-    name: 'isBaby', 
+    name: 'isBaby',
     check: (value) => {
       return value >= 0 && value <= 6
     }

@@ -71,8 +71,8 @@ test('SchemaType.parse', ava => {
   expect(schema.Boolean.parse('on')).to.eql(true)
   expect(schema.Boolean.parse('false')).to.eql(false)
   expect(schema.Boolean.parse('x')).to.eql(false)
-  expect(schema.Boolean.parse(0.)).to.eql(false)
-  expect(schema.Boolean.parse(1.)).to.eql(true)
+  expect(schema.Boolean.parse(0.0)).to.eql(false)
+  expect(schema.Boolean.parse(1.0)).to.eql(true)
 
   expect(schema.Array.parse()).to.eql(undefined)
   expect(schema.Array.parse([1])).to.eql([1])
@@ -94,10 +94,10 @@ test('SchemaType.ObjectID', ava => {
     }
   })
   class ObjectID {
-    constructor(id) {
+    constructor (id) {
       this.id = id
     }
-    toString() {
+    toString () {
       return this.id
     }
   }

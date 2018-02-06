@@ -38,7 +38,7 @@ export function numberVal (val) {
 
 export function arrayVal (val) {
   if (isString(val)) {
-    if (val[0] === '[' && val[val.length -1] === ']') {
+    if (val[0] === '[' && val[val.length - 1] === ']') {
       try {
         return JSON.parse(val)
       } catch (err) {
@@ -53,7 +53,7 @@ export function arrayVal (val) {
 
 export function objectVal (val) {
   if (isString(val)) {
-    if (val[0] === '{' && val[val.length -1] === '}') {
+    if (val[0] === '{' && val[val.length - 1] === '}') {
       try {
         return JSON.parse(val)
       } catch (err) {

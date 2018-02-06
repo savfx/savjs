@@ -10,13 +10,7 @@ import {SchemaCheck} from './SchemaCheck.js'
 import {registerTypes} from './types.js'
 import {registerChecks} from './checks.js'
 import {SchemaNoRuleError} from './SchemaError.js'
-
-const SCHEMA_TYPE = 1
-const SCHEMA_ENUM = 2
-const SCHEMA_STURCT = 3
-const SCHEMA_LIST = 4
-const SCHEMA_REFER = 5
-const SCHEMA_FIELD = 6
+import {SCHEMA_TYPE, SCHEMA_ENUM, SCHEMA_STURCT, SCHEMA_LIST, SCHEMA_REFER, SCHEMA_FIELD} from './consts.js'
 
 export class Schema {
   constructor (opts) {

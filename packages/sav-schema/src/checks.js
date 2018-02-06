@@ -55,7 +55,7 @@ function re (value, [, regexp]) {
   return ref.test(value)
 }
 
-function nre(value, argv) {
+function nre (value, argv) {
   return !re(value, argv)
 }
 
@@ -92,7 +92,7 @@ let checks = [
   {name: 'llt', check: llt},
   {name: 'llte', check: llte},
   {name: 're', check: re},
-  {name: 'nre', check: nre},
+  {name: 'nre', check: nre}
 ]
 
 export function registerChecks (schema) {
