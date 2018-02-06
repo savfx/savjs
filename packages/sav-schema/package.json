@@ -4,7 +4,7 @@
   "description": "schema for savjs",
   "main": "dist/sav-schema.cjs.js",
   "browser": "dist/sav-schema.min.js",
-  "jsnext:main": "lib/index.js",
+  "jsnext:main": "src/index.js",
   "scripts": {
     "build": "node ./rollup.config.js",
     "lint": "standard rollup.* test/** src/**",
@@ -60,7 +60,7 @@
         "resolver",
         {
           "resolveDirs": [
-            "lib"
+            "src"
           ]
         }
       ],
