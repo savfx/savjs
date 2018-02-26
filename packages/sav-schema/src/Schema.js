@@ -83,7 +83,16 @@ export class Schema {
 }
 
 function createSchema (schema, data, opts) {
-  let {enums, props, refer, list, type} = data
+  let {enums, props, refer, list, type, refs} = data
+  if (refs) {
+    if (isObject(refs)) {
+      refs = Object.keys(refs).map(it => {
+        refs[it].name = it
+        return refs[it]
+      })
+    }
+    schema.declare(refs)
+  }
   let ret
   if (props) {
     if (isObject(props)) {

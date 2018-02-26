@@ -38,3 +38,15 @@ test('SchemaEnum.strict', ava => {
   expect(Sex.create(2)).to.eql(2)
   expect(Sex.create('null')).to.eql('null')
 })
+
+test('SchemaEnum.getEnum', ava => {
+  const Sex = new SchemaEnum(null, {
+    strict: true,
+    enums: [
+      {key: 'male', value: 1},
+      {key: 'female', value: 2}
+    ]
+  })
+  expect(Sex.key('male')).to.eql({key: 'male', value: 1})
+  expect(Sex.value(1)).to.eql({key: 'male', value: 1})
+})

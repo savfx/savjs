@@ -51,4 +51,17 @@ export class SchemaEnum extends SchemaBase {
       }
     }
   }
+  getEnum (key, val) {
+    for (let it of this.opts.enums) {
+      if (it[key] === val) {
+        return it
+      }
+    }
+  }
+  key (val) {
+    return this.getEnum('key', val)
+  }
+  value (val) {
+    return this.getEnum('value', val)
+  }
 }
