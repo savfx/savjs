@@ -59,9 +59,9 @@ export class SchemaEnum extends SchemaBase {
     }
   }
   key (val) {
-    return this.getEnum('key', val)
+    return this.getEnum('value', val).key
   }
   value (val) {
-    return this.getEnum('value', val)
+    return this.getEnum('key', val).value
   }
 }

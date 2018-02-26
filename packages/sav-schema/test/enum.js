@@ -47,6 +47,6 @@ test('SchemaEnum.getEnum', ava => {
       {key: 'female', value: 2}
     ]
   })
-  expect(Sex.key('male')).to.eql({key: 'male', value: 1})
-  expect(Sex.value(1)).to.eql({key: 'male', value: 1})
+  expect(Sex.value('male')).to.eql(1)
+  expect(Sex.key(1)).to.eql('male')
 })
