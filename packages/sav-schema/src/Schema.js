@@ -1,4 +1,4 @@
-import {isArray, isObject, isFunction, isString} from 'sav-util'
+import {isArray, isObject, isFunction, isString, isNumber} from 'sav-util'
 
 import {SchemaType} from './SchemaType.js'
 import {SchemaEnum} from './SchemaEnum.js'
@@ -109,7 +109,7 @@ function createSchema (schema, data, opts) {
       })
     }
     let fields = props.map(it => {
-      if (isString(it)) {
+      if (isString(it) || isNumber(it)) {
         return schema.idMap[it]
       }
       if (isFunction(it.type)) {
@@ -137,7 +137,7 @@ function createSchema (schema, data, opts) {
   } else if (type) {
     ret = new SchemaField(schema, data)
     ret.schemaType = SCHEMA_FIELD
-    if (ret.id) {
+    if ('id' in ret) {
       schema.idMap[ret.id] = ret
     }
     return ret
