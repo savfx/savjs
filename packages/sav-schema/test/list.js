@@ -8,7 +8,6 @@ test('SchemaList', async ava => {
     list: 'String'
   })
   expect(StringList.create()).to.eql([])
-  expect(StringList.create('a,b')).to.eql(['a', 'b'])
   expect(StringList.create('["a", "b"]')).to.eql(['a', 'b'])
   StringList.check('["a", "b"]')
   await StringList.checkThen('["a", "b"]')

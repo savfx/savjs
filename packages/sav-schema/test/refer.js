@@ -12,7 +12,6 @@ test('SchemaRefer', async ava => {
     refer: 'StringList'
   })
   expect(StringList.create()).to.eql([])
-  expect(StringList.create('a,b')).to.eql(['a', 'b'])
   expect(StringList.create('["a", "b"]')).to.eql(['a', 'b'])
   StringList.check('["a", "b"]')
   await StringList.checkThen('["a", "b"]')

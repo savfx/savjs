@@ -61,7 +61,7 @@ test('SchemaType.parse', ava => {
   expect(schema.Number.parse('true')).to.eql(1)
   expect(schema.Number.parse('on')).to.eql(1)
   expect(schema.Number.parse('false')).to.eql(0)
-  expect(schema.Number.parse('x')).to.eql(0)
+  expect(schema.Number.parse('x')).to.eql('x')
   expect(schema.Number.parse(false)).to.eql(0)
   expect(schema.Number.parse(true)).to.eql(1)
 
@@ -70,13 +70,12 @@ test('SchemaType.parse', ava => {
   expect(schema.Boolean.parse('true')).to.eql(true)
   expect(schema.Boolean.parse('on')).to.eql(true)
   expect(schema.Boolean.parse('false')).to.eql(false)
-  expect(schema.Boolean.parse('x')).to.eql(false)
+  expect(schema.Boolean.parse('x')).to.eql('x')
   expect(schema.Boolean.parse(0.0)).to.eql(false)
   expect(schema.Boolean.parse(1.0)).to.eql(true)
 
   expect(schema.Array.parse()).to.eql(undefined)
   expect(schema.Array.parse([1])).to.eql([1])
-  expect(schema.Array.parse('1,2')).to.eql(['1', '2'])
   expect(schema.Array.parse('[1,2]')).to.eql([1, 2])
   expect(schema.Array.parse('[a, b]')).to.eql('[a, b]')
 

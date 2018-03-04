@@ -1,5 +1,10 @@
 import {isNumber, isBoolean, isObject, isArray, isString} from 'sav-util'
 
+/**
+ * 字符串解析
+ * bool类型 加引号
+ * number类型 加引号, 科学计数转换为值
+ */
 export function stringVal (val) {
   if (isNumber(val) || isBoolean(val)) {
     return String(val)
@@ -7,35 +12,62 @@ export function stringVal (val) {
   return val
 }
 
+/**
+ * 布尔解析
+ * 字符串类型 只处理true/false/on/off 不区分大小写
+ * number类型 0 => false, 其他均为 true
+ */
 export function boolVal (val) {
   if (isNumber(val)) {
     return Boolean(val)
   }
   if (isString(val)) {
-    if (val === 'true' || val === 'on') {
-      return true
+    if (val.length < 6) {
+      switch (val.toLowerCase()) {
+        case 'true':
+        case 'on':
+          return true
+        case 'false':
+        case 'off':
+          return false
+      }
     }
-    return false
   }
   return val
 }
 
+/**
+ * 数字解析
+ * 布尔类型
+ * 字符串类型 只处理true/false/on/off 不区分大小写
+ * 数字类型字符串 "1.23456792E8" => (double)123456792, 科学计数转换为值
+ */
 export function numberVal (val) {
   if (isBoolean(val)) {
     return Number(val)
   } else if (isString(val)) {
     let it = parseFloat(val)
-    if (isNaN(it)) {
-      if (val === 'true' || val === 'on') {
-        return 1
-      }
-      return 0
+    if (!isNaN(it)) {
+      return it
     }
-    return it
+    if (val.length < 6) {
+      switch (val.toLowerCase()) {
+        case 'true':
+        case 'on':
+          return 1
+        case 'false':
+        case 'off':
+          return 0
+      }
+    }
   }
   return val
 }
 
+/**
+ * 数组解析
+ * JSON字符串
+ */
 export function arrayVal (val) {
   if (isString(val)) {
     if (val[0] === '[' && val[val.length - 1] === ']') {
@@ -44,13 +76,15 @@ export function arrayVal (val) {
       } catch (err) {
         return val
       }
-    } else if (val.indexOf(',') !== -1) {
-      return val.split(',')
     }
   }
   return val
 }
 
+/**
+ * 对象解析
+ * JSON字符串
+ */
 export function objectVal (val) {
   if (isString(val)) {
     if (val[0] === '{' && val[val.length - 1] === '}') {
