@@ -1,139 +1,180 @@
-import {EventEmitter} from 'events'
-import {routerPlugin} from './plugin'
-import compose from 'koa-compose'
-import {isPromise, isAsync, isFunction, makeProp} from 'sav-util'
+import pathToRegexp from 'path-to-regexp'
+import {isString, convertCase, pascalCase, isArray, isObject} from 'sav-util'
 
-export class Router extends EventEmitter {
+export class Router {
   constructor (opts) {
-    super()
-    this.opts = {...opts}
-    this.matchRoute = null
-    this.payloads = []
-    if (!this.opts.noRoute) {
-      this.use(routerPlugin)
+    this.opts = {
+      prefix: '',
+      caseType: 'camel',
+      sensitive: true,
+      method: 'POST'
     }
+    Object.assign(this.opts, opts)
+    this.modalMap = {}
+    this.modalRoutes = []
+    this.absoluteRoutes = createMethods({}) // 绝对路径路由
   }
-  config (name, dval) {
-    return name in this.opts ? this.opts[name] : dval
+  declare (target) {
+    if (target.modal) {
+      return this.createActionRoute(target)
+    }
+    return this.createModalRoute(target)
   }
-  use (plugin) {
-    if (typeof plugin === 'function') {
-      plugin(this)
-    } else if (typeof plugin === 'object') {
-      for (let name in plugin) {
-        if (name === 'payload') {
-          this.payloads.push(plugin[name])
-        } else {
-          this.on(name, plugin[name])
-        }
+  load ({modals, actions}) {
+    if (isObject(modals)) { // 兼容 decorator
+      for (let name in modals) {
+        let it = modals[name]
+        it.name = name
+        this.declare(it)
       }
+    } else if (isArray(modals)) {
+      modals.forEach(it => this.declare(it))
+    }
+    if (isArray(actions)) {
+      actions.forEach(it => this.declare(it))
     }
   }
-  declare (modules) {
-    if (!Array.isArray(modules)) {
-      modules = [modules]
+  createModalRoute (opts) {
+    let route = {
+      name: pascalCase(opts.name),
+      path: convertCase(this.opts.caseType, opts.name),
+      opts,
+      keys: [],
+      childs: createMethods({})
     }
-    buildModules(this, modules)
-  }
-  route () {
-    let payloads = [payloadStart.bind(this)].concat(this.payloads).concat([payloadEnd.bind(this)])
-    let payload = compose(payloads)
-    return payload
-  }
-  async exec (ctx) {
-    if (this._executer) {
-      return await this._executer(ctx)
-    }
-    this._executer = this.route()
-    return await this._executer(ctx)
-  }
-  warn (...args) {
-    this.emit('warn', ...args)
-  }
-}
-
-function buildModules (ctx, modules) {
-  for (let module of modules) {
-    let prop = makeProp(module, false)
-    prop({
-      ctx
+    let path = isString(opts.path) ? opts.path : route.path
+    route.path = normalPath('/' + path)
+    route.regexp = pathToRegexp(route.path, route.keys, {
+      sensitive: this.opts.sensitive,
+      end: false
     })
-    ctx.emit('module', module)
-    for (let actionName in module.actions) {
-      let action = module.actions[actionName]
-      let prop = makeProp(action, false)
-      prop({
-        module,
-        ctx,
-        middlewares: action.config.map(([name]) => {
-          return {name}
-        }),
-        set (name, middleware) {
-          for (let it of action.middlewares) {
-            if (it.name === name) {
-              it.middleware = middleware
-              return
-            }
-          }
-          action.middlewares.push({name, middleware})
-        },
-        get (name) {
-          for (let it of action.middlewares) {
-            if (it.name === name) {
-              return it
-            }
-          }
-        }
+    this.modalMap[opts.name] = route
+    if (opts.id) {
+      this.modalMap[opts.id] = route
+    }
+    this.modalRoutes.push(route)
+    // 兼容 decorator
+    if (isArray(opts.routes)) {
+      opts.routes.forEach(it => {
+        it.modal = opts.name || opts.id
+        this.declare(it)
       })
-      ctx.emit('action', action)
+    } else if (isObject(opts.routes)) {
+      for (let name in opts.routes) {
+        let it = opts.routes[name]
+        it.modal = opts.name || opts.id
+        it.name = name
+        this.declare(it)
+      }
     }
+    return route
   }
-}
-
-async function payloadStart (ctx, next) {
-  let prop = makeProp(ctx)
-  prop({
-    stack: [],
-    end (data, name) {
-      ctx.stack.push({name, data})
+  createActionRoute (opts) {
+    let modal = this.modalMap[opts.modal]
+    let route = {
+      name: modal.name + pascalCase(opts.name),
+      path: modal.path + '/' + convertCase(this.opts.caseType, opts.name),
+      opts: opts,
+      method: opts.method || (modal.view ? 'GET' : (this.opts.method || 'POST')),
+      modal,
+      keys: []
     }
-  })
-  prop.getter('data', (data, name) => {
-    let ret = ctx.stack[ctx.stack.length - 1]
-    return ret && ret.data
-  })
-  await next()
-}
-
-async function payloadEnd (ctx, next) {
-  let method = ctx.method.toUpperCase()
-  let path = ctx.path || ctx.originalUrl
-  let matched = this.matchRoute(path, method)
-  if (matched) {
-    let [route, params] = matched
-    let {prop} = ctx
-    prop({
-      params,
-      route
+    let isAbsolute = false
+    let path = isString(opts.path) ? opts.path : route.path
+    if (path && path[0] === '/') {
+      isAbsolute = true
+    } else {
+      path = modal.path + '/' + opts.path
+    }
+    route.path = normalPath(path)
+    route.regexp = pathToRegexp(route.path, route.keys, {
+      sensitive: this.opts.sensitive,
+      end: true
     })
-    for (let {name, middleware} of route.middlewares) {
-      if (isFunction(middleware)) {
-        let ret
-        if (isAsync(middleware)) {
-          ret = await middleware(ctx)
-        } else {
-          ret = middleware(ctx)
-          if (ret && isPromise(ret)) {
-            ret = await ret
+    route.isAbsolute = isAbsolute
+    if (isAbsolute) {
+      this.absoluteRoutes[route.method].push(route)
+      this.absoluteRoutes['ANY'].push(route)
+    } else {
+      modal.childs[route.method].push(route)
+      modal.childs['ANY'].push(route)
+    }
+    return route
+  }
+  matchRoute (path, method) {
+    method = method.toUpperCase()
+    if (method === 'OPTIONS') {
+      method = 'ANY'
+    }
+    if (methods.indexOf(method) === -1) {
+      return
+    }
+    path = stripPrefix(path, this.opts.prefix)
+    let ret = {
+      path
+    }
+    // 顶级路由
+    for (let route of this.absoluteRoutes[method]) {
+      if (matchRoute(route, path, ret)) {
+        return ret
+      }
+    }
+    for (let route of this.modalRoutes) {
+      // 模块路由
+      if (matchRoute(route, path)) {
+        for (let subRoute of route.childs[method]) {
+          // 子级路由
+          if (matchRoute(subRoute, path, ret)) {
+            return ret
           }
-        }
-        if (name === 'route') {
-          ctx.end(ret, name)
         }
       }
     }
-    ctx.body = ctx.data
-  } else {
-    await next()
   }
+}
+
+const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'ANY']
+
+function createMethods (target) {
+  methods.forEach((name) => {
+    target[name] = []
+  })
+  return target
+}
+
+function normalPath (path) {
+  return path.replace(/\/+/g, '/')
+}
+
+function matchRoute (route, path, ret) {
+  let mat = path.match(route.regexp)
+  if (mat) {
+    if (ret) {
+      ret.route = route
+      let {keys} = route
+      let params = ret.params = {}
+      for (let i = 1, len = mat.length; i < len; ++i) {
+        const key = keys[i - 1]
+        if (key) {
+          const val = typeof mat[i] === 'string' ? decodeURIComponent(mat[i]) : mat[i]
+          params[key.name] = val
+        }
+      }
+    }
+    return true
+  }
+}
+
+export function stripPrefix (src, prefix) {
+  if (prefix) {
+    let pos = src.indexOf(prefix)
+    if (pos === 0 || ((pos === 1) && src[0] === '/')) {
+      src = src.substr(pos + prefix.length, src.length)
+      if (src[0] !== '/') {
+        src = '/' + src
+      }
+      return src
+    }
+  }
+  return src
 }

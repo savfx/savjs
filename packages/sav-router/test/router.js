@@ -1,113 +1,152 @@
 import test from 'ava'
 import {expect} from 'chai'
+import {Router, stripPrefix} from '../src/Router.js'
 
-import {Router, get, post, route} from '../src'
-import {gen, conf} from 'sav-decorator'
+test('api', async ava => {
+  expect(stripPrefix).to.be.a('function')
+  expect(Router).to.be.a('function')
+  ava.pass()
+})
 
-test('router.use', ava => {
-  let router = new Router()
+test('stripPrefix', async ava => {
+  expect(stripPrefix('', '')).to.eql('')
+  expect(stripPrefix('/', '')).to.eql('/')
+  expect(stripPrefix('/a', '/a')).to.eql('/')
+  expect(stripPrefix('/a/', '/a')).to.eql('/')
+  expect(stripPrefix('/a/b', '/a')).to.eql('/b')
 
-  @gen
-  class Test {
-    @conf('hello', 'world')
-    say () {}
-  }
+  expect(stripPrefix('/a/', '/a/')).to.eql('/')
+  expect(stripPrefix('/a/b', '/a/')).to.eql('/b')
+  ava.pass()
+})
 
-  router.use((router) => {
-    router.on('module', (moudle) => {
-      expect(moudle.ctx).to.equal(router)
-    })
-    router.on('action', (action) => {
-      expect(action.module.actions[action.actionName]).to.equal(action)
-    })
+test('router.basic', async (ava) => {
+  let router = new Router({
+    prefix: '',
+    caseType: 'camel',
+    method: 'GET',
+    sensitive: true
   })
-
-  router.use({
-    module (moudle) {
-      expect(moudle.ctx).to.equal(router)
-    },
-    async payload (ctx, next) {
-
+  router.load({
+    modals: {
+      Home: {
+        routes: {
+          default: {
+          },
+          relative: {
+            path: 'relativeRoute'
+          },
+          absolute: {
+            path: '/absoluteRoute'
+          },
+          user: {
+            path: 'user/:id'
+          }
+        }
+      },
+      Article: {
+        path: 'art',
+        routes: {
+          list: {},
+          cat: {
+            path: '/article/cat/:id'
+          },
+          item: {
+            path: 'item/:id'
+          }
+        }
+      }
     }
   })
-
-  router.declare(Test)
-})
-
-test('router.api', async (ava) => {
-  let router = new Router()
-  @gen
-  class Article {
-    @get() async get () {}
-    @post('/user/article/:aid') async post () {}
-  }
-  router.declare(Article)
-  let route = router.route()
-  await route({
-    path: '/Article/get',
-    method: 'GET'
-  }, async () => {
-    throw new Error('hehe')
-  })
-  await route({
-    path: '/article/post',
-    method: 'GET'
-  }, async () => {
-    ava.pass()
-  })
-})
-
-test('router.declare#2', ava => {
-  let router = new Router()
-  @gen
-  class Article {
-    @get() get () {}
-    @post('/user/article/:aid') post () {}
-  }
-  @gen
-  class User {
-    @get() get () {}
-    @post('') post () {}
-    @route() route () {}
-  }
-  router.declare([Article, User])
-})
-
-test('router.opts', ava => {
-  let router = new Router({noRoute: true})
-  expect(router.listenerCount('module')).to.eql(0)
-
-  let router2 = new Router()
-  expect(router2.listenerCount('module')).to.eql(1)
-})
-
-test('router.warn', ava => {
-  let router = new Router()
-  expect(router.warn).to.be.a('function')
-  let n = 1
-  router.on('warn', (x) => {
-    n += x
-  })
-  router.warn(2)
-  expect(n).to.eql(3)
-})
-
-test('router.ctx.exec', async (ava) => {
-  let router = new Router()
-  @gen
-  class Article {
-    @get()
-    hello (ctx, payload) {
-      return 'hello'
+  let pathEqual = (path, end) => {
+    let ret = router.matchRoute(path, 'GET')
+    expect(ret).to.be.a('object')
+    expect(ret.route).to.be.a('object')
+    if (typeof end === 'string') {
+      expect(ret.route.path).to.eql(end)
+    } else {
+      expect(end ? (ret.route.path + '/') : ret.route.path).to.eql(path)
     }
   }
-  router.declare(Article)
-  {
-    let ctx = {
-      path: '/Article/hello',
-      method: 'GET'
+
+  pathEqual('/home/default')
+  pathEqual('/home/default/', true)
+  pathEqual('/home/relativeRoute')
+  pathEqual('/home/relativeRoute/', true)
+  pathEqual('/absoluteRoute')
+  pathEqual('/absoluteRoute/', true)
+  pathEqual('/home/user/1', '/home/user/:id')
+  pathEqual('/home/user/1/', '/home/user/:id')
+
+  expect(router.matchRoute('/Home/default', 'GET')).to.eql(undefined)
+  expect(router.matchRoute('/', 'GET')).to.eql(undefined)
+  expect(router.matchRoute('/something', 'GET')).to.eql(undefined)
+  expect(router.matchRoute('/home', 'GET')).to.eql(undefined)
+  expect(router.matchRoute('/home/', 'GET')).to.eql(undefined)
+  expect(router.matchRoute('/home/anything', 'GET')).to.eql(undefined)
+  expect(router.matchRoute('/home/default', 'POST')).to.eql(undefined)
+
+  pathEqual('/art/list')
+  pathEqual('/art/list/', true)
+  pathEqual('/art/item/1', '/art/item/:id')
+  pathEqual('/art/item/1/', '/art/item/:id')
+  pathEqual('/article/cat/1', '/article/cat/:id')
+  pathEqual('/article/cat/1/', '/article/cat/:id')
+
+  ava.pass()
+})
+
+test('router.caseType.sensitive', async (ava) => {
+  let router = new Router({caseType: 'hyphen', sensitive: false, method: 'GET'})
+  router.load({
+    modals: {
+      UserProfile: {
+        routes: {
+          HomeInfo: {},
+          UserAddress: {
+            path: 'UserAddress'
+          }
+        }
+      }
     }
-    await router.exec(ctx)
-    expect(ctx.body).to.eql('hello')
-  }
+  })
+  expect(router.matchRoute('/user-profile/home-info', 'GET')).to.be.a('object')
+  expect(router.matchRoute('/user-PROFILE/HOME-info/', 'GET')).to.be.a('object')
+  expect(router.matchRoute('/user-profile/HomeInfo', 'GET')).to.eql(undefined)
+  expect(router.matchRoute('/UserProfile/home-info', 'GET')).to.eql(undefined)
+  expect(router.matchRoute('/UserProfile/HomeInfo', 'GET')).to.eql(undefined)
+  expect(router.matchRoute('/user-profile/UserAddress', 'GET')).to.be.a('object')
+  ava.pass()
+})
+
+test('router.load', async (ava) => {
+  let router = new Router({caseType: 'hyphen', sensitive: false, method: 'GET'})
+  router.load({
+    modals: [
+      {
+        id: 5,
+        name: 'UserProfile',
+        routes: [
+          {
+            name: 'UserAddress'
+          }
+        ]
+      }
+    ],
+    actions: [
+      {
+        modal: 5,
+        name: 'HomeInfo'
+      }
+    ]
+  })
+  expect(router.matchRoute('/user-profile/home-info', 'GET')).to.be.a('object')
+  expect(router.matchRoute('/user-PROFILE/HOME-info/', 'GET')).to.be.a('object')
+  expect(router.matchRoute('/user-profile/HomeInfo', 'GET')).to.eql(undefined)
+  expect(router.matchRoute('/UserProfile/home-info', 'GET')).to.eql(undefined)
+  expect(router.matchRoute('/UserProfile/HomeInfo', 'GET')).to.eql(undefined)
+  expect(router.matchRoute('/user-profile/user-address', 'NONE')).to.eql(undefined)
+  expect(router.matchRoute('/user-profile/user-address', 'OPTIONS')).to.be.a('object')
+  expect(router.matchRoute('/user-profile/user-address', 'GET')).to.be.a('object')
+  ava.pass()
 })
