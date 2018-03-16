@@ -1,26 +1,64 @@
-import babel from 'rollup-plugin-babel'
+let {executeRollup, errorExit} = require('rollup-standalone')
 
-export default {
-  entry: 'src/index.js',
-  targets: [
-    { dest: 'dist/sav-router.cjs.js', format: 'cjs' },
-    { dest: 'dist/sav-router.es.js', format: 'es' }
-  ],
-  plugins: [
-    babel({
-      babelrc: false,
-      externalHelpers: false,
-      exclude: 'node_modules/**',
-      'plugins': [
-        ['transform-object-rest-spread', { 'useBuiltIns': true }]
+const pack = require('./package.json')
+const banner = `/*!
+ * ${pack.name} v${pack.version}
+ * (c) ${new Date().getFullYear()} ${pack.author.name} ${pack.author.email}
+ * Release under the ${pack.license} License.
+ */
+`
+
+Promise.all([
+  executeRollup({
+    entry: 'src/index.js',
+    external: [
+      'sav-util'
+    ],
+    dest: 'dist/sav-router.cjs.js',
+    format: 'cjs'
+  }),
+  executeRollup({
+    entry: 'src/index.js',
+    external: [
+      'sav-util'
+    ],
+    dest: 'dist/sav-router.es.js',
+    format: 'es'
+  }),
+  executeRollup({
+    entry: 'src/index-umd.js',
+    dest: 'dist/sav-router.min.js',
+    format: 'umd',
+    exports: 'named',
+    moduleName: 'schema',
+    babelOptions: {
+      include: [
+        'node_modules/**'
       ]
-    })
-  ],
-  onwarn (err) {
-    if (err) {
-      if (err.code !== 'UNRESOLVED_IMPORT') {
-        console.log(err.code, err.message)
-      }
+    },
+    uglifyOptions: true,
+    resolveOptions: {
+      jsnext: true
     }
-  }
-}
+  }, (bundle, res) => {
+    res.code = banner + res.code
+  }),
+  executeRollup({
+    entry: 'src/index-umd.js',
+    dest: 'dist/sav-router-umd.js',
+    format: 'umd',
+    exports: 'named',
+    moduleName: 'schema',
+    babelOptions: {
+      include: [
+        'node_modules/**'
+      ]
+    },
+    // uglifyOptions: true,
+    resolveOptions: {
+      jsnext: true
+    }
+  }, (bundle, res) => {
+    res.code = banner + res.code
+  })
+]).catch(errorExit('build fail'))

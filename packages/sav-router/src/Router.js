@@ -1,5 +1,5 @@
 import pathToRegexp from 'path-to-regexp'
-import {isString, convertCase, pascalCase, isArray, isObject} from 'sav-util'
+import {isString, convertCase, pascalCase, isArray, isObject, bindEvent} from 'sav-util'
 
 export class Router {
   constructor (opts) {
@@ -9,10 +9,14 @@ export class Router {
       sensitive: true,
       method: 'POST'
     }
-    Object.assign(this.opts, opts)
+    opts && this.setOptions(opts)
     this.modalMap = {}
     this.modalRoutes = []
     this.absoluteRoutes = createMethods({}) // 绝对路径路由
+    bindEvent(this)
+  }
+  setOptions (opts) {
+    Object.assign(this.opts, opts)
   }
   declare (target) {
     if (target.modal) {
@@ -53,6 +57,7 @@ export class Router {
       this.modalMap[opts.id] = route
     }
     this.modalRoutes.push(route)
+    this.emit('declareModal', route)
     // 兼容 decorator
     if (isArray(opts.routes)) {
       opts.routes.forEach(it => {
@@ -99,6 +104,7 @@ export class Router {
       modal.childs[route.method].push(route)
       modal.childs['ANY'].push(route)
     }
+    this.emit('declareAction', route)
     return route
   }
   matchRoute (path, method) {
