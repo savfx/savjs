@@ -105,7 +105,9 @@ export function ajax (opts, next) {
         206,
         0
       ].indexOf(req.status) === -1) { // error
-        emit(new Error('error_status_' + req.status))
+        let err = new Error()
+        err.code = req.status
+        emit(err)
       } else {
         let data = req.response
         let parse = (req.status !== 204)
