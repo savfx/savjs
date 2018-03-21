@@ -106,7 +106,7 @@ export function ajax (opts, next) {
         0
       ].indexOf(req.status) === -1) { // error
         let err = new Error()
-        err.code = req.status
+        err.status = req.status
         emit(err)
       } else {
         let data = req.response

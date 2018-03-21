@@ -1,6 +1,6 @@
 {
   "name": "sav-util",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "description": "util library for savjs",
   "main": "dist/sav-util.cjs.js",
   "module": "dist/sav-util.es.js",
