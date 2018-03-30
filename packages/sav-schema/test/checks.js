@@ -429,3 +429,52 @@ test('check.replace.array', ava => {
   UserInfo.check(src, {replace: true})
   expect(src).to.eql([1, 2, 3])
 })
+
+test('check.min&max', ava => {
+  let UserInfo = schema.declare({
+    props: {
+      age: {
+        type: Number,
+        min: 3,
+        max: 40
+      }
+    }
+  })
+  let src = {age: '30'}
+  UserInfo.check(src, {replace: true})
+  expect(src).to.eql({age: 30})
+  expect(() => {
+    UserInfo.check({age: 0})
+  }).to.throw()
+  expect(() => {
+    UserInfo.check({age: 50})
+  }).to.throw()
+})
+
+test('check.len', ava => {
+  let UserInfo = schema.declare({
+    props: {
+      name: {
+        type: String,
+        min: 3,
+        max: 8
+      },
+      password: {
+        type: String,
+        len: 5
+      }
+    }
+  })
+  expect(() => {
+    UserInfo.check({name: 'jetiny', password: '12345'})
+  }).to.not.throw()
+  expect(() => {
+    UserInfo.check({name: 'y', password: '12345'})
+  }).to.throw()
+  expect(() => {
+    UserInfo.check({name: '0123456789', password: '12345'})
+  }).to.throw()
+  expect(() => {
+    UserInfo.check({name: 'hello', password: '1234'})
+  }).to.throw()
+})

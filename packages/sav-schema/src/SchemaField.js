@@ -1,6 +1,6 @@
 import {SchemaBase} from './SchemaBase.js'
 import {SchemaRequiredError, SchemaTypeError, SchemaCheckedError, SchemaEqlError, SchemaEmptyError} from './SchemaError.js'
-import {isNull} from 'sav-util'
+import {isNull, isArray, isString} from 'sav-util'
 
 /*
 {
@@ -21,7 +21,7 @@ export class SchemaField extends SchemaBase {
   }
   validate (obj, opts) {
     let {ref} = this
-    let {name, nullable, empty, eql, optional, message, checks} = this.opts
+    let {name, nullable, optional, message} = this.opts
     if (optional && !(name in obj)) {
       return
     }
@@ -32,6 +32,7 @@ export class SchemaField extends SchemaBase {
       if (!(name in obj)) {
         throw new SchemaRequiredError(name)
       }
+      let {empty, eql, checks, len, min, max} = this.opts
       let val = obj[name]
       if (!empty && !isNull(val)) {
         if (val === '') {
@@ -44,11 +45,25 @@ export class SchemaField extends SchemaBase {
           throw new SchemaEqlError(name, eql)
         }
       }
+      val = checkValue(val, opts, ref)
+      // len 字符串或数组长度
+      // min, max 数字区间, 或字符串数组长度
+      if (len || min || max) {
+        let valLen = (isArray(val) || isString(val)) ? val.length : val
+        if (len && (valLen !== len)) {
+          throw new SchemaCheckedError(name, 'len')
+        }
+        if (min && (valLen < min)) {
+          throw new SchemaCheckedError(name, 'min')
+        }
+        if (max && (valLen > max)) {
+          throw new SchemaCheckedError(name, 'max')
+        }
+      }
       let rule = this.schema.applyChecks(val, checks)
       if (rule) {
         throw new SchemaCheckedError(name, rule[0])
       }
-      val = checkValue(val, opts, ref)
       return val
     } catch (err) {
       if (message) {

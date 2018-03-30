@@ -12,7 +12,7 @@
     "start": "watch -p \"+(test|lib)/*.js\" -c \"npm run lint -- --fix && npm run build && nyc ava ./test\"",
     "watch": "watch -p \"+(test|lib)/*.js\" -c \"npm run lint -- --fix && nyc ava ./test/schema.js\"",
     "test": "npm run lint && npm run build && nyc ava ./test",
-    "t": "nyc ava ./test/refer.js"
+    "t": "nyc ava ./test/checks.js"
   },
   "repository": {
     "type": "git",
