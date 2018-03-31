@@ -93,6 +93,7 @@ test('router.basic', async (ava) => {
   pathEqual('/article/cat/1', '/article/cat/:id')
   pathEqual('/article/cat/1/', '/article/cat/:id')
 
+  expect(Object.keys(router.getModals())).to.eql(['Home', 'Article'])
   ava.pass()
 })
 
@@ -116,6 +117,69 @@ test('router.caseType.sensitive', async (ava) => {
   expect(router.matchRoute('/UserProfile/home-info', 'GET')).to.eql(undefined)
   expect(router.matchRoute('/UserProfile/HomeInfo', 'GET')).to.eql(undefined)
   expect(router.matchRoute('/user-profile/UserAddress', 'GET')).to.be.a('object')
+  ava.pass()
+})
+
+test('router.path', async (ava) => {
+  let router = new Router()
+  router.load({
+    modals: {
+      Home: {
+        routes: {
+          search: {
+            path: 'search/:id'
+          },
+          regexp: {
+            path: 'regexp/:id(\\d+)'
+          },
+          any: {
+            path: 'any/:id/(.*)'
+          }
+        }
+      }
+    }
+  })
+  expect(router.matchRoute('/home/search/1', 'POST')).to.be.a('object')
+  expect(router.matchRoute('/home/regexp/1', 'POST')).to.be.a('object')
+  expect(router.matchRoute('/home/regexp/test', 'POST')).to.be.a('undefined')
+  expect(router.matchRoute('/home/any/test', 'POST')).to.be.a('undefined')
+  expect(router.matchRoute('/home/any/test/a', 'POST')).to.be.a('object')
+  ava.pass()
+})
+
+test('router.prefix', async (ava) => {
+  let prefixs = [
+    '/admin',
+    'admin',
+    'admin/'
+  ]
+
+  prefixs.forEach(prefix => {
+    let router = new Router({
+      prefix,
+      caseType: 'hyphen',
+      sensitive: false,
+      method: 'GET'
+    })
+    router.load({
+      modals: {
+        UserProfile: {
+          routes: {
+            HomeInfo: {},
+            UserAddress: {
+              path: 'UserAddress'
+            }
+          }
+        }
+      }
+    })
+    expect(router.matchRoute('/admin/user-profile/home-info', 'GET')).to.be.a('object')
+    expect(router.matchRoute('/user-PROFILE/HOME-info/', 'GET')).to.eql(undefined)
+    expect(router.matchRoute('/user-profile/HomeInfo', 'GET')).to.eql(undefined)
+    expect(router.matchRoute('/UserProfile/home-info', 'GET')).to.eql(undefined)
+    expect(router.matchRoute('/UserProfile/HomeInfo', 'GET')).to.eql(undefined)
+    expect(router.matchRoute('/admin/user-profile/UserAddress', 'GET')).to.be.a('object')
+  })
   ava.pass()
 })
 

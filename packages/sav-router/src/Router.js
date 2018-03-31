@@ -38,13 +38,22 @@ export class Router {
       actions.forEach(it => this.declare(it))
     }
   }
+  getModals () {
+    let ret = {}
+    for (let name in this.modalMap) {
+      let modal = this.modalMap[name]
+      ret[modal.name] = modal
+    }
+    return ret
+  }
   createModalRoute (opts) {
     let route = {
       name: pascalCase(opts.name),
       path: convertCase(this.opts.caseType, opts.name),
       opts,
       keys: [],
-      childs: createMethods({})
+      childs: createMethods({}),
+      routes: []
     }
     let path = isString(opts.path) ? opts.path : route.path
     route.path = normalPath('/' + path)
@@ -104,6 +113,7 @@ export class Router {
       modal.childs[route.method].push(route)
       modal.childs['ANY'].push(route)
     }
+    modal.routes.push(route)
     this.emit('declareAction', route)
     return route
   }
@@ -116,6 +126,9 @@ export class Router {
       return
     }
     path = stripPrefix(path, this.opts.prefix)
+    if (path === undefined) {
+      return
+    }
     let ret = {
       path
     }
@@ -181,6 +194,7 @@ export function stripPrefix (src, prefix) {
       }
       return src
     }
+  } else {
+    return src
   }
-  return src
 }
