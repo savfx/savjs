@@ -61,6 +61,7 @@ export class Router {
       sensitive: this.opts.sensitive,
       end: false
     })
+    normalKeys(route)
     this.modalMap[opts.name] = route
     if (opts.id) {
       this.modalMap[opts.id] = route
@@ -105,6 +106,7 @@ export class Router {
       sensitive: this.opts.sensitive,
       end: true
     })
+    normalKeys(route)
     route.isAbsolute = isAbsolute
     if (isAbsolute) {
       this.absoluteRoutes[route.method].push(route)
@@ -176,7 +178,7 @@ function matchRoute (route, path, ret) {
         const key = keys[i - 1]
         if (key) {
           const val = typeof mat[i] === 'string' ? decodeURIComponent(mat[i]) : mat[i]
-          params[key.name] = val
+          params[key] = val
         }
       }
     }
@@ -197,4 +199,8 @@ export function stripPrefix (src, prefix) {
   } else {
     return src
   }
+}
+
+function normalKeys (ref) {
+  ref.keys = ref.keys.map(it => it.name)
 }
