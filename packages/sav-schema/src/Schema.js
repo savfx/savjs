@@ -23,19 +23,26 @@ export class Schema {
     registerTypes(this)
     registerChecks(this)
   }
-  declare (data, opts = {}) {
+  declare (data) {
     if (isArray(data)) {
-      return data.map(it => this.declare(it, opts))
+      return data.map(it => this.declare(it))
     } else if (isObject(data)) {
-      let ret = createSchema(this, data, opts)
+      let ret = createSchema(this, data)
       return ret
     }
   }
-  load (data, opts = {}) {
+  load (data) {
     // 从suite加载
+    if (isArray(data.fields)) {
+      data.fields.forEach((field, id) => {
+        if (!('id' in field)) {
+          field.id = String(id)
+        }
+      })
+    }
     ['fields', 'enums', 'lists', 'structs', 'schemas'].forEach(it => {
       if (data[it]) {
-        this.declare(data[it], opts)
+        this.declare(data[it])
       }
     })
   }
@@ -82,7 +89,14 @@ export class Schema {
   }
 }
 
-function createSchema (schema, data, opts) {
+Schema['SCHEMA_TYPE'] = SCHEMA_TYPE
+Schema['SCHEMA_FIELD'] = SCHEMA_FIELD
+Schema['SCHEMA_ENUM'] = SCHEMA_ENUM
+Schema['SCHEMA_STURCT'] = SCHEMA_STURCT
+Schema['SCHEMA_LIST'] = SCHEMA_LIST
+Schema['SCHEMA_REFER'] = SCHEMA_REFER
+
+function createSchema (schema, data) {
   let {enums, props, refer, list, type, refs} = data
   if (refs) {
     if (isObject(refs)) {
