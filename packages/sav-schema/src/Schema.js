@@ -87,6 +87,9 @@ export class Schema {
         return this.idMap[opts.type] || this.nameMap[opts.type]
     }
   }
+  getSchema (name) {
+    return this.idMap[name] || this.nameMap[name]
+  }
 }
 
 Schema['SCHEMA_TYPE'] = SCHEMA_TYPE
