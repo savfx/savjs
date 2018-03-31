@@ -5,33 +5,76 @@
 import path from 'path'
 import {transform} from 'babel-standalone'
 import Module from 'module'
-import {ucfirst, isObject, isFunction} from 'sav-util'
+import {isObject, isFunction} from 'sav-util'
 import * as decorators from '../utils/decorator.js'
-import {inputFile, readDir} from '../utils/util.js'
-import {Schema} from 'sav-schema'
+import {inputFile, readDir, pathExists} from '../utils/util.js'
 
-export function loadInterface (dir) {
-  return readDir(dir).then((dirs) => 
-    Promise.all(dirs.filter((it) => acceptModules.indexOf(it) !== -1)
-      .map((name) => {
-    return loadModule(name, path.resolve(dir, name))
-  })).then((args) => args.reduce((a, b) => {
-    a[b[0]] = b[1]
-    return a
-  }, {}))).then(all => {
-    let schema = new Schema()
-    if (all.schemas) {
-      loadSchemas(all.schemas, schema)
+export async function loadInterface (dir) {
+  let res = {}
+  let projectFile = path.join(dir, 'project.js')
+  if (await pathExists(projectFile)) {
+    res.project = require(projectFile)
+  }
+
+  let modalsDir = path.join(dir, 'modals')
+  if (await pathExists(modalsDir)) {
+    res.modals = await loadModule('modals', modalsDir)
+  }
+
+  let schemasDir = path.join(dir, 'schemas')
+  if (await pathExists(schemasDir)) {
+    let schemaData = await loadModule('schemas', schemasDir)
+    let schemas = []
+    for (let groupName in schemaData) {
+      let schemaGroup = schemaData[groupName]
+      schemas = schemas.concat(Object.keys(schemaGroup).map(name => {
+        let item = schemaGroup[name]
+        item.name = name
+        return item
+      }))
     }
-    if (all.modals) {
-      normalizeModals(all.modals, schema)
+    res.schemas = schemas
+  }
+
+  let mocksDir = path.join(dir, 'mocks')
+  if (await pathExists(mocksDir)) {
+    let mockData = await loadModule('mocks', mocksDir)
+    let mocks = []
+    for (let modalName in mockData) {
+      let mockGroup = mockData[modalName]
+      Object.keys(mockGroup).forEach(actionName => {
+        let item = mockGroup[actionName]
+        if (isObject(item.req)) {
+          item.req = [item.req]
+        }
+        if (isObject(item.res)) {
+          item.res = [item.res]
+        }
+        if (item.req) {
+          item.req.forEach(it => {
+            mocks.push(Object.assign(it, {
+              modalName,
+              req: true,
+              actionName
+            }))
+          })
+        }
+        if (item.res) {
+          item.res.forEach(it => {
+            mocks.push(Object.assign(it, {
+              modalName,
+              res: true,
+              actionName
+            }))
+          })
+        }
+      })
     }
-    all.schema = schema
-    return all
-  })
+    res.mocks = mocks
+  }
+  return res
 }
 
-let acceptModules = ['modals', 'mocks', 'schemas']
 let excludeFiles = ['index.js']
 
 async function loadModule (name, dir) {
@@ -49,7 +92,7 @@ async function loadModule (name, dir) {
       return a
     }, {}))
   })
-  return [name, ret]
+  return ret
 }
 
 function interopDefault (ex) {
@@ -121,54 +164,3 @@ function convertFunctionToName (obj) {
 }
 
 exportModule('sav', decorators)
-
-function loadSchemas (files, schema) {
-  for (let name in files) {
-    let file = files[name]
-    Object.keys(file).map(it => {
-      let item = file[it]
-      item.name = it
-      schema.declare(item)
-    })
-  }
-}
-
-function normalizeModals(modals, schema) {
-  for (let modalName in modals) {
-    let modal = modals[modalName]
-    if (modal.routes) {
-      modal.routes = Object.keys(modal.routes).map(it => {
-        let route = modal.routes[it]
-        route.name = it
-        processRouteSchema(modalName, route, 'request', schema)
-        processRouteSchema(modalName, route, 'response', schema)
-        return route
-      })
-    }
-  }
-}
-
-const shortTypeMap = {
-  request: 'Req',
-  response: 'Res',
-}
-
-function processRouteSchema (modalName, route, type, schema) {
-  let name = shortTypeMap[type] + modalName + ucfirst(route.name)
-  if (route[type]) {
-    let data = route[type]
-    if (isObject(data)) {
-      if (!data.name) {
-        data.name = name
-        schema.declare(data)
-        route[type] = name
-      }
-    } else if (!schema[data]) {
-      throw new Error(`schema ${data} no found with ${type} of ${modalName}.${route.name}`)
-    }
-  } else {
-    if (schema[name]) {
-      route[type] = name
-    }
-  }
-}

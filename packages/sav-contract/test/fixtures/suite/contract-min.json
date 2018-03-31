@@ -1,0 +1,235 @@
+{
+  "project": {
+    "id": "5a95704a34f4f51c689a99b9",
+    "name": "sdsd",
+    "version": "1.0.2",
+    "title": "sdsds",
+    "description": "000"
+  },
+  "fields": [
+    {
+      "name": "dsfef",
+      "title": "sfsdfsdf",
+      "type": "String"
+    },
+    {
+      "name": "fse",
+      "title": "fsfsfs",
+      "type": "String"
+    },
+    {
+      "name": "dsf",
+      "title": "sefsfs",
+      "type": "String"
+    },
+    {
+      "name": "fsf",
+      "title": "sefesfs",
+      "type": "String"
+    },
+    {
+      "name": "fes",
+      "title": "eefsfe",
+      "type": "String"
+    },
+    {
+      "name": "fsefe",
+      "title": "sfsfes",
+      "type": "fsdfsdf"
+    },
+    {
+      "name": "fse",
+      "title": "fsefes",
+      "type": "fdsfesfse"
+    },
+    {
+      "name": "fes",
+      "title": "fsefs",
+      "type": "fsdfsdf"
+    }
+  ],
+  "enums": [
+    {
+      "name": "fsdfsdf",
+      "title": "fsed",
+      "enums": [
+        {
+          "key": "efs",
+          "value": "fes",
+          "title": "fsfes"
+        },
+        {
+          "key": "fes",
+          "value": "fsefs",
+          "title": "fesf"
+        }
+      ]
+    },
+    {
+      "name": "fesfsfes",
+      "title": "fes",
+      "enums": [
+        {
+          "key": "fse",
+          "value": "fs",
+          "title": "fesfesf"
+        }
+      ]
+    }
+  ],
+  "lists": [
+    {
+      "name": "esfsf",
+      "title": "fsef",
+      "list": "Number"
+    },
+    {
+      "name": "sefs",
+      "title": "fesf",
+      "list": "String"
+    },
+    {
+      "name": "fsf",
+      "title": "fes",
+      "list": "fsdfsdf"
+    },
+    {
+      "name": "esfes",
+      "title": "fsef",
+      "list": "fdsfesfse"
+    }
+  ],
+  "structs": [
+    {
+      "name": "fesfs",
+      "title": "fse",
+      "props": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "fdsfesfse",
+      "title": "fsd",
+      "props": [
+        2,
+        3
+      ]
+    },
+    {
+      "name": "esefs",
+      "title": "fsef",
+      "props": [
+        4,
+        5
+      ]
+    },
+    {
+      "name": "efsefs",
+      "title": "fes",
+      "props": [
+        6,
+        7
+      ]
+    }
+  ],
+  "schemas": [
+    {
+      "name": "ReqDsdsdFsfs",
+      "title": "dsds-fesfes-请求",
+      "refer": "fesfs",
+      "flow": 1,
+      "state": {
+        "dsfef": "",
+        "fse": ""
+      }
+    },
+    {
+      "name": "ReqDsdsdDsfsdf",
+      "title": "dsds-fdsf-请求",
+      "refer": "fdsfesfse",
+      "flow": 1
+    },
+    {
+      "name": "ReqSdfsdfSefesf",
+      "title": "fdsf-fesf-请求",
+      "refer": "esefs",
+      "flow": 1
+    },
+    {
+      "name": "ResDsdsdFsfs",
+      "title": "dsds-fesfes-响应",
+      "refer": "esefs",
+      "flow": 2
+    },
+    {
+      "name": "ResDsdsdDsfsdf",
+      "title": "dsds-fdsf-响应",
+      "refer": "fdsfesfse",
+      "flow": 2
+    },
+    {
+      "name": "ResSdfsdfSefesf",
+      "title": "fdsf-fesf-响应",
+      "refer": "efsefs",
+      "flow": 2
+    }
+  ],
+  "modals": [
+    {
+      "name": "Dsdsd",
+      "title": "dsds",
+      "auth": true
+    },
+    {
+      "name": "Sdfsdf",
+      "title": "fdsf",
+      "auth": true
+    }
+  ],
+  "pages": [
+    {
+      "modal": "Dsdsd",
+      "name": "Sfesf",
+      "title": "fesfse",
+      "view": true,
+      "path": "sfesffesfsefs/:sdsds",
+      "component": "fdsfdsf"
+    },
+    {
+      "modal": "Sdfsdf",
+      "name": "Fdsfsf",
+      "title": "dfs",
+      "view": true
+    }
+  ],
+  "actions": [
+    {
+      "modal": "Dsdsd",
+      "name": "Fsfs",
+      "title": "fesfes",
+      "method": "GET",
+      "api": true,
+      "path": "ssds/:fsfs",
+      "request": "ReqDsdsdFsfs",
+      "response": "ResDsdsdFsfs"
+    },
+    {
+      "modal": "Dsdsd",
+      "name": "Dsfsdf",
+      "title": "fdsf",
+      "method": "GET",
+      "api": true,
+      "request": "ReqDsdsdDsfsdf",
+      "response": "ResDsdsdDsfsdf"
+    },
+    {
+      "modal": "Sdfsdf",
+      "name": "Sefesf",
+      "title": "fesf",
+      "api": true,
+      "request": "ReqSdfsdfSefesf",
+      "response": "ResSdfsdfSefesf"
+    }
+  ]
+}

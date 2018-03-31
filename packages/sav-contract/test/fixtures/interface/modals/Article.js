@@ -1,8 +1,6 @@
 import {Modal, post, get} from 'sav'
 
-@Modal({
-  view: true
-})
+@Modal()
 export default class Article {
   @get({
     title: '文章列表',
@@ -39,14 +37,12 @@ export default class Article {
   @post({
     path: 'modify/:aid?',
     auth: true,
-    component: 'Article/ArticleModify'
   })
   modify() {}
 
   @post({
     path: 'update/:aid',
     auth: true,
-    component: 'Article/ArticleModify'
   })
   update() {}
 }

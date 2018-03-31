@@ -21,7 +21,8 @@ export default class Home {
   about () {}
 
   @get({
-    path: 'profile/:uid'
+    path: 'profile/:uid',
+    view: false
   })
   profile() {}
 

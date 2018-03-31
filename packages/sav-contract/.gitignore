@@ -58,3 +58,9 @@ typings/
 .env
 
 /package-lock.json
+/tmp
+/test/fixtures/interface-actions
+/test/fixtures/interface-contract
+/test/fixtures/suite-actions
+/test/fixtures/suite-contract
+/dist

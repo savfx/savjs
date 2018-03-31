@@ -1,87 +1,71 @@
-import program from 'commander'
+import {Command} from 'commander'
+import osLocale from 'os-locale'
 import {resolve} from 'path'
-import {loadInterface} from './loaders/interface.js'
+import {CommandContract} from './CommandContract.js'
 
-program
-  .version('$$VERSION$$')
-  .option('-a, --app [app]', 'input app name')
-  .option('-e, --example [example]', 'output simple example name')
-  .option('-i, --interface [interface]', 'input interface directory')
-  .option('-c, --contract [contract]', 'input contract directory')
-  .option('-d, --dest [dest]', 'dest dir, default .')
-  .option('-l, --lang [lang]', 'dest language, node|php, default node')
-
-  .option('-m, --modal [modal]', 'output modals, -m contract,action,sass,vue,rollup,package, default all')
-  .option('-S, --sassPage [sassPage]', 'sass page by modal|action|app', /^(modal|action|app)$/i, 'app')
-  .parse(process.argv)
-
-if (program.example) {
-  program.interface = 'interface'
-}
-
-let interfaceDir = 'interface' in program ? resolve(program.interface || '.', '') : false
-let contractDir = 'contract' in program ? resolve(program.contract || '.', '') : false
-
-if (!(interfaceDir || contractDir)) {
-  program.help()
-  process.exit(0)
-}
-
-if (!program.app) {
-  program.help()
-  process.exit(0)
-}
-
-let lang = (program.lang || 'node').split(',')
-
-const modalNames = 'contract,action,sass,vue,rollup,package'
-let dest = resolve('.', program.dest || '.')
-let modals = (program.modal || modalNames).split(',')
-
-let promise = Promise.resolve()
-
-if (interfaceDir) {
-  if (program.example) {
-    promise = writeExample(program.interface)
+function getProgram (locale) {
+  let program = (new Command()).version('$$VERSION$$')
+  if (locale === 'zh_CN') {
+    program
+      .option('-t, --type <type>', '命令类型 sync 同步(默认)|create 创建')
+      .option('-i, --interface [interface]', 'interface 输入目录')
+      .option('-c, --contract [contract]', 'contract 输入目录')
+      .option('-l, --langs [langs]', '目标语言, js,node,php')
+      .option('-C, --dest-contract [destContract]', 'contract 输出目录')
+      .option('-M, --dest-modals [destModals]', 'modals 输出目录')
+      .option('-F, --dest-front [destFront]', '前端项目输出目录')
+  } else {
+    program
+      .option('-t, --type <type>', 'command type sync(default)|create')
+      .option('-i, --interface [interface]', 'input interface directory')
+      .option('-c, --contract [contract]', 'input contract directory')
+      .option('-l, --langs [langs]', 'dest languages, js,node,php')
+      .option('-C, --dest-contract [destContract]', 'output contract directory')
+      .option('-M, --dest-modals [destModals]', 'output modals directory')
+      .option('-F, --dest-front [destFront]', 'output font-end projects directory')
   }
-  promise = promise.then(() => {
-    return loadInterface(interfaceDir)
-  })
-} else {
-  promise.then(() => {
-    program.require = require
-    return program.require(contractDir)
-  })
+  program.on('--help', function(){
+    console.log('  Examples:');
+    console.log();
+    console.log('  sav-cli -t sync -i ./interface -l js,node -C ./contract -M node-modals -P ./font-end-project');
+    console.log();
+  });
+  // .option('-a, --app [app]', 'input app name')
+  // .option('-e, --example [example]', 'output simple example name')
+
+  // .option('-m, --modal [modal]', 'output modals, -m contract,action,sass,vue,rollup,package, default all')
+  // .option('-S, --sassPage [sassPage]', 'sass page by modal|action|app', /^(modal|action|app)$/i, 'app')
+  return program.parse(process.argv)
 }
 
-promise.then((contract) => {
-  contract = convertFunctionToName(contract)
-  let mods = modalNames.split(',')
-  return Promise.all(modals.filter((name) => mods.indexOf(name) !== -1).map((name) => {
-    switch (name) {
-      case 'contract':
-        return writeContract(resolve(dest, './contract'), contract)
-      case 'action':
-        if (lang.indexOf('node') !== -1) {
-          return writeActions(resolve(dest, './actions'), contract.modals)
-        } else if (lang.indexOf('php') !== -1) {
-          return writePhpActions(resolve(dest, './actions'), contract.modals)
-        }
-        break
-      case 'sass':
-        return writeSass(resolve(dest, './sass'), contract.modals, {mode: program.sassPage})
-      case 'vue':
-        return writeVue(resolve(dest, './views'), contract.modals)
-      case 'rollup':
-        return writeRollup(resolve(dest, './scripts'))
-      case 'package':
-        return writePackage(dest, {
-          name: program.app
-        })
+osLocale().then(locale => {
+  let program = getProgram(locale)
+  let showHelp = () => {
+    program.help()
+    process.exit(0)
+  }
+  let ensure = (fields) => {
+    Array.isArray(fields) || (fields = [fields])
+    fields.forEach(it => {
+      if (!program[it]) {
+        showHelp()
+      }
+    })
+  }
+  let any = (fieldA, fieldB) => {
+    if (!(program[fieldA] || program[fieldB])) {
+      showHelp()
     }
-  }))
-}).then(() => console.log('done')).catch(err => {
-  console.error(err)
-  console.error()
-  process.exit(1)
-})
+  }
+  switch (program.type) {
+    case 'create':
+      break
+    default:
+      ensure(['langs'])
+      any('contract', 'interface')
+      any('destContract', 'destModals', 'destFront')
+      let cmd = new CommandContract()
+      cmd.execute(program)
+      break
+  }
+}); 

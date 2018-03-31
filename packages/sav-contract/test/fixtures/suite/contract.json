@@ -1,0 +1,269 @@
+{
+  "project": {
+    "id": "5a95704a34f4f51c689a99b9",
+    "name": "sdsd",
+    "version": "1.0.2",
+    "title": "sdsds",
+    "description": "000"
+  },
+  "fields": [
+    {
+      "id": "5a95708e34f4f51c689a99c5",
+      "name": "dsfef",
+      "title": "sfsdfsdf",
+      "type": "String"
+    },
+    {
+      "id": "5a95708e34f4f51c689a99c6",
+      "name": "fse",
+      "title": "fsfsfs",
+      "type": "String"
+    },
+    {
+      "id": "5a95709534f4f51c689a99c8",
+      "name": "dsf",
+      "title": "sefsfs",
+      "type": "String"
+    },
+    {
+      "id": "5a95709534f4f51c689a99c9",
+      "name": "fsf",
+      "title": "sefesfs",
+      "type": "String"
+    },
+    {
+      "id": "5a9570a234f4f51c689a99cb",
+      "name": "fes",
+      "title": "eefsfe",
+      "type": "String"
+    },
+    {
+      "id": "5a9570a234f4f51c689a99cc",
+      "name": "fsefe",
+      "title": "sfsfes",
+      "type": "5a95708134f4f51c689a99c3"
+    },
+    {
+      "id": "5a9570b434f4f51c689a99ce",
+      "name": "fse",
+      "title": "fsefes",
+      "type": "5a95709534f4f51c689a99ca"
+    },
+    {
+      "id": "5a9570b434f4f51c689a99cf",
+      "name": "fes",
+      "title": "fsefs",
+      "type": "5a95708134f4f51c689a99c3"
+    }
+  ],
+  "enums": [
+    {
+      "id": "5a95708134f4f51c689a99c3",
+      "name": "fsdfsdf",
+      "title": "fsed",
+      "enums": [
+        {
+          "key": "efs",
+          "value": "fes",
+          "title": "fsfes"
+        },
+        {
+          "key": "fes",
+          "value": "fsefs",
+          "title": "fesf"
+        }
+      ]
+    },
+    {
+      "id": "5a95708534f4f51c689a99c4",
+      "name": "fesfsfes",
+      "title": "fes",
+      "enums": [
+        {
+          "key": "fse",
+          "value": "fs",
+          "title": "fesfesf"
+        }
+      ]
+    }
+  ],
+  "lists": [
+    {
+      "id": "5a9570b934f4f51c689a99d1",
+      "name": "esfsf",
+      "title": "fsef",
+      "list": "Number"
+    },
+    {
+      "id": "5a9570bd34f4f51c689a99d2",
+      "name": "sefs",
+      "title": "fesf",
+      "list": "String"
+    },
+    {
+      "id": "5a9570c334f4f51c689a99d3",
+      "name": "fsf",
+      "title": "fes",
+      "list": "5a95708134f4f51c689a99c3"
+    },
+    {
+      "id": "5a9570cb34f4f51c689a99d4",
+      "name": "esfes",
+      "title": "fsef",
+      "list": "5a95709534f4f51c689a99ca"
+    }
+  ],
+  "structs": [
+    {
+      "id": "5a95708e34f4f51c689a99c7",
+      "name": "fesfs",
+      "title": "fse",
+      "props": [
+        "5a95708e34f4f51c689a99c5",
+        "5a95708e34f4f51c689a99c6"
+      ]
+    },
+    {
+      "id": "5a95709534f4f51c689a99ca",
+      "name": "fdsfesfse",
+      "title": "fsd",
+      "props": [
+        "5a95709534f4f51c689a99c8",
+        "5a95709534f4f51c689a99c9"
+      ]
+    },
+    {
+      "id": "5a9570a234f4f51c689a99cd",
+      "name": "esefs",
+      "title": "fsef",
+      "props": [
+        "5a9570a234f4f51c689a99cb",
+        "5a9570a234f4f51c689a99cc"
+      ]
+    },
+    {
+      "id": "5a9570b434f4f51c689a99d0",
+      "name": "efsefs",
+      "title": "fes",
+      "props": [
+        "5a9570b434f4f51c689a99ce",
+        "5a9570b434f4f51c689a99cf"
+      ]
+    }
+  ],
+  "schemas": [
+    {
+      "id": "5a9570d034f4f51c689a99d5",
+      "name": "ReqDsdsdFsfs",
+      "title": "dsds-fesfes-请求",
+      "refer": "5a95708e34f4f51c689a99c7",
+      "flow": 1,
+      "state": {
+        "dsfef": "",
+        "fse": ""
+      }
+    },
+    {
+      "id": "5a9570d334f4f51c689a99d6",
+      "name": "ReqDsdsdDsfsdf",
+      "title": "dsds-fdsf-请求",
+      "refer": "5a95709534f4f51c689a99ca",
+      "flow": 1
+    },
+    {
+      "id": "5a9570d734f4f51c689a99d7",
+      "name": "ReqSdfsdfSefesf",
+      "title": "fdsf-fesf-请求",
+      "refer": "5a9570a234f4f51c689a99cd",
+      "flow": 1
+    },
+    {
+      "id": "5a9570da34f4f51c689a99d8",
+      "name": "ResDsdsdFsfs",
+      "title": "dsds-fesfes-响应",
+      "refer": "5a9570a234f4f51c689a99cd",
+      "flow": 2
+    },
+    {
+      "id": "5a9570dd34f4f51c689a99d9",
+      "name": "ResDsdsdDsfsdf",
+      "title": "dsds-fdsf-响应",
+      "refer": "5a95709534f4f51c689a99ca",
+      "flow": 2
+    },
+    {
+      "id": "5a9570e034f4f51c689a99da",
+      "name": "ResSdfsdfSefesf",
+      "title": "fdsf-fesf-响应",
+      "refer": "5a9570b434f4f51c689a99d0",
+      "flow": 2
+    }
+  ],
+  "modals": [
+    {
+      "id": "5a95705434f4f51c689a99ba",
+      "name": "Dsdsd",
+      "title": "dsds",
+      "auth": true
+    },
+    {
+      "id": "5a95705734f4f51c689a99bb",
+      "name": "Sdfsdf",
+      "title": "fdsf",
+      "auth": true
+    }
+  ],
+  "pages": [
+    {
+      "id": "5a95705b34f4f51c689a99bc",
+      "modal": "5a95705434f4f51c689a99ba",
+      "name": "Sfesf",
+      "title": "fesfse",
+      "method": "GET",
+      "view": true,
+      "path": "sfesffesfsefs/:sdsds",
+      "component": "fdsfdsf"
+    },
+    {
+      "id": "5a95705f34f4f51c689a99bd",
+      "modal": "5a95705734f4f51c689a99bb",
+      "name": "Fdsfsf",
+      "title": "dfs",
+      "method": "GET",
+      "view": true
+    }
+  ],
+  "actions": [
+    {
+      "id": "5a95706c34f4f51c689a99c0",
+      "modal": "5a95705434f4f51c689a99ba",
+      "name": "Fsfs",
+      "title": "fesfes",
+      "method": "GET",
+      "api": true,
+      "path": "ssds/:fsfs",
+      "request": "5a9570d034f4f51c689a99d5",
+      "response": "5a9570da34f4f51c689a99d8"
+    },
+    {
+      "id": "5a95706f34f4f51c689a99c1",
+      "modal": "5a95705434f4f51c689a99ba",
+      "name": "Dsfsdf",
+      "title": "fdsf",
+      "method": "GET",
+      "api": true,
+      "request": "5a9570d334f4f51c689a99d6",
+      "response": "5a9570dd34f4f51c689a99d9"
+    },
+    {
+      "id": "5a95707434f4f51c689a99c2",
+      "modal": "5a95705734f4f51c689a99bb",
+      "name": "Sefesf",
+      "title": "fesf",
+      "method": "POST",
+      "api": true,
+      "request": "5a9570d734f4f51c689a99d7",
+      "response": "5a9570e034f4f51c689a99da"
+    }
+  ]
+}
