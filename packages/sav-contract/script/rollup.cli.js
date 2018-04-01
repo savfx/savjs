@@ -4,7 +4,7 @@ import commonjs from 'rollup-plugin-commonjs'
 import includePaths from 'rollup-plugin-includepaths'
 import json from 'rollup-plugin-json'
 import re from 'rollup-plugin-re'
-import fs from 'fs-extra'
+import fse from 'fs-extra'
 const pkg = require('../package.json')
 
 export default {
@@ -58,11 +58,12 @@ export default {
           .replace(/path__default/g, 'path')
           .replace(/path\$1__default/g, `require('path')`)
           .replace('$$VERSION$$', pkg.version)
-        fs.copy(require.resolve('babel-standalone'), 'dist/babel-standalone.js', err => {
+          .replace('PROJECT_ROOT', `require('path').dirname(__dirname)`)
+        fse.copy(require.resolve('babel-standalone'), 'dist/babel-standalone.js', err => {
           if (err) return console.error(err)
           console.log('copy babel-standalone')
         })
-        fs.copy(require.resolve('acorn'), 'dist/acorn.js', err => {
+        fse.copy(require.resolve('acorn'), 'dist/acorn.js', err => {
           if (err) return console.error(err)
           console.log('copy acorn')
         })
