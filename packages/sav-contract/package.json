@@ -4,7 +4,7 @@
   "description": "sav contract tools",
   "scripts": {
     "build": "rollup -c script/rollup.cli.js",
-    "tmp": "node dist/sav-cli.js -i test/fixtures/interface -l js,node,php -C ./tmp/contract -M ./tmp/modals -F ./tmp/front",
+    "tmp": "node dist/contract.js -i test/fixtures/interface -l js,node,php -C ./tmp/contract -M ./tmp/modals -F ./tmp/front -S modal",
     "lint": "standard src/** test/**",
     "fix": "standard src/** test/** --fix",
     "t": "ava ./test/specs/interfaceLoader.js --no-color",

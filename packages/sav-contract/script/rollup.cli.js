@@ -10,7 +10,7 @@ const pkg = require('../package.json')
 export default {
   input: 'src/index.js',
   output: [
-    { file: 'dist/sav-cli.js', format: 'cjs' }
+    { file: 'dist/contract.js', format: 'cjs' }
   ],
   external: [
     'babel-standalone',

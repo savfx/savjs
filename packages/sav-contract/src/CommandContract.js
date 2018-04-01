@@ -61,7 +61,7 @@ export class CommandContract extends Contract {
     }
     if (destFront) {
       destFront = path.resolve(destFront)
-      await updateFront(destFront, modals)
+      await updateFront(destFront, modals, params)
     }
   }
 

@@ -8,13 +8,18 @@ import {noticeString, ensureDir, outputFile,
   inputFile, pathExists, getFrontRoutes} from '../utils/util.js'
 import {pascalCase, hyphenCase, camelCase, prop, isString} from 'sav-util'
 
-export async function updateFront (dir, modals) {
+export async function updateFront (dir, modals, opts = {}) {
   await ensureDir(dir)
+  let views = path.join(dir, 'views')
+  await ensureDir(views)
   let args = await Promise.all(modals.map((modal) => {
-    return writeVueFile(dir, modal.name, modal, modal.routes)
+    return writeVueFile(views, modal.name, modal, modal.routes)
   }))
   args = args.filter(it => !!it)
-  await writeVueRouter(dir, args)
+  await writeVueRouter(views, args)
+  let sassDir = path.join(dir, 'sass')
+  await ensureDir(sassDir)
+  await writeSassFiles(sassDir, args, opts)
 }
 
 async function writeVueRouter (dir, components) {
@@ -58,6 +63,8 @@ const vueTemplate = `<template>
     getters: [
     ],
     actions: [
+    ],
+    payload: [
     ]
   }
 </script>
@@ -119,4 +126,36 @@ async function writeVueFile (dir, modalName, modal, routes) {
   }
   prop(modalComponent, 'files', files)
   return modalComponent
+}
+
+async function writeSassFiles (dir, components, opts) {
+  let allText = ''
+  if (opts.sassMode === 'modal') {
+    allText = '@import _all.sass'
+    let files = await components.reduce((ret, b) => {
+      return ret.then(async (res) => {
+        let name = hyphenCase(b.component)
+        let pagePath = path.join(dir, `_${name}.sass`)
+        if (!await pathExists(pagePath)) {
+          await outputFile(pagePath, `${noticeString}// ${b.component}`)
+        }
+        res.push(name)
+        return res
+      })
+    }, Promise.resolve([]))
+    let pageText = `${noticeString}${files.map(it => `@import '${it}'`).join('\n')}`
+    let allSass = path.resolve(dir, `_all.sass`)
+    if (await pathExists(allSass)) {
+      let oldText = await inputFile(allSass)
+      if (oldText.toString() !== pageText) {
+        await outputFile(allSass, pageText)
+      }
+    } else {
+      await outputFile(allSass, pageText)
+    }
+  }
+  let appFile = path.resolve(dir, `app.sass`)
+  if (!await pathExists(appFile)) {
+    await outputFile(appFile, `${noticeString}${allText}`)
+  }
 }

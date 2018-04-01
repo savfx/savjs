@@ -14,6 +14,7 @@ function getProgram (locale) {
       .option('-C, --dest-contract [destContract]', 'contract 输出目录')
       .option('-M, --dest-modals [destModals]', 'modals 输出目录')
       .option('-F, --dest-front [destFront]', '前端项目输出目录')
+      .option('-S, --sassMode [sassMode]', 'sass 组织方式 app(单个)|modal(模块)', /^(app|modal)$/i, 'app')
   } else {
     program
       .option('-t, --type <type>', 'command type sync(default)|create')
@@ -23,18 +24,19 @@ function getProgram (locale) {
       .option('-C, --dest-contract [destContract]', 'output contract directory')
       .option('-M, --dest-modals [destModals]', 'output modals directory')
       .option('-F, --dest-front [destFront]', 'output font-end projects directory')
+      .option('-S, --sassMode [sassMode]', 'sass mode with app|modal', /^(app|modal)$/i, 'app')
   }
   program.on('--help', function(){
     console.log('  Examples:');
     console.log();
-    console.log('  sav-cli -t sync -i ./interface -l js,node -C ./contract -M node-modals -P ./font-end-project');
+    if (locale === 'zh_CN') {
+      console.log('  载入interface目录合约, 输出js和node标准合约到contract, 同步node方法, 同步前端路由组件及样式');
+    }
+    console.log('  contract -i ./interface -l js,node -C ./contract -M modals -P ./front');
     console.log();
   });
   // .option('-a, --app [app]', 'input app name')
   // .option('-e, --example [example]', 'output simple example name')
-
-  // .option('-m, --modal [modal]', 'output modals, -m contract,action,sass,vue,rollup,package, default all')
-  // .option('-S, --sassPage [sassPage]', 'sass page by modal|action|app', /^(modal|action|app)$/i, 'app')
   return program.parse(process.argv)
 }
 
@@ -65,7 +67,9 @@ osLocale().then(locale => {
       any('contract', 'interface')
       any('destContract', 'destModals', 'destFront')
       let cmd = new CommandContract()
-      cmd.execute(program)
+      cmd.execute(program).then(() => {
+        console.log('success')
+      })
       break
   }
-}); 
+});

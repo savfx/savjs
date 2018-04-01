@@ -1,0 +1,19 @@
+{
+  "name": "ProjectName",
+  "scripts": {
+    "build-sass": "stdx ./script/build-sass.js",
+    "build-client": "rollup -c ./script/build-client.js",
+    "build": "run-p build-sass build-client",
+    "dev-sass": "watch -p \"sass/**\" -c \"npm run build-sass\"",
+    "dev-client": "npm run build-client -- -w",
+    "dev-serve": "hs ./static",
+    "dev": "run-p dev-sass dev-client dev-serve",
+    "build-prod": "cross-env NODE_ENV=production npm run build"
+  },
+  "devDependencies": {
+    "sav-flux": "^0.0.24",
+    "vue": "^2.5.16",
+    "vue-router": "^3.0.1",
+    "vue-template-compiler": "^2.5.16"
+  }
+}

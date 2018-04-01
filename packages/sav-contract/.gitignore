@@ -57,7 +57,7 @@ typings/
 # dotenv environment variables file
 .env
 
-/package-lock.json
+package-lock.json
 /tmp
 /test/fixtures/interface-actions
 /test/fixtures/interface-contract
