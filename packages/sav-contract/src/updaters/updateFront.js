@@ -4,7 +4,7 @@
 
 import path from 'path'
 import JSON5 from 'json5'
-import {noticeString, ensureDir, outputFile, 
+import {noticeString, ensureDir, outputFile,
   inputFile, pathExists, getFrontRoutes} from '../utils/util.js'
 import {pascalCase, hyphenCase, camelCase, prop, isString} from 'sav-util'
 

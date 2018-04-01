@@ -31,7 +31,7 @@ export class CommandContract extends Contract {
     } else if (params.contract) {
       data = await loadContract(params.interface)
     } else {
-      throw new Error("interface or contract required")
+      throw new Error('interface or contract required')
     }
     this.load(data)
 
@@ -39,23 +39,23 @@ export class CommandContract extends Contract {
     let {destContract, destModals, destFront} = params
     if (destContract) {
       destContract = path.resolve(destContract)
-      if (langs.indexOf('node') !== -1) {// node后端
+      if (langs.indexOf('node') !== -1) { // node后端
         await writeContract(path.join(destContract, 'node'), this)
       }
       if (langs.indexOf('js') !== -1) { // js 前端
         await writeContract(path.join(destContract, 'js'), this, {js: true})
       }
-      if (langs.indexOf('php') !== -1) {// php后端
+      if (langs.indexOf('php') !== -1) { // php后端
         await writePhpContract(path.join(destContract, 'php'), this)
       }
     }
     let modals = this.getContractModals()
     if (destModals) {
       destModals = path.resolve(destModals)
-      if (langs.indexOf('node') !== -1) {// node后端
+      if (langs.indexOf('node') !== -1) { // node后端
         await updateNodeActions(destModals, modals)
       }
-      if (langs.indexOf('php') !== -1) {// php后端
+      if (langs.indexOf('php') !== -1) { // php后端
         await updatePhpActions(destModals, modals)
       }
     }

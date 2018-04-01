@@ -23,17 +23,12 @@ export async function loadInterface (dir) {
 
   let schemasDir = path.join(dir, 'schemas')
   if (await pathExists(schemasDir)) {
-    let schemaData = await loadModule('schemas', schemasDir)
-    let schemas = []
-    for (let groupName in schemaData) {
-      let schemaGroup = schemaData[groupName]
-      schemas = schemas.concat(Object.keys(schemaGroup).map(name => {
-        let item = schemaGroup[name]
-        item.name = name
-        return item
-      }))
-    }
-    res.schemas = schemas
+    let schemaData = await loadModule('schemas', schemasDir, {merge: true})
+    res.schemas = Object.keys(schemaData).map(name => {
+      let item = schemaData[name]
+      item.name = name
+      return item
+    })
   }
 
   let mocksDir = path.join(dir, 'mocks')
@@ -77,7 +72,8 @@ export async function loadInterface (dir) {
 
 let excludeFiles = ['index.js']
 
-async function loadModule (name, dir) {
+async function loadModule (name, dir, opts = {}) {
+  let {merge} = opts
   let ret = await readDir(dir).then((dirs) => {
     let files = dirs.filter((it) => excludeFiles.indexOf(it) === -1 && path.extname(it) === '.js')
     return Promise.all(files.map((fileName) => {
@@ -87,9 +83,12 @@ async function loadModule (name, dir) {
         }
         return [path.basename(fileName, '.js'), data]
       })
-    })).then((args) => args.reduce((a, b) => {
-      a[b[0]] = b[1]
-      return a
+    })).then((args) => args.reduce((ret, [name, data]) => {
+      if (merge) {
+        return Object.assign(ret, data)
+      }
+      ret[name] = data
+      return ret
     }, {}))
   })
   return ret

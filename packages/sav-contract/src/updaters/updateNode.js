@@ -13,7 +13,7 @@ const acornParse = acorn.parse
 
 export async function updateNodeActions (dir, modals) {
   await ensureDir(dir)
-  await Promise.all(modals.map((modal) => 
+  await Promise.all(modals.map((modal) =>
     syncNodeAction(dir, modal.name, modal)))
   await updateIndex(dir)
 }

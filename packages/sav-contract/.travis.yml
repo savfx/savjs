@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+- stable
+deploy:
+  provider: npm
+  email: 86287344@qq.com
+  skip_cleanup: true
+  api_key:
+    secure: sFKjfqaTva8Lk4X+kvoJAWDjQxkKP5st7d5W2f/Y0zXj1sFsCQQXNM2TaFs6aOnnmRjdvj69OSyIwfGp/k/Ak+dsImp+70PoFwFF/Hc8RpJxrQEsRdDyWMiNuz3UeGJaXy2adNnLK4tqd5c3yz90lDyewuEeoTeguEsjHpikQ2Y49J+jUB/fV7qsyRe/MRE+TM6knxYivBlb7iGsR5uHinn2sU6mfygFL0dlUFCZa/wzSMgQDug9qgT3zI0l6HJfpMk1dRFc/1NtsMgvOW5AbE9TVW569F6WOVLC+DOURvLtCXVE5HZqkBR4rPAlkyxi5EouhJx/xXdsnGVfCJP/89uHWkSsBV60PyTDWf6QSSZJx11MpCQUWnnvE8e3GcfmLCzukCdHDjuPOLYB88dl1HztVy7+vO5hstwYXnVN2otphbQ0NxnJPqw582wGqQwVhu4f9BcNNY1orc2fMMjsM0fR5lR6BrNGMw6gNeTd2pd4rY1O35DWTViKkVgIJGa4IFIooWmI0ZyoUIw8iQiau0TK/dMuf+8zkQ5WWSGp7RgY+oWX+xwxGsKfjdOQ7W4iE50g+GgFaqez20ggUWPnBs6gIvAwqCxyE+R/wuziRjJAsi7sAtopSDackyzma7WZcyxYg+NTVPW7sX9RRrkdgCemkZ4inkNHWOf+3a8TuXI=
+before_script:
+- npm install stdx
+script:
+- npm run lint
+- npm run build

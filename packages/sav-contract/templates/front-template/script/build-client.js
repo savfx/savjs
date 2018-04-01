@@ -5,7 +5,7 @@ import commonjs from 'rollup-plugin-commonjs'
 import re from 'rollup-plugin-re'
 import json from 'rollup-plugin-json'
 import uglify from 'rollup-plugin-uglify'
-import fse from 'fs-extra'
+import fs from 'fs'
 import path from 'path'
 
 const IS_DEV = process.env.NODE_ENV !== 'production'
@@ -14,7 +14,7 @@ export default {
   input: 'views/client-entry.js',
   output: {
     format: 'umd',
-    name: 'ProjectName',
+    name: 'HelloWorld',
     file: `static/js/client-entry.js`,
     globals: {
       'vue': 'Vue',
@@ -30,8 +30,21 @@ export default {
 
 let min = IS_DEV ? '' : '.min'
 
-fse.copy(require.resolve(`vue/dist/vue${min}.js`), 'static/js/vue.js')
-fse.copy(require.resolve(`vue-router/dist/vue-router${min}.js`), 'static/js/vue-router.js')
+function copyFile (src, dist) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(src, (err ,buf) => {
+      fs.writeFile(dist, buf, (err) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve()
+      })
+    })
+  })
+}
+
+copyFile(require.resolve(`vue/dist/vue${min}.js`), 'static/js/vue.js')
+copyFile(require.resolve(`vue-router/dist/vue-router${min}.js`), 'static/js/vue-router.js')
 
 const resolves = ['vue']
 

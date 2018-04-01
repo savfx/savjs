@@ -15,7 +15,7 @@ let parser = new PhpParser({
 export async function updatePhpActions (dir, modals, opts = {}) {
   modals = modals.filter(it => !it.view)
   await ensureDir(dir)
-  await Promise.all(modals.map((modal) => 
+  await Promise.all(modals.map((modal) =>
     syncPhpAction(dir, modal.name, modal, opts)))
 }
 
@@ -53,8 +53,8 @@ function createClassModule (className, methods, opts) {
   }
   methods = methods.map((method) => {
     return `
-  public function ${method}(${args||''}) {
-${body||''}
+  public function ${method}(${args || ''}) {
+${body || ''}
   }`
   }).join('').trim()
   return `${opts.namespace || ''}
@@ -92,8 +92,8 @@ function parseClassModule (str, className) {
       continue
     }
     let methods = target.body
-    .filter((it) => it.kind === 'method' && it.visibility === 'public' && it.isStatic === false)
-    .map((it) => it.name)
+      .filter((it) => it.kind === 'method' && it.visibility === 'public' && it.isStatic === false)
+      .map((it) => it.name)
     let start = target.loc.start.offset
     let end = target.loc.end.offset - 1
     return {
