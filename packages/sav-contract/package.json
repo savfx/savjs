@@ -1,6 +1,6 @@
 {
   "name": "sav-contract",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "sav contract tools",
   "main": "dist/sav-contract.cjs.js",
   "module": "dist/sav-contract.es.js",
