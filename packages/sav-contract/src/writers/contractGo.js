@@ -125,6 +125,19 @@ function convertEnum (input) {
   let ret = input.enums.map(it => {
     return `var ${pascalCase(it.key)} = ${it.value} // ${it.title}`
   })
+  /*
+    type SexType int
+    type SexEnum struct {
+      Male SexType
+      Female SexType
+    }
+    var Sex = SexEnum{1, 2}
+
+    schema.bindEnum(&Sex, &SexType, `{enums: }`)
+
+
+   */
+  // 
   return ret
 }
 
