@@ -4,6 +4,7 @@ import {loadInterface} from '../../src/loaders/interface.js'
 import {loadContract} from '../../src/loaders/contract.js'
 import {writeContract} from '../../src/writers/contract.js'
 import {writePhpContract} from '../../src/writers/contractPhp.js'
+import {writeGoContract} from '../../src/writers/contractGo.js'
 import {CommandContract} from '../../src/CommandContract.js'
 import {updatePhpActions} from '../../src/updaters/updatePhp.js'
 import {updateNodeActions} from '../../src/updaters/updateNode.js'
@@ -52,6 +53,8 @@ test('loadInterface', async (ava) => {
 
   expect(outputPhp3).to.eql(outputPhp2)
   expect(outputPhp3).to.eql(outputPhp)
+
+  let outputGo = await writeGoContract(dist, cmd)
 
   let actionPath = path.resolve(__dirname, '../fixtures/interface-actions')
   let modals = cmd.getContractModals()

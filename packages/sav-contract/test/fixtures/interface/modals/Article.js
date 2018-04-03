@@ -10,7 +10,10 @@ export default class Article {
         ArticleItem: {
           props: {
             id: 'Number',
-            title: 'String',
+            title: {
+              type: 'String',
+              title: '标题',
+            },
             content: 'String'
           }
         }
