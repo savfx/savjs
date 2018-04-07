@@ -99,3 +99,12 @@ export function formatDate (fmt, date) {
 export function ObjectValues (obj) {
   return Object.keys(obj).map(i => obj[i])
 }
+
+export function testAssign (tar, src) {
+  for (let key in src) {
+    if (!(key in tar)) {
+      tar[key] = src[key]
+    }
+  }
+  return tar
+}
