@@ -100,10 +100,17 @@ export function ObjectValues (obj) {
   return Object.keys(obj).map(i => obj[i])
 }
 
-export function testAssign (tar, src) {
+export function testAssign (tar, src, ensures) {
   for (let key in src) {
     if (!(key in tar)) {
       tar[key] = src[key]
+    }
+  }
+  if (ensures) {
+    for(let key in ensures) {
+      if (!tar[key]) {
+        throw new Error(ensures[key])
+      }
     }
   }
   return tar
