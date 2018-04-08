@@ -7,7 +7,7 @@ import {crc32, testAssign, bindEvent, prop, isArray, isObject, isFunction, pasca
 export class Contract {
   constructor (opts = {}) {
     this.opts = testAssign(opts, {
-      mockState: false,
+      enableMock: false, // 是否开启mock
       mockFlow: false,
       strict: true
     })
@@ -42,7 +42,7 @@ export class Contract {
         if (mock.req) { // 不处理req, 只处理res
           return
         }
-        let name = mock.modalName + mock.actionName
+        let name = pascalCase(mock.modalName + '_' + mock.actionName)
         let datas = this.mocks[name] || (this.mocks[name] = [])
         datas.push(mock)
       })
@@ -67,18 +67,19 @@ export class Contract {
    * }
    * @param  {Object} vueRoute 当前vue路由
    */
-  resolvePayload (payload, vueRoute) {
+  resolvePayload (payload, {params, query} = {}) {
     let savRoute = this.routes[payload.name]
     let schema = this.schema.getSchema(payload.name)
     if (savRoute) {
       if (payload.merge) {
-        payload.params = Object.assign({}, vueRoute.params, payload.params)
-        payload.query = Object.assign({}, vueRoute.query, payload.query)
+        payload.params = Object.assign({}, params, payload.params)
+        payload.query = Object.assign({}, query, payload.query)
       }
       prop(payload, 'route', savRoute)
       prop(payload, 'contract', this)
       return payload
-    } else if (schema) {
+    }
+    if (schema) {
       let stateName = schema.opts.stateName || payload.name
       let stateData
       if (schema.schemaType === Schema.SCHEMA_ENUM) {
@@ -86,7 +87,7 @@ export class Contract {
       } else {
         stateData = schema.create(Object.assign({}, schema.opts.state))
         if (payload.merge) {
-          Object.assign(stateData, vueRoute.params, vueRoute.query)
+          Object.assign(stateData, params, query)
         }
       }
       payload.state = {
@@ -170,11 +171,11 @@ export class Contract {
     let {route} = payload
     payload.url = route.compile(payload.params)
     payload.input = Object.assign({}, payload.params, payload.query, payload.data)
-    let ttl = this.opts.noCache ? null : payload.ttl || (route.action.ttl)
+    let ttl = this.opts.noCache ? null : payload.ttl || (route.opts.ttl)
     let cacheKey = ttl ? getCacheKey(payload) : null
     let cacheVal = cacheKey ? this.cache.get(cacheKey, ttl) : null
     if (!cacheVal) {
-      let reqStruct = schema.getSchema(route.request)
+      let reqStruct = schema.getSchema(route.request || `Req${route.name}`)
       if (reqStruct) {
         try {
           payload.input = reqStruct.extract(payload.input)
@@ -185,7 +186,8 @@ export class Contract {
       }
       payload.method = route.method
       let output = await this.fetch(payload)
-      let resStruct = schema.getSchema(route.response)
+      let schemaName = route.response || `Res${route.name}`
+      let resStruct = schema.getSchema(schemaName)
       let cache
       if (resStruct) {
         resStruct.check(output)
@@ -196,7 +198,7 @@ export class Contract {
       }
       payload.output = output
       if (cacheKey) {
-        this.cache.set(cacheKey, ttl, cache || route.response, output)
+        this.cache.set(cacheKey, ttl, cache || schemaName, output)
       }
     } else {
       payload.output = cacheVal
@@ -204,7 +206,7 @@ export class Contract {
     return mapPayloadState(payload)
   }
   fetch (payload) {
-    if (this.opts.mockState) {
+    if (this.opts.enableMock) {
       let mocks = this.mocks[payload.route.name]
       if (mocks && mocks.length) {
         if (this.opts.mockFlow) {
@@ -263,8 +265,8 @@ function mapPayloadState (payload) {
   let {route, output} = payload
   let ret
   if (isObject(output)) {
-    ret = mapping(payload, output) || mapping(route.action, output) || output
-    let {resState} = route.action
+    ret = mapping(payload, output) || mapping(route.opts, output) || output
+    let {resState} = route.opts
     let name = resState || route.response
     if ((resState !== false) && name) {
       return {[`${name}`]: ret}

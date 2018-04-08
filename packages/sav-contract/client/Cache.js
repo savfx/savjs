@@ -4,18 +4,17 @@
 export class Cache {
   constructor () {
     this.count = 0
+    this.caches = {}
   }
-  get (key, ttl) {
+  get (key) {
     let val = this.caches[key]
     if (val) {
-      if (ttl < 0) {
-        return JSON.parse(val.value)
-      }
       let now = +new Date()
-      if (now < val.now + ttl * 1000) {
+      if (now < val.now + val.ttl * 1000) {
         return JSON.parse(val.value)
       }
       delete this.caches[key]
+      this.count--
     }
   }
   set (key, ttl, name, value) {
@@ -36,7 +35,8 @@ export class Cache {
   }
   removeByName (name) {
     let it
-    for (let cacheKey in this.caches) {
+    let cacheKey
+    for (cacheKey in this.caches) {
       it = this.caches[cacheKey]
       if (it.name === name) {
         delete this.caches[cacheKey]
