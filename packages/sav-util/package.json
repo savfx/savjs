@@ -1,6 +1,6 @@
 {
   "name": "sav-util",
-  "version": "1.0.30",
+  "version": "1.0.31",
   "description": "util library for savjs",
   "main": "dist/sav-util.cjs.js",
   "module": "dist/sav-util.es.js",
@@ -13,7 +13,7 @@
     "na": "nyc ava ./test",
     "pretest": "npm run lint",
     "test": "npm run na",
-    "t": "ava ./test/crc32.js",
+    "t": "ava ./test/tmpl.js",
     "prepare": "npm run build"
   },
   "repository": {
