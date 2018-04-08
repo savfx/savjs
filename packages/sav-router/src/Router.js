@@ -102,10 +102,12 @@ export class Router {
       path = modal.path + '/' + opts.path
     }
     route.path = normalPath(path)
-    route.regexp = pathToRegexp(route.path, route.keys, {
+    let pathOpts = {
       sensitive: this.opts.sensitive,
       end: true
-    })
+    }
+    route.regexp = pathToRegexp(route.path, route.keys, pathOpts)
+    route.compile = pathToRegexp.compile(route.path, pathOpts)
     normalKeys(route)
     route.isAbsolute = isAbsolute
     if (isAbsolute) {
