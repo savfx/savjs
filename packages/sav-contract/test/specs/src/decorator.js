@@ -1,7 +1,7 @@
 import test from 'ava'
 import {expect} from 'chai'
 
-import {Modal, get, post, head, put, patch, del} from '../../src/utils/decorator.js'
+import {Modal, get, post, head, put, patch, del} from '../../../src/utils/decorator.js'
 
 test('decorator.api', (ava) => {
   expect(Modal).to.be.a('function')

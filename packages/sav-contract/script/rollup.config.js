@@ -1,41 +1,39 @@
 import babel from 'rollup-plugin-babel'
 import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
-import includePaths from 'rollup-plugin-includepaths'
 import json from 'rollup-plugin-json'
-import re from 'rollup-plugin-re'
-import fse from 'fs-extra'
-const pkg = require('../package.json')
 
 export default {
-  input: 'src/Contract.js',
+  input: 'client/index.js',
   output: [
-    { file: 'dist/sav-contract.cjs.js', format: 'cjs' },
-    { file: 'dist/sav-contract.es.js', format: 'es' },
+    { file: 'dist/sav-contract.js', format: 'cjs'},
   ],
   external: [
+    'sav-util',
     'sav-router',
     'sav-schema',
-    'sav-util',
   ],
   plugins: [
+    json({
+      preferConst: false // Default: false
+    }),
+    resolve({
+      "jsnext:main": false,
+      module: false,
+      main: true
+    }),
     babel({
       babelrc: false,
       externalHelpers: false,
-      exclude: ['node_modules/**'],
+      // exclude: ['node_modules/**'],
+      exclude: [],
+      include: ['node_modules/**'],
       plugins: [
+        'transform-decorators-legacy',
+        ['transform-object-rest-spread', { 'useBuiltIns': true }]
       ]
     }),
-    resolve({
-      main: true
-    }),
-    commonjs({
-      include: [
-        'node_modules/**',
-        'src/**',
-        process.env.ENTRYMODULE + '/**',
-      ]
-    })
+    commonjs({})
   ],
   onwarn (err) {
     if (err) {

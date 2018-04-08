@@ -1,11 +1,20 @@
 /**
  * 生成 contract 目录的内容
  */
-import path from 'path'
-import {noticeString, ensureDir, outputFile,
-  getBackRoutes} from '../utils/util.js'
-import jsonar from 'jsonar'
-import {isString, isArray, isObject, convertCase, pascalCase, camelCase} from 'sav-util'
+// import path from 'path'
+import {
+  // noticeString,
+  // outputFile,
+  // getBackRoutes,
+  ensureDir
+} from '../utils/util.js'
+// import jsonar from 'jsonar'
+import {
+  // convertCase,
+  pascalCase,
+  // camelCase
+  isString, isArray, isObject
+} from 'sav-util'
 
 /**
  * 写入contract
@@ -23,7 +32,7 @@ export async function writeGoContract (dir, contract, opts = {}) {
     await ensureDir(dir)
   }
 
-  let {mocks, project} = contract
+  // let {mocks, project} = contract
   // let mockData
   // if (mocks) {
   //   let mockFile = path.join(dir, `mocks.php`)
@@ -69,7 +78,7 @@ export async function writeGoContract (dir, contract, opts = {}) {
   let schemaData = schemas.map(it => {
     let ret
     if (it.list) {
-      ret = convertList(it)      
+      ret = convertList(it)
     } else if (it.refer) {
       ret = convertRefer(it)
     } else if (it.props) {
@@ -135,9 +144,8 @@ function convertEnum (input) {
 
     schema.bindEnum(&Sex, &SexType, `{enums: }`)
 
-
    */
-  // 
+  //
   return ret
 }
 
@@ -157,7 +165,7 @@ const typeMaps = {
   Int32: 'int32',
   UInt32: 'uint32',
   Integer: 'int64',
-  
-  Long: 'int64',
+
+  Long: 'int64'
 
 }

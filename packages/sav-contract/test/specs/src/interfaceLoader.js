@@ -1,13 +1,13 @@
 import test from 'ava'
 import {expect} from 'chai'
-import {loadInterface} from '../../src/loaders/interface.js'
-import {loadContract} from '../../src/loaders/contract.js'
-import {writeContract} from '../../src/writers/contract.js'
-import {writePhpContract} from '../../src/writers/contractPhp.js'
-import {writeGoContract} from '../../src/writers/contractGo.js'
-import {CommandContract} from '../../src/CommandContract.js'
-import {updatePhpActions} from '../../src/updaters/updatePhp.js'
-import {updateNodeActions} from '../../src/updaters/updateNode.js'
+import {loadInterface} from '../../../src/loaders/interface.js'
+import {loadContract} from '../../../src/loaders/contract.js'
+import {writeContract} from '../../../src/writers/contract.js'
+import {writePhpContract} from '../../../src/writers/contractPhp.js'
+import {writeGoContract} from '../../../src/writers/contractGo.js'
+import {CommandContract} from '../../../src/CommandContract.js'
+import {updatePhpActions} from '../../../src/updaters/updatePhp.js'
+import {updateNodeActions} from '../../../src/updaters/updateNode.js'
 import path from 'path'
 // import fs from 'fs'
 
@@ -15,8 +15,9 @@ test('loadInterface', async (ava) => {
   expect(loadInterface).to.be.a('function')
   expect(loadContract).to.be.a('function')
   expect(writeContract).to.be.a('function')
+  expect(writeGoContract).to.be.a('function')
   let contract = await loadInterface(path.resolve(__dirname,
-    '../fixtures/interface'))
+    '../../fixtures/interface'))
   expect(contract.project).to.be.a('object')
   expect(contract.modals).to.be.a('object')
   expect(contract.schemas).to.be.a('array')
@@ -25,7 +26,7 @@ test('loadInterface', async (ava) => {
   let cmd = new CommandContract()
   cmd.load(contract)
 
-  let dist = path.resolve(__dirname, '../fixtures/interface-contract')
+  let dist = path.resolve(__dirname, '../../fixtures/interface-contract')
   await writeContract(dist, cmd)
 
   let output = await writeContract(dist, cmd, {mem: true})
@@ -54,9 +55,9 @@ test('loadInterface', async (ava) => {
   expect(outputPhp3).to.eql(outputPhp2)
   expect(outputPhp3).to.eql(outputPhp)
 
-  let outputGo = await writeGoContract(dist, cmd)
+  // let outputGo = await writeGoContract(dist, cmd)
 
-  let actionPath = path.resolve(__dirname, '../fixtures/interface-actions')
+  let actionPath = path.resolve(__dirname, '../../fixtures/interface-actions')
   let modals = cmd.getContractModals()
   await updatePhpActions(actionPath, modals)
   await updateNodeActions(actionPath, modals)

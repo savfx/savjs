@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "sav-flux": "^0.0.24",
+    "sav-util": "^1.0.30",
     "vue-router": "^3.0.1"
   }
 }

@@ -6,12 +6,12 @@
   "module": "dist/sav-contract.es.js",
   "scripts": {
     "build-cli": "rollup -c script/rollup.cli.js",
-    "build-app": "rollup -c script/rollup.config.js",
-    "build": "npm run build-cli && npm run build-app",
+    "build-client": "rollup -c script/rollup.config.js",
+    "build": "run-p build-cli build-client",
     "tcreate": "node dist/contract.js -t create -a HelloWorld -F ./tmp/HelloWorld",
     "tcontrace": "node dist/contract.js -i test/fixtures/interface -l js,node,php -C ./tmp/contract -M ./tmp/modals -F ./tmp/front -S modal",
-    "lint": "standard src/** test/**",
-    "fix": "standard src/** test/** --fix",
+    "lint": "standard src/** test/** client/**",
+    "fix": "standard src/** test/** client/** --fix",
     "t": "ava ./test/specs/interfaceLoader.js --no-color",
     "test": "nyc ava ./test/specs"
   },
@@ -44,7 +44,7 @@
   "dependencies": {
     "sav-router": "latest",
     "sav-schema": "next",
-    "sav-util": "^1.0.28"
+    "sav-util": "latest"
   },
   "standard": {
     "require": "babel-eslint",
