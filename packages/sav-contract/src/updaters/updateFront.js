@@ -30,7 +30,7 @@ async function writeVueRouter (dir, components) {
     })
     return a
   }, [])
-  routes = routes.replace(/component:\s+"(\w+)"/g, (_, name) => {
+  routes = routes.replace(/component:\s+'(\w+)'/g, (_, name) => {
     return `component: ${name}`
   })
   let content = unique(imports).concat([''])

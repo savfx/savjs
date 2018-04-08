@@ -5,11 +5,12 @@
     "build-sass": "stdx ./script/build-sass.js",
     "build-client": "rollup -c ./script/build-client.js",
     "build": "run-p build-sass build-client",
+    "dev-build": "run-s build-interface build",
     "dev-sass": "watch -p \"sass/**\" -c \"npm run build-sass\"",
     "dev-client": "npm run build-client -- -w",
     "dev-serve": "hs ./static",
     "dev-interface": "watch -p \"interface/**\" -c \"npm run build-interface\"",
-    "dev": "run-p dev-sass dev-client dev-serve dev-interface",
+    "dev": "run-p dev-build dev-sass dev-client dev-serve dev-interface",
     "build-prod": "cross-env NODE_ENV=production npm run build"
   },
   "devDependencies": {

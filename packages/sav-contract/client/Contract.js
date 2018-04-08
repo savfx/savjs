@@ -39,8 +39,11 @@ export class Contract {
     this.router.load(data)
     if (mocks) {
       mocks.forEach(mock => {
-        let modal = this.mocks[mock.modalName] || (this.mocks[mock.modalName] = {})
-        let datas = modal[mock.actionName] || (modal[mock.actionName] = [])
+        if (mock.req) { // 不处理req, 只处理res
+          return
+        }
+        let name = mock.modalName + mock.actionName
+        let datas = this.mocks[name] || (this.mocks[name] = [])
         datas.push(mock)
       })
     }
@@ -202,7 +205,7 @@ export class Contract {
   }
   fetch (payload) {
     if (this.opts.mockState) {
-      let mocks = this.mocks[payload.route.response]
+      let mocks = this.mocks[payload.route.name]
       if (mocks && mocks.length) {
         if (this.opts.mockFlow) {
           return new Promise((resolve, reject) => {
@@ -212,7 +215,7 @@ export class Contract {
           return mocks[0].data
         }
       } else {
-        throw new Error(`mock data no found: ${payload.route.response}`)
+        throw new Error(`mock data no found: ${payload.route.name}`)
       }
     }
     return this.request.request(payload)
