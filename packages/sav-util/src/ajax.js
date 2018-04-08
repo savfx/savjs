@@ -88,7 +88,7 @@ export function ajax (opts, next) {
     }
     if (opts.headerOnly) {
       req.onreadystatechange = function () {
-                // console.log('state', req.readyState, req);
+        // console.log('state', req.readyState, req);
         if (req.readyState === 2) { // HEADERS_RECEIVED
           let headers = parseHeaders(req.getAllResponseHeaders(), opts.camelHeaders)
           req.abort()
@@ -97,7 +97,7 @@ export function ajax (opts, next) {
       }
     }
     req.onload = function () {
-            // if(req.readyState != 4) return;
+      // if(req.readyState != 4) return;
       if ([
         200,
         204,
@@ -137,7 +137,7 @@ export function ajax (opts, next) {
     req.onerror = function (e) {
       emit(new Error('error_network'))
     }
-        // 进度
+    // 进度
     if (opts.onprogress && !opts.headerOnly) {
       req.onloadend = req.onprogress = function (e) {
         let info = {

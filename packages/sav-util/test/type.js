@@ -16,7 +16,7 @@ test('type', (ava) => {
     'Date': new Date()
   }
   Object.keys(items).forEach((name) => {
-        // items
+    // items
     Object.keys(items).forEach((key) => {
       let ret = type['is' + name](items[key])
       expect(ret).to.eql(name === key)

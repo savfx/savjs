@@ -34,8 +34,8 @@ export function shortId () {
 
 function s4 () {
   return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1)
+    .toString(16)
+    .substring(1)
 }
 
 export function inherits (ctor, SuperCtor, useSuper) {
@@ -107,7 +107,7 @@ export function testAssign (tar, src, ensures) {
     }
   }
   if (ensures) {
-    for(let key in ensures) {
+    for (let key in ensures) {
       if (!tar[key]) {
         throw new Error(ensures[key])
       }

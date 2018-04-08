@@ -1,12 +1,12 @@
 import {
-    isBoolean,
-    isFunction,
-    isObject,
-    isArray
+  isBoolean,
+  isFunction,
+  isObject,
+  isArray
 } from './type'
 
 export function extend () {
-    // form jQuery & remove this
+  // form jQuery & remove this
   let options, name, src, copy, copyIsArray, clone
   let target = arguments[0] || {}
   let i = 1
@@ -22,7 +22,7 @@ export function extend () {
   }
   for (; i < length; i++) {
     options = arguments[i]
-        /* jshint eqnull:true */
+    /* jshint eqnull:true */
     if (options != null) {
       for (name in options) {
         src = target[name]
