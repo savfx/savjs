@@ -80,7 +80,7 @@ export class Contract {
       return payload
     }
     if (schema) {
-      let stateName = schema.opts.stateName || payload.name
+      let stateName = payload.name
       let stateData
       if (schema.schemaType === Schema.SCHEMA_ENUM) {
         stateData = JSON.parse(JSON.stringify(schema.opts.enums))
@@ -111,9 +111,9 @@ export class Contract {
           return this.invoke(flux, argv, route, fetch)
         }
       }
-      let reqStruct = schema.getSchema(route.request)
+      let reqStruct = schema.getSchema(route.opts.request)
       if (reqStruct) {
-        let reqName = (isDefault ? '' : this.projectName) + route.request
+        let reqName = (isDefault ? '' : this.projectName) + route.opts.request
         ret[`Check${reqName}`] = (flux, data) => {
           return reqStruct.check(data)
         }
@@ -121,9 +121,9 @@ export class Contract {
           return reqStruct.extractThen(data)
         }
       }
-      let resStruct = schema.getSchema(route.response)
+      let resStruct = schema.getSchema(route.opts.response)
       if (resStruct) {
-        let resName = (isDefault ? '' : this.projectName) + route.response
+        let resName = (isDefault ? '' : this.projectName) + route.opts.response
         ret[`Check${resName}`] = (flux, data) => {
           return resStruct.check(data)
         }
@@ -170,15 +170,15 @@ export class Contract {
     let {schema} = this
     let {route} = payload
     payload.url = route.compile(payload.params)
-    payload.input = Object.assign({}, payload.params, payload.query, payload.data)
     let ttl = this.opts.noCache ? null : payload.ttl || (route.opts.ttl)
     let cacheKey = ttl ? getCacheKey(payload) : null
-    let cacheVal = cacheKey ? this.cache.get(cacheKey, ttl) : null
+    let cacheVal = cacheKey ? this.cache.get(cacheKey) : null
     if (!cacheVal) {
-      let reqStruct = schema.getSchema(route.request || `Req${route.name}`)
-      if (reqStruct) {
+      payload.input = Object.assign({}, payload.params, payload.query, payload.data)
+      let inputSchema = schema.getSchema(getRequestSchemaName(route))
+      if (inputSchema) {
         try {
-          payload.input = reqStruct.extract(payload.input)
+          payload.input = inputSchema.extract(payload.input)
         } catch (err) {
           err.status = 400
           throw err
@@ -186,22 +186,20 @@ export class Contract {
       }
       payload.method = route.method
       let output = await this.fetch(payload)
-      let schemaName = route.response || `Res${route.name}`
-      let resStruct = schema.getSchema(schemaName)
-      let cache
-      if (resStruct) {
-        resStruct.check(output)
-        cache = resStruct.opts.cache
-        if (cache) {
-          this.cache.removeByName(cache)
-        }
+      let outputSchema = schema.getSchema(getResponseSchemaName(route))
+      let stateName
+      if (outputSchema) {
+        stateName = outputSchema.name
+        outputSchema.check(output)
       }
       payload.output = output
+      payload.stateName = stateName
       if (cacheKey) {
-        this.cache.set(cacheKey, ttl, cache || schemaName, output)
+        this.cache.set(cacheKey, ttl, route.name, {output, stateName})
       }
     } else {
-      payload.output = cacheVal
+      payload.output = cacheVal.output
+      payload.stateName = cacheVal.stateName
     }
     return mapPayloadState(payload)
   }
@@ -224,28 +222,18 @@ export class Contract {
   }
 }
 
-function getCacheKey (argv) {
-  // 只支持query
-  let uri = argv.url + JSON.stringify(argv.query)
-  return crc32(uri)
+function getResponseSchemaName (route) {
+  return route.opts.response || `Res${route.name}`
 }
 
-function mapping (target, output) {
-  let {mapState} = target
-  if (isArray(mapState)) {
-    return mapState.reduce((ret, name) => {
-      ret[name] = getStatePath(output, name)
-    }, {})
-  } else if (isObject(mapState)) {
-    let ret = {}
-    for (let name in mapState) {
-      ret[name] = getStatePath(output, mapState[name])
-    }
-    return ret
-  } else if (isFunction(mapState)) {
-    return mapState(output)
-  }
-  return output
+function getRequestSchemaName (route) {
+  return route.opts.request || `Req${route.name}`
+}
+
+function getCacheKey (payload) {
+  // 只支持query
+  let uri = payload.url + JSON.stringify(payload.query)
+  return crc32(uri)
 }
 
 function getStatePath (output, stateName) {
@@ -263,14 +251,32 @@ function getStatePath (output, stateName) {
 
 function mapPayloadState (payload) {
   let {route, output} = payload
-  let ret
-  if (isObject(output)) {
-    ret = mapping(payload, output) || mapping(route.opts, output) || output
-    let {resState} = route.opts
-    let name = resState || route.response
-    if ((resState !== false) && name) {
-      return {[`${name}`]: ret}
-    }
+  let mapState = payload.mapState || route.opts.mapState
+  let ret = mapping(payload, mapState, output)
+  let stateName = route.opts.stateName || payload.stateName
+  if (stateName) {
+    return {[`${stateName}`]: ret}
   }
   return ret
+}
+
+function mapping (payload, mapState, output) {
+  if (isObject(output)) {
+    if (isArray(mapState)) {
+      return mapState.reduce((ret, name) => {
+        ret[name] = getStatePath(output, name)
+        return ret
+      }, {})
+    } else if (isObject(mapState)) {
+      let ret = {}
+      for (let name in mapState) {
+        ret[name] = getStatePath(output, mapState[name])
+      }
+      return ret
+    }
+  }
+  if (isFunction(mapState)) {
+    return mapState(output)
+  }
+  return output
 }
