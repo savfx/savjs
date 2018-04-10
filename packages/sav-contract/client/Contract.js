@@ -95,6 +95,9 @@ export class Contract {
       }
       return payload
     }
+    let err = new Error('can not resolve payload')
+    err.payload = payload
+    throw err
   }
   injectFlux (flux, isDefault) {
     let {schema} = this

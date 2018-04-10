@@ -1,11 +1,16 @@
 import { bindEvent, isString, isArray, testAssign } from 'sav-util'
+import {
+  PAYLOAD_START,
+  PAYLOAD_PROGRESS,
+  PAYLOAD_RESOLVE,
+  PAYLOAD_REJECT
+} from './events.js'
 
 const defaultProject = 'default'
 
 export class Sav {
   constructor (opts = {}) {
     this.opts = testAssign(opts, {
-      fallback: null, // 请求失败后处理回调
       flux: null,
       contract: null,
       cacheField: true,
@@ -76,7 +81,7 @@ export class Sav {
     if (!enumKey) {
       let arr = path.split('.')
       path = arr[0]
-      enumKey = arr[1]
+      enumKey = arr[1] || ''
     }
     let uri = `${project}.${path}.${enumKey}`
     let caches = this.caches
@@ -91,7 +96,10 @@ export class Sav {
       let schemaEnum = sav.schema.getSchema(path)
       ret = schemaEnum.getEnum('key', enumKey).title
     } catch (err) {
-      ret = project === defaultProject ? `${path}.${enumKey}` : uri 
+      ret = project === defaultProject ? `${path}.${enumKey}` : uri
+      if (enumKey === '') {
+        ret = ret.substr(0, ret.length -1)
+      }
     } finally {
       if (this.opts.cacheEnum) {
         caches[uri] = ret
@@ -126,5 +134,77 @@ export class Sav {
       ret = []
     }
     return ret
+  }
+  /**
+   * 预加载处理
+   * @param  {Array} payloads 预加载
+   * @param  {Object} route vue跳转路由
+   * @return {Promise}
+   */
+  resolvePayloads (payloads, route) {
+    let states = []
+    return new Promise((resolve, reject) => {
+      try {
+        payloads = payloads.filter((payload) => {
+          let projectName = payload.project || defaultProject
+          let project = this.contracts[projectName]
+          if (project) {
+            if (project.resolvePayload(payload, route)) {
+              if (payload.state) {
+                states.push(payload.state)
+              } else {
+                return true
+              }
+            }
+          } else {
+            throw new Error('project no found: ', projectName)
+          }
+        })
+      } catch (err) {
+        return reject(err)
+      }
+      resolve({payloads, states})
+    })
+  }
+  /**
+   * 执行预加载
+   * @param  {Array} payloads 预加载
+   * @param  {Object} route    vue路由
+   * @return {Promise}
+   */
+  invokePayloads (payloads, route) {
+    return this.resolvePayloads(payloads, route)
+      .then(({payloads, states}) => {
+        if (payloads.length) {
+          let status = {
+            route,
+            total: payloads.length,
+            remains: payloads.length
+          }
+          this.emit(PAYLOAD_START, status)
+          const progress = () => {
+            status.remains--
+            this.emit(PAYLOAD_PROGRESS, status)
+          }
+          return Promise.all(payloads.map(async (payload) => {
+            const p = payload.contract.invokePayload(payload)
+            p.then(progress, progress)
+            return p
+          })).then((args) => {
+            this.emit(PAYLOAD_RESOLVE, status)
+            args = states.concat(args)
+            if (args.length) {
+              args = Object.assign.apply({}, args)
+              return this.opts.flux.updateState(args)
+            }
+          }).catch((err) => {
+            status.error = err
+            this.emit(PAYLOAD_REJECT, status)
+            throw err
+          })
+        } else if (states.length) {
+          return this.opts.flux.updateState(Object.assign.apply({}, states))
+        }
+      })
   }
 }

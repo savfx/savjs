@@ -93,7 +93,6 @@ test('Contract.invokePayload', async (ava) => {
   })
   contract.load(JSON5.parse(contractData))
   expect(contract.projectName).to.eql('test')
-  expect(contract.resolvePayload({})).to.eql(undefined)
 
   // 解析Action
   let payload = {
@@ -191,7 +190,6 @@ test('Contract.mapState', async (ava) => {
   let data = JSON5.parse(contractData)
 
   contract.load(data)
-  expect(contract.resolvePayload({})).to.eql(undefined)
   {
     let payload = {
       name: 'AccountSession',
@@ -234,7 +232,6 @@ test('Contract.cache', async (ava) => {
   let data = JSON5.parse(contractData)
 
   contract.load(data)
-  expect(contract.resolvePayload({})).to.eql(undefined)
   {
     let payload = {
       name: 'AccountCache'
