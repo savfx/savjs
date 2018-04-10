@@ -13,6 +13,9 @@ test('SchemaStruct', ava => {
     }
   })
   expect(User.create()).to.eql({name: '', age: 0})
+  expect(User.fieldByName('name')).to.be.a('object')
+  expect(User.fieldByName('age')).to.be.a('object')
+  expect(User.fieldByName('nofound')).to.eql(undefined)
   expect(User.extract({name: 'a', age: 10, sex: 1})).to.eql({name: 'a', age: 10})
 })
 

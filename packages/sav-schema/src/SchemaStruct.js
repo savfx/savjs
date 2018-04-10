@@ -10,6 +10,15 @@ export class SchemaStruct extends SchemaControl {
     })
     return struct
   }
+  fieldByName (name) {
+    if (!this.fieldMap) {
+      this.fieldMap = this.fields.reduce((ret, it) => {
+        ret[it.name] = it
+        return ret
+      }, {})
+    }
+    return this.fieldMap[name]
+  }
   validate (obj, opts) {
     try {
       let {extract, replace} = opts
