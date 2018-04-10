@@ -87,7 +87,7 @@ export class Contract {
       } else {
         stateData = schema.create(Object.assign({}, schema.opts.state))
         if (payload.merge) {
-          Object.assign(stateData, params, query)
+          Object.assign(stateData, params, query, payload.params, payload.query)
         }
       }
       payload.state = {
@@ -111,9 +111,10 @@ export class Contract {
           return this.invoke(flux, argv, route, fetch)
         }
       }
-      let reqStruct = schema.getSchema(route.opts.request)
+      let inputSchemaName = getRequestSchemaName(route)
+      let reqStruct = schema.getSchema(inputSchemaName)
       if (reqStruct) {
-        let reqName = (isDefault ? '' : this.projectName) + route.opts.request
+        let reqName = (isDefault ? '' : this.projectName) + inputSchemaName
         ret[`Check${reqName}`] = (flux, data) => {
           return reqStruct.check(data)
         }
@@ -121,9 +122,10 @@ export class Contract {
           return reqStruct.extractThen(data)
         }
       }
-      let resStruct = schema.getSchema(route.opts.response)
+      let outputSchemaName = getResponseSchemaName(route)
+      let resStruct = schema.getSchema(outputSchemaName)
       if (resStruct) {
-        let resName = (isDefault ? '' : this.projectName) + route.opts.response
+        let resName = (isDefault ? '' : this.projectName) + outputSchemaName
         ret[`Check${resName}`] = (flux, data) => {
           return resStruct.check(data)
         }

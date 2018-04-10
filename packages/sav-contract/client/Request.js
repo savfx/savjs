@@ -16,11 +16,11 @@ export class Request {
     this.invoker = null
     bindEvent(this)
   }
-  before (fn) {
+  insert (fn) {
     this.invoker = null
     this.invokeQueues.unshift(fn)
   }
-  after (fn) {
+  append (fn) {
     this.invoker = null
     this.invokeQueues.push(fn)
   }
@@ -44,8 +44,7 @@ export class Request {
     }
     let {invoker} = this
     let ctx = {request: options}
-    let res = invoker(ctx).then(() => stripHeaders ? ctx.response.data : ctx.response)
-    return res
+    return invoker(ctx).then(() => stripHeaders ? ctx.response.data : ctx.response)
   }
   invoke (ctx, next) {
     return new Promise((resolve, reject) => {

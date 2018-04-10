@@ -1,9 +1,8 @@
 import test from 'ava'
 import {expect} from 'chai'
-import path from 'path'
+import {Flux} from 'sav-flux'
 
 import {Contract} from '../../../client/Contract.js'
-import {loadInterface} from '../../../src/loaders/interface.js'
 import JSON5 from 'json5'
 
 const contractData = `{
@@ -45,6 +44,13 @@ const contractData = `{
         id: 'String'
       }
     },
+    {
+      name: 'Sex',
+      enums: [
+        {key: 'male', value: 1},
+        {key: 'female', value: 2},
+      ]
+    }
   ],
   mocks: [
     {
@@ -66,16 +72,27 @@ const contractData = `{
       modalName: 'Account',
       actionName: 'cache',
       data: {id: 'a'}
+    },
+    {
+      modalName: 'Account',
+      actionName: 'cache',
+      data: {id: 'b'}
+    },
+    {
+      modalName: 'Account',
+      actionName: 'cache',
+      req: true,
+      data: {id: 'a'}
     }
   ]
 }`
 
 test('Contract.invokePayload', async (ava) => {
-  expect(Contract).to.be.a('function')
   let contract = new Contract({
     enableMock: true
   })
   contract.load(JSON5.parse(contractData))
+  expect(contract.projectName).to.eql('test')
   expect(contract.resolvePayload({})).to.eql(undefined)
 
   // 解析Action
@@ -89,7 +106,7 @@ test('Contract.invokePayload', async (ava) => {
   contract.resolvePayload(payload)
   expect(payload.route).to.be.a('object')
   expect(payload.contract).to.be.a('object')
-  
+
   let ret = await contract.invokePayload(payload)
   expect(payload.url).to.eql('/account/login')
   expect(payload.method).to.eql('POST')
@@ -100,6 +117,15 @@ test('Contract.invokePayload', async (ava) => {
   expect(payload.output).to.eql({id: 'a'})
   expect(payload.stateName).to.eql('ResAccountLogin')
   expect(ret).to.eql({ResAccountLogin: {id: 'a'}})
+
+  payload = {name: 'AccountLogin', merge: true, query: {username: 's'}}
+  contract.resolvePayload(payload, {query: {password: 'b'}})
+  expect(payload.query).to.eql({
+    username: 's',
+    password: 'b'
+  })
+  await contract.invokePayload(payload)
+  expect(payload.output).to.eql({id: 'a'})
 
   payload = {
     name: 'AccountRegister'
@@ -124,12 +150,41 @@ test('Contract.invokePayload', async (ava) => {
     }
   })
 
+  // 解析Schema, merge
+  payload = {
+    name: 'ReqAccountLogin',
+    merge: true,
+    params: {a: 1},
+    query: {b: 2}
+  }
+  contract.resolvePayload(payload, {
+    params: {c: 3},
+    query: {d: 4}
+  })
+  expect(payload.state).to.eql({
+    ReqAccountLogin: {
+      username: '',
+      password: '',
+      confirmPassword: '',
+      a: 1,
+      b: 2,
+      c: 3,
+      d: 4
+    }
+  })
+
+  // 解析枚举Schema
+  payload = {
+    name: 'Sex'
+  }
+  contract.resolvePayload(payload)
+  expect(payload.state.Sex).to.be.a('array')
+
   // console.log(contract)
   ava.pass()
 })
 
 test('Contract.mapState', async (ava) => {
-  expect(Contract).to.be.a('function')
   let contract = new Contract({
     enableMock: true
   })
@@ -173,7 +228,6 @@ test('Contract.mapState', async (ava) => {
 })
 
 test('Contract.cache', async (ava) => {
-  expect(Contract).to.be.a('function')
   let contract = new Contract({
     enableMock: true
   })
@@ -201,7 +255,6 @@ test('Contract.cache', async (ava) => {
 })
 
 test('Contract.ajax', async (ava) => {
-  expect(Contract).to.be.a('function')
   let contract = new Contract({
     ajax (req, callback) {
       setTimeout(callback(null, {id: 'a'}))
@@ -228,7 +281,6 @@ test('Contract.ajax', async (ava) => {
 })
 
 test('Contract.mock', async (ava) => {
-  expect(Contract).to.be.a('function')
   let contract = new Contract({
     enableMock: true,
     mockFlow: true
@@ -264,5 +316,70 @@ test('Contract.mock', async (ava) => {
     let ret = await contract.invokePayload(payload)
     expect(ret.flow).to.eql(1)
   }
+  ava.pass()
+})
+
+test('Contract.flux', async (ava) => {
+  let contract = new Contract({
+    enableMock: true,
+    contract: JSON5.parse(contractData)
+  })
+  let flux = new Flux()
+  contract.injectFlux(flux, true)
+  let exists = [
+    'CheckResAccountLogin',
+    'ExtractResAccountLogin',
+    'PostAccountLogin',
+    'PostAccountLoginData'
+  ]
+  exists.forEach((it) => {
+    expect(flux.actions[it]).to.be.a('function')
+  })
+  expect(await flux.dispatch.CheckResAccountLogin({id: 's'}))
+    .to.eql({id: 's'})
+  let req = {
+    username: 'x',
+    password: 'b',
+    some: 'c'
+  }
+  expect(await flux.dispatch.CheckReqAccountLogin(req))
+    .to.eql(req)
+  expect(await flux.dispatch.ExtractResAccountLogin({id: 's', s: 'b'}))
+    .to.eql({id: 's'})
+  expect(await flux.dispatch.ExtractReqAccountLogin(req))
+    .to.eql({
+      username: 'x',
+      password: 'b'
+    })
+
+  await flux.dispatch.PostAccountLoginData({
+    username: 's',
+    password: 'b'
+  })
+  expect(flux.state.ResAccountLogin).to.eql({id: 'a'})
+  flux.updateState({ResAccountLogin: null})
+  await flux.dispatch.PostAccountLogin({
+    data: {
+      username: 's',
+      password: 'b'
+    }
+  })
+
+  await (async () => {
+    try {
+      await flux.dispatch.PostAccountLoginData()
+    } catch (err) {
+      expect(err).to.be.a('error')
+    }
+  })()
+
+  expect(flux.state.ResAccountLogin).to.eql({id: 'a'})
+  flux.updateState({ResAccountLogin: null})
+  let res = await flux.dispatch.PostAccountLoginData({
+    username: 's',
+    password: 'b'
+  }, true)
+  expect(res).to.eql({ResAccountLogin: {id: 'a'}})
+  expect(flux.state.ResAccountLogin).to.eql(null)
   ava.pass()
 })

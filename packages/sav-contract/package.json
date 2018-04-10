@@ -12,7 +12,7 @@
     "tcontrace": "node dist/contract.js -i test/fixtures/interface -l js,node,php -C ./tmp/contract -M ./tmp/modals -F ./tmp/front -S modal",
     "lint": "standard src/** test/** client/**",
     "fix": "standard src/** test/** client/** --fix",
-    "t": "nyc ava ./test/specs/client/contract.js --no-color",
+    "t": "nyc ava ./test/specs/client/sav.js --no-color",
     "test": "nyc ava ./test/specs"
   },
   "bin": {
@@ -39,7 +39,8 @@
     "json5": "^1.0.0",
     "jsonar": "^1.8.0",
     "os-locale": "^2.1.0",
-    "php-parser": "^2.2.0"
+    "php-parser": "^2.2.0",
+    "sav-flux": "0.0.25"
   },
   "dependencies": {
     "sav-router": "latest",
