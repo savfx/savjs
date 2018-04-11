@@ -1,18 +1,14 @@
 {
   "name": "sav-contract",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "sav contract tools",
-  "main": "dist/sav-contract.cjs.js",
-  "module": "dist/sav-contract.es.js",
   "scripts": {
-    "build-cli": "rollup -c script/rollup.cli.js",
-    "build-client": "rollup -c script/rollup.config.js",
-    "build": "run-p build-cli build-client",
+    "build": "rollup -c script/rollup.cli.js",
     "tcreate": "node dist/contract.js -t create -a HelloWorld -F ./tmp/HelloWorld",
     "tcontrace": "node dist/contract.js -i test/fixtures/interface -l js,node,php -C ./tmp/contract -M ./tmp/modals -F ./tmp/front -S modal",
-    "lint": "standard src/** test/** client/**",
-    "fix": "standard src/** test/** client/** --fix",
-    "t": "nyc ava ./test/specs/client/sav.js --no-color",
+    "lint": "standard src/** test/**",
+    "fix": "standard src/** test/** --fix",
+    "t": "nyc ava ./test/specs/src/decorator.js --no-color",
     "test": "nyc ava ./test/specs"
   },
   "bin": {
@@ -40,9 +36,6 @@
     "jsonar": "^1.8.0",
     "os-locale": "^2.1.0",
     "php-parser": "^2.2.0",
-    "sav-flux": "0.0.25"
-  },
-  "dependencies": {
     "sav-router": "latest",
     "sav-schema": "next",
     "sav-util": "latest"
