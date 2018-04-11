@@ -1,18 +1,67 @@
 {
   "name": "savjs",
-  "version": "0.0.1",
+  "version": "1.0.2",
   "description": "savjs foundation",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/savjs/savjs.git"
   },
+  "main": "dist/savjs.js",
   "author": {
     "name": "jetiny",
     "email": "86287344@qq.com"
+  },
+  "scripts": {
+    "build": "rollup -c script/rollup.config.js",
+    "lint": "standard src/** test/**",
+    "fix": "standard src/** test/** --fix",
+    "test": "nyc ava ./test/specs",
+    "t": "nyc ava ./test/specs/savVue.js --no-color"
   },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/savjs/savjs/issues"
   },
-  "homepage": "https://github.com/savjs/savjs#readme"
+  "dependencies": {
+    "sav-flux": "^0.0.25",
+    "sav-router": "^1.0.23",
+    "sav-schema": "^1.0.37",
+    "sav-util": "^1.0.32"
+  },
+  "standard": {
+    "require": "babel-eslint",
+    "babel": "inherit",
+    "ignore": [
+      "fixtures",
+      "package.json"
+    ],
+    "global": [
+      "AsyncFunction",
+      "PROJECT_ROOT",
+      "Promise"
+    ]
+  },
+  "nyc": {
+    "exclude": [
+      "node_modules",
+      "test"
+    ]
+  },
+  "ava": {
+    "require": [
+      "babel-register",
+      "./test/helpers/setup.js"
+    ],
+    "babel": "inherit"
+  },
+  "babel": {
+    "plugins": [
+      "transform-decorators-legacy",
+      "transform-es2015-modules-commonjs"
+    ]
+  },
+  "homepage": "https://github.com/savjs/savjs#readme",
+  "devDependencies": {
+    "vue-router": "^3.0.1"
+  }
 }

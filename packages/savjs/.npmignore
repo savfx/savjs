@@ -15,3 +15,7 @@ jspm_packages
 .idea
 
 test
+script
+src
+package-lock.json
+.travis.yml
