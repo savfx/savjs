@@ -15,7 +15,6 @@ export async function generateFront (dir, params) {
   let scriptPath = path.join(dir, 'script')
   await ensureDir(scriptPath)
   await copyFile(path.join(srcPath, 'script/build-client.js'), path.join(scriptPath, 'build-client.js'), params.appName)
-  await copyFile(path.join(srcPath, 'script/build-sass.js'), path.join(scriptPath, 'build-sass.js'))
 
   let staticPath = path.join(dir, 'static')
   let jsPath = path.join(staticPath, 'js')

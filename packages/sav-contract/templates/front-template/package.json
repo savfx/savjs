@@ -2,11 +2,11 @@
   "name": "ProjectName",
   "scripts": {
     "build-interface": "contract -i ./interface -C ./contract -l js,node -F ./",
-    "build-sass": "stdx ./script/build-sass.js",
+    "build-sass": "node-sass --output-style=compressed -r sass -o static/css",
     "build-client": "rollup -c ./script/build-client.js",
     "build": "run-p build-sass build-client",
     "dev-build": "run-s build-interface build",
-    "dev-sass": "watch -p \"sass/**\" -c \"npm run build-sass\"",
+    "dev-sass": "node-sass -w --output-style=expanded -r sass -o static/css",
     "dev-client": "npm run build-client -- -w",
     "dev-serve": "hs ./static",
     "dev-interface": "watch -p \"interface/**\" -c \"npm run build-interface\"",
