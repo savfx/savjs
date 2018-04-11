@@ -1,3 +1,3 @@
 # savjs
 
-savjs foundation
+savjs
