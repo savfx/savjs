@@ -6,6 +6,8 @@
 import {Vue, VueRouter, Flux, FluxVue} from './client-plugin.js'
 import routes from './routes.js'
 import App from './App.vue'
+import {Contract, SavVue} from 'savjs'
+import contractData from '../contract/js/contract.js'
 
 let router = new VueRouter(Object.assign({
   mode: 'hash',
@@ -23,6 +25,20 @@ let flux = new Flux({
 // flux服务在这里嵌入
 // flux.declare(...)
 
+let contract = new Contract({
+// #if IS_DEV
+  // enableMock: true,
+// #endif
+  contract: contractData
+})
+
+let sav = new SavVue({
+  flux,
+  contract,
+  router,
+  Vue
+})
+
 let vm = new Vue(Object.assign({
   vaf: new FluxVue({flux}),
   router
@@ -32,5 +48,6 @@ vm.$mount('#app')
 
 export default {
   vm,
-  flux
+  flux,
+  sav
 }
