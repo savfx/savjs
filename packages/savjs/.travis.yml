@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-- '7.6'
+- '8'
 deploy:
   provider: npm
   email: 86287344@qq.com
@@ -10,5 +10,4 @@ deploy:
 before_script:
 - npm install stdx-linux --no-save
 script:
-- npm run lint
-- npm run build
+- npm run release

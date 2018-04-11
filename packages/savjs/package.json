@@ -16,6 +16,7 @@
     "lint": "standard src/** test/**",
     "fix": "standard src/** test/** --fix",
     "test": "nyc ava ./test/specs",
+    "release": "run-p lint build test",
     "t": "nyc ava ./test/specs/savVue.js --no-color"
   },
   "license": "MIT",
