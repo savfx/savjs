@@ -70,11 +70,11 @@ osLocale().then(locale => {
   let load = require
   let rcFile
   try {
-    rcFile = path.resolve(process.cwd(), program.rc)
+    rcFile = path.join(process.cwd(), program.rc)
     let config = load(rcFile)
     Object.assign(program, config)
   } catch (err) {
-    console.log('rcFile', err)
+    // console.log('rcFile', err)
   }
 
   let showHelp = () => {
