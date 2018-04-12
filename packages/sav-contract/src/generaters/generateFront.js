@@ -1,11 +1,12 @@
 import path from 'path'
-import {ensureDir, outputFile, inputFile} from '../utils/util.js'
+import {ensureDir, outputFile, inputFile, pathExists} from '../utils/util.js'
 
 export async function generateFront (dir, params) {
   let srcPath = path.join(PROJECT_ROOT, 'templates/front-template')
   dir = path.resolve(dir)
   await ensureDir(dir)
   await copyFile(path.join(srcPath, 'package.json'), path.join(dir, 'package.json'), params.appName)
+  await copyFile(path.join(srcPath, 'contract.rc.js'), path.join(dir, 'contract.rc.js'), params.appName)
   await copyFile(path.join(srcPath, 'README.md'), path.join(dir, 'README.md'), params.appName)
 
   let sassPath = path.join(dir, 'sass')
@@ -45,9 +46,11 @@ export async function generateFront (dir, params) {
 }
 
 async function copyFile (src, dist, appName) {
-  let text = await inputFile(src)
-  if (appName) {
-    text = text.toString().replace(/ProjectName/g, appName)
+  if (!await pathExists(dist)) {
+    let text = await inputFile(src)
+    if (appName) {
+      text = text.toString().replace(/ProjectName/g, appName)
+    }
+    outputFile(dist, text)
   }
-  outputFile(dist, text)
 }

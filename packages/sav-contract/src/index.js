@@ -2,51 +2,81 @@ import {Command} from 'commander'
 import osLocale from 'os-locale'
 import {CommandContract} from './CommandContract.js'
 import {generateFront} from './generaters/generateFront.js'
+import fs from 'fs'
+import path from 'path'
+
+const locals = {
+  'zh_CN': {
+    type: '命令类型 sync 同步(默认)|create 创建',
+    appName: '应用名称',
+    interface: 'interface 输入目录',
+    contract: 'contract 输入目录',
+    langs: '目标语言, js,node,php,go,java',
+    destContract: 'contract 输出目录',
+    destModals: 'modals 输出目录',
+    destFront: '前端项目输出目录',
+    sassMode: 'sass 组织方式 app(单个)|modal(模块)',
+    rc: '配置缓存文件 (默认 contract.rc.js)',
+  },
+  'en': {
+    type: 'command type sync(default)|create',
+    appName: 'app name',
+    interface: 'input interface directory',
+    contract: 'input contract directory',
+    langs: 'dest languages, js,node,php,go,java',
+    destContract: 'output contract directory',
+    destModals: 'output modals directory',
+    destFront: 'output font-end projects directory',
+    sassMode: 'sass mode with app|modal',
+    rc: 'config resourece file (default contract.rc.js)',
+  }
+}
 
 function getProgram (locale) {
   let program = (new Command()).version('$$VERSION$$')
-  if (locale === 'zh_CN') {
-    program
-      .option('-t, --type <type>', '命令类型 sync 同步(默认)|create 创建')
-      .option('-a, --app-name [appName]', '创建应用名称')
-      .option('-i, --interface [interface]', 'interface 输入目录')
-      .option('-c, --contract [contract]', 'contract 输入目录')
-      .option('-l, --langs [langs]', '目标语言, js,node,php,go,java')
-      .option('-C, --dest-contract [destContract]', 'contract 输出目录')
-      .option('-M, --dest-modals [destModals]', 'modals 输出目录')
-      .option('-F, --dest-front [destFront]', '前端项目输出目录')
-      .option('-S, --sassMode [sassMode]', 'sass 组织方式 app(单个)|modal(模块)', /^(app|modal)$/i, 'app')
-  } else {
-    program
-      .option('-t, --type <type>', 'command type sync(default)|create')
-      .option('-a, --app-name [appName]', 'input app name for create')
-      .option('-i, --interface [interface]', 'input interface directory')
-      .option('-c, --contract [contract]', 'input contract directory')
-      .option('-l, --langs [langs]', 'dest languages, js,node,php,go,java')
-      .option('-C, --dest-contract [destContract]', 'output contract directory')
-      .option('-M, --dest-modals [destModals]', 'output modals directory')
-      .option('-F, --dest-front [destFront]', 'output font-end projects directory')
-      .option('-S, --sassMode [sassMode]', 'sass mode with app|modal', /^(app|modal)$/i, 'app')
+  if (!(locale in locals)) {
+    locale = 'en'
   }
-  program.on('--help', function () {
-    console.log('  Examples:')
-    console.log()
-    if (locale === 'zh_CN') {
-      console.log('  载入interface目录合约, 输出js和node标准合约到contract, 同步node方法, 同步前端路由,组件及样式')
-    }
-    console.log('  contract -i ./interface -l js,node -C ./contract -M modals -F ./front')
-    if (locale === 'zh_CN') {
-      console.log('  创建前端示例项目')
-    }
-    console.log('  contract -t create -a MyProject -F ./front')
-    console.log()
-  })
-  // .option('-e, --example [example]', 'output simple example name')
+  let current = locals[locale]
+  program
+    .option('-t, --type <type>', current.type)      
+    .option('-a, --app-name [appName]', current.appName)
+    .option('-i, --interface [interface]', current.interface)
+    .option('-c, --contract [contract]', current.contract)
+    .option('-l, --langs [langs]', current.langs)
+    .option('-C, --dest-contract [destContract]', current.destContract)
+    .option('-M, --dest-modals [destModals]', current.destModals)
+    .option('-F, --dest-front [destFront]', current.destFront)
+    .option('-S, --sassMode [sassMode]', current.sassMode, /^(app|modal)$/i, 'app')
+    .option('-r, --rc [rc]', current.rc, String, 'contract.rc')
+    .on('--help', function () {
+      console.log('  Examples:')
+      console.log()
+      if (locale === 'zh_CN') {
+        console.log('  载入interface目录合约, 输出js和node标准合约到contract, 同步node方法, 同步前端路由,组件及样式')
+      }
+      console.log('  contract -i ./interface -l js,node -C ./contract -M modals -F ./front')
+      if (locale === 'zh_CN') {
+        console.log('  创建前端示例项目')
+      }
+      console.log('  contract -t create -a MyProject -F ./front')
+      console.log()
+    })
   return program.parse(process.argv)
 }
 
 osLocale().then(locale => {
   let program = getProgram(locale)
+  let load = require
+  let rcFile
+  try {
+    rcFile = path.resolve(process.cwd(), program.rc)
+    let config = load(rcFile)
+    Object.assign(program, config)
+  } catch (err) {
+    console.log('rcFile', err)
+  }
+
   let showHelp = () => {
     program.help()
     process.exit(0)
@@ -71,7 +101,7 @@ osLocale().then(locale => {
         console.log('success')
       })
       break
-    default:
+    case 'sync':
       ensure(['langs'])
       any('contract', 'interface')
       any('destContract', 'destModals', 'destFront')
@@ -80,5 +110,7 @@ osLocale().then(locale => {
         console.log('success')
       })
       break
+    default:
+      showHelp()
   }
 })
