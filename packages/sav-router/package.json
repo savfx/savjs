@@ -39,10 +39,10 @@
     "nyc": "^10.3.2",
     "rollup-standalone": "^0.42.9",
     "standard": "^9.0.1",
+    "path-route": "^1.0.2",
     "watch-cli": "^0.2.3"
   },
   "dependencies": {
-    "path-to-regexp": "^1.7.0",
     "sav-util": "^1.0.26"
   },
   "standard": {

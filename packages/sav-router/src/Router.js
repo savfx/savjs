@@ -1,4 +1,4 @@
-import pathToRegexp from 'path-to-regexp'
+import {parse, complie, match} from 'path-route'
 import {isString, convertCase, pascalCase, isArray, isObject, bindEvent} from 'sav-util'
 
 export class Router {
@@ -51,17 +51,17 @@ export class Router {
       name: pascalCase(opts.name),
       path: convertCase(this.opts.caseType, opts.name),
       opts,
-      keys: [],
       childs: createMethods({}),
       routes: []
     }
     let path = isString(opts.path) ? opts.path : route.path
     route.path = normalPath('/' + path)
-    route.regexp = pathToRegexp(route.path, route.keys, {
+    let parsed = parse(route.path, {
       sensitive: this.opts.sensitive,
+      strict: false,
       end: false
     })
-    normalKeys(route)
+    route.regexp = parsed.regexp
     this.modalMap[opts.name] = route
     if (opts.id) {
       this.modalMap[opts.id] = route
@@ -102,12 +102,14 @@ export class Router {
       path = modal.path + '/' + opts.path
     }
     route.path = normalPath(path)
-    let pathOpts = {
+    let parsed = parse(route.path, {
       sensitive: this.opts.sensitive,
+      strict: false,
       end: true
-    }
-    route.regexp = pathToRegexp(route.path, route.keys, pathOpts)
-    route.compile = pathToRegexp.compile(route.path, pathOpts)
+    })
+    route.regexp = parsed.regexp
+    route.keys = parsed.keys
+    route.complie = complie(parsed.tokens)
     normalKeys(route)
     route.isAbsolute = isAbsolute
     if (isAbsolute) {
@@ -138,16 +140,22 @@ export class Router {
     }
     // 顶级路由
     for (let route of this.absoluteRoutes[method]) {
-      if (matchRoute(route, path, ret)) {
+      let params = {}
+      if (match(route, path, params)) {
+        ret.params = params
+        ret.route = route
         return ret
       }
     }
     for (let route of this.modalRoutes) {
       // 模块路由
-      if (matchRoute(route, path)) {
+      if (match(route, path)) {
         for (let subRoute of route.childs[method]) {
           // 子级路由
-          if (matchRoute(subRoute, path, ret)) {
+          let params = {}
+          if (match(subRoute, path, params)) {
+            ret.params = params
+            ret.route = subRoute
             return ret
           }
         }
@@ -167,25 +175,6 @@ function createMethods (target) {
 
 function normalPath (path) {
   return path.replace(/\/+/g, '/')
-}
-
-function matchRoute (route, path, ret) {
-  let mat = path.match(route.regexp)
-  if (mat) {
-    if (ret) {
-      ret.route = route
-      let {keys} = route
-      let params = ret.params = {}
-      for (let i = 1, len = mat.length; i < len; ++i) {
-        const key = keys[i - 1]
-        if (key) {
-          const val = typeof mat[i] === 'string' ? decodeURIComponent(mat[i]) : mat[i]
-          params[key] = val
-        }
-      }
-    }
-    return true
-  }
 }
 
 export function stripPrefix (src, prefix) {

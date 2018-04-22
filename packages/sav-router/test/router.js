@@ -130,10 +130,10 @@ test('router.path', async (ava) => {
             path: 'search/:id'
           },
           regexp: {
-            path: 'regexp/:id(\\d+)'
+            path: 'regexp/:id'
           },
           any: {
-            path: 'any/:id/(.*)'
+            path: 'any/:id/'
           }
         }
       }
@@ -141,9 +141,8 @@ test('router.path', async (ava) => {
   })
   expect(router.matchRoute('/home/search/1', 'POST')).to.be.a('object')
   expect(router.matchRoute('/home/regexp/1', 'POST')).to.be.a('object')
-  expect(router.matchRoute('/home/regexp/test', 'POST')).to.be.a('undefined')
-  expect(router.matchRoute('/home/any/test', 'POST')).to.be.a('undefined')
-  expect(router.matchRoute('/home/any/test/a', 'POST')).to.be.a('object')
+  expect(router.matchRoute('/home/regexp/test', 'POST')).to.be.a('object')
+  expect(router.matchRoute('/home/any/test/', 'POST')).to.be.a('object')
   ava.pass()
 })
 
