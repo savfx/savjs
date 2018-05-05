@@ -2,10 +2,12 @@ const childProcess = require('child_process')
 const path = require('path')
 const fs = require('fs')
 const step = process.argv[2]
+const {version} = require('./package.json')
 
 const actions = {
   prepare,
   build,
+  publish,
   deploy,
 }
 
@@ -62,7 +64,7 @@ function deploy() {
 
 function publish() {
   return Promise.all([
-    spawn(lerna, 'publish --skip-git --yes').catch(err => {
+    spawn(lerna, `publish --skip-git --skip-npm --repo-version ${version} --yes`).catch(err => {
       console.warn('!*************WARN', 'lerna publish')
       console.warn(err)
     }),

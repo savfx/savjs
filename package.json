@@ -1,5 +1,6 @@
 {
   "name": "sav",
+  "version": "2.0.1",
   "description": "savjs library",
   "repository": {
     "type": "git",
