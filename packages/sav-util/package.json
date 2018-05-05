@@ -25,9 +25,6 @@
   "bugs": {
     "url": "https://github.com/sav/issues"
   },
-  "standard": {
-    "parser": "babel-eslint"
-  },
   "nyc": {
     "exclude": [
       "node_modules",

@@ -6,6 +6,6 @@ go:
 before_install:
   - nvm install 8
   - echo $NPM_AUTH_TOKEN>~/.npmrc
-  - npm i stdx-linux --no-save
+  - npm i stdx-linux -g
 install: node ./build.js prepare
 script: node ./build.js deploy
