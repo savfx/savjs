@@ -2,7 +2,7 @@ const childProcess = require('child_process')
 const path = require('path')
 const fs = require('fs')
 const step = process.argv[2]
-const {version} = require('./package.json')
+const version = require('./package.json').version
 
 const actions = {
   prepare,
@@ -38,8 +38,9 @@ function build() {
     let packages = dirs.map(dir => {
       let cwd = path.join(packageCwd, dir)
       let package = require(cwd + '/package.json')
-      let {name, devDependencies, dependencies} = package
-      let deps = Object.keys(devDependencies || []).concat(Object.keys(dependencies || [])).
+      let name = package.name
+      let deps = Object.keys(package.devDependencies || []).
+        concat(Object.keys(package.dependencies || [])).
         filter(dir => dirs.indexOf(dir) !== -1)
       let it = {
         dir,
