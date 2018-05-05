@@ -6,6 +6,5 @@ go:
 before_script:
   - nvm install 8
   - echo $NPM_AUTH_TOKEN>~/.npmrc
-  - node ./build.js prepare
-script:
-  - node ./build.js deploy
+install: node ./build.js prepare
+script: node ./build.js deploy
