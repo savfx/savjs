@@ -3,7 +3,7 @@ import {expect} from 'chai'
 
 import {makeProp, delProps} from '../src'
 
-test('prop default', ava => {
+test('prop default', t => {
   let ctx = {}
   makeProp(ctx)
   expect(ctx.ctx).to.equal(ctx)
@@ -25,11 +25,13 @@ test('prop default', ava => {
   expect(ctx.d).to.equal(3)
   delProps(ctx)
   expect(ctx).to.eql({})
+  t.pass()
 })
 
-test('prop change ctx name', ava => {
+test('prop change ctx name', t => {
   let ctx = {}
   makeProp(ctx, 'self')
   makeProp(ctx)
   expect(ctx.self).to.equal(ctx)
+  t.pass()
 })

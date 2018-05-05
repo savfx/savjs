@@ -1,22 +1,22 @@
 {
-  "name": "sav-schema",
+  "name": "savfx-schema",
   "version": "1.0.37",
   "description": "schema for savjs",
   "main": "dist/sav-schema.cjs.js",
   "browser": "dist/sav-schema.min.js",
   "jsnext:main": "src/index.js",
   "scripts": {
-    "build": "node ./rollup.config.js",
+    "build": "rollup -c",
     "lint": "standard rollup.* test/** src/**",
     "fix": "npm run lint -- --fix",
     "start": "watch -p \"+(test|lib)/*.js\" -c \"npm run lint -- --fix && npm run build && nyc ava ./test\"",
     "watch": "watch -p \"+(test|lib)/*.js\" -c \"npm run lint -- --fix && nyc ava ./test/schema.js\"",
-    "test": "npm run lint && npm run build && nyc ava ./test",
+    "test": "nyc ava ./test",
     "t": "nyc ava ./test/checks.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/savjs/sav-schema.git"
+    "url": "git+https://github.com/savfx/schema.git"
   },
   "author": {
     "name": "jetiny",
@@ -24,26 +24,12 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/savjs/sav-schema/issues"
-  },
-  "devDependencies": {
-    "ava": "^0.17.0",
-    "babel-plugin-resolver": "^1.1.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-register": "^6.24.1",
-    "chai": "^3.5.0",
-    "eslint-plugin-standard": "^2.0.1",
-    "expect.js": "^0.3.1",
-    "nyc": "^10.0.0",
-    "rollup-standalone": "^0.42.9",
-    "standard": "^8.5.0",
-    "watch-cli": "^0.2.1"
+    "url": "https://github.com/savfx/schema/issues"
   },
   "dependencies": {
-    "sav-util": "^1.0.24"
+    "sav-util": "^1.0.32"
   },
-  "homepage": "https://github.com/savjs/sav-schema#readme",
+  "homepage": "https://github.com/savfx/schema#readme",
   "nyc": {
     "exclude": [
       "node_modules",
@@ -56,14 +42,6 @@
   },
   "babel": {
     "plugins": [
-      [
-        "resolver",
-        {
-          "resolveDirs": [
-            "src"
-          ]
-        }
-      ],
       "transform-object-rest-spread",
       "transform-es2015-modules-commonjs"
     ]

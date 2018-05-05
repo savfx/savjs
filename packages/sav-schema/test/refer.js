@@ -2,7 +2,7 @@ import test from 'ava'
 import {expect} from 'chai'
 import {Schema} from '../src/Schema.js'
 
-test('SchemaRefer', async ava => {
+test('SchemaRefer', async t => {
   let schema = new Schema()
   schema.declare({
     name: 'StringList',
@@ -17,4 +17,5 @@ test('SchemaRefer', async ava => {
   await StringList.checkThen('["a", "b"]')
   expect(StringList.extract('["a", "b"]')).to.eql(['a', 'b'])
   expect(await StringList.extractThen('["a", "b"]')).to.eql(['a', 'b'])
+  t.pass()
 })

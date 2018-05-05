@@ -120,7 +120,7 @@ export const md5 = (() => {
   }
 
   function UTF8Encode (string) {
-    string = string.replace(/\x0d\x0a/g, '\x0a')
+    string = string.replace(/\\x0d\\x0a/g, '\\x0a')
     let output = ''
     for (let n = 0; n < string.length; n++) {
       let c = string.charCodeAt(n)

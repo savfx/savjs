@@ -2,7 +2,7 @@ import test from 'ava'
 import {expect} from 'chai'
 import {Schema} from '../src/Schema.js'
 
-test('SchemaStruct', ava => {
+test('SchemaStruct', t => {
   let schema = new Schema()
   let User = schema.declare({
     props: {
@@ -17,9 +17,10 @@ test('SchemaStruct', ava => {
   expect(User.fieldByName('age')).to.be.a('object')
   expect(User.fieldByName('nofound')).to.eql(undefined)
   expect(User.extract({name: 'a', age: 10, sex: 1})).to.eql({name: 'a', age: 10})
+  t.pass()
 })
 
-test('SchemaStruct.Ref', ava => {
+test('SchemaStruct.Ref', t => {
   let schema = new Schema()
   schema.declare({
     name: 'Sex',
@@ -37,4 +38,5 @@ test('SchemaStruct.Ref', ava => {
   })
   expect(User.create()).to.eql({name: '', age: 0, sex: 1})
   expect(User.extract({name: 'a', age: 10, sex: 1})).to.eql({name: 'a', age: 10, sex: 1})
+  t.pass()
 })

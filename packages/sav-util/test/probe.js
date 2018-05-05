@@ -1,18 +1,18 @@
 import test from 'ava'
 import { probe, isObject } from '../src'
 
-test('probe', (ava) => {
-  ava.true(isObject(probe))
+test('probe', (t) => {
+  t.true(isObject(probe))
 
   // node 6
-  ava.true(probe.Map)
-  ava.true(probe.Proxy)
+  t.true(probe.Map)
+  t.true(probe.Proxy)
 
   // browser
-  ava.false(probe.MessageChannel)
-  ava.false(probe.localStorage)
-  ava.false(probe.XMLHttpRequest)
-  ava.false(probe.MutationObserver)
-  ava.false(probe.window)
-  ava.false(probe.document)
+  t.false(probe.MessageChannel)
+  t.false(probe.localStorage)
+  t.false(probe.XMLHttpRequest)
+  t.false(probe.MutationObserver)
+  t.false(probe.window)
+  t.false(probe.document)
 })

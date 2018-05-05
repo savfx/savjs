@@ -1,6 +1,6 @@
 
 export const tmpl = (() => {
-  let tmplEncodeReg = /[<>&"'\x00]/g
+  let tmplEncodeReg = /[<>&"'\\x00]/g
   let tmplEncodeMap = {
     '<': '&lt;',
     '>': '&gt;',

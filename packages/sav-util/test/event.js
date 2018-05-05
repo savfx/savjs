@@ -1,7 +1,7 @@
 import test from 'ava'
 import { bindEvent, isFunction } from '../src'
 
-test('bindEvent', (av) => {
+test('bindEvent', (t) => {
   let testObj = {}
   bindEvent(testObj)
   const arr = [
@@ -13,6 +13,6 @@ test('bindEvent', (av) => {
     'emit'
   ]
   arr.forEach((val) => {
-    av.true(isFunction(testObj[val]))
+    t.true(isFunction(testObj[val]))
   })
 })

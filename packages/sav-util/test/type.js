@@ -2,7 +2,7 @@ import test from 'ava'
 import {expect} from 'chai'
 import * as type from '../src'
 
-test('type', (ava) => {
+test('type', (t) => {
   const items = {
     'Object': {},
     'Array': [],
@@ -22,18 +22,21 @@ test('type', (ava) => {
       expect(ret).to.eql(name === key)
     })
   })
+  t.pass()
 })
 
-test('isType', async (ava) => {
+test('isType', async (t) => {
   expect(type.isNull(null)).to.eql(true)
   expect(type.isUint(5)).to.eql(true)
   expect(type.isAsync(async () => {})).to.eql(true)
   expect(type.isPromise(Promise.resolve())).to.eql(true)
+  t.pass()
 })
 
-test('typeValue', async (ava) => {
+test('typeValue', async (t) => {
   expect(type.typeValue(5)).to.eql('Number')
   expect(type.typeValue(undefined)).to.eql('Undefined')
   expect(type.typeValue(null)).to.eql('Null')
   expect(type.typeValue(NaN)).to.eql('Nan')
+  t.pass()
 })

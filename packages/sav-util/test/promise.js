@@ -1,8 +1,8 @@
 import test from 'ava'
 import { toPromise, isFunction, isObject, isPromiseLike } from '../src'
 
-test('toPromise', (ava) => {
-  ava.true(isFunction(toPromise))
+test('toPromise', (t) => {
+  t.true(isFunction(toPromise))
   let store = {}
   let storage = {
     get (key) {
@@ -21,10 +21,10 @@ test('toPromise', (ava) => {
     }
   }
   let asyncStorage = toPromise(storage, ['get', 'set'])
-  ava.true(isObject(asyncStorage))
-  ava.true(isPromiseLike(asyncStorage.set('a', 'b').then(() => {
-    ava.true(isPromiseLike(asyncStorage.get('a').then((ret) => {
-      ava.true(ret === 'b')
+  t.true(isObject(asyncStorage))
+  t.true(isPromiseLike(asyncStorage.set('a', 'b').then(() => {
+    t.true(isPromiseLike(asyncStorage.get('a').then((ret) => {
+      t.true(ret === 'b')
     })))
   })))
 })

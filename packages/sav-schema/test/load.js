@@ -3,7 +3,7 @@ import {expect} from 'chai'
 import {Schema} from '../src/Schema.js'
 const schemas = require('./fixtures/schemas.js')
 
-test('Schema.load', async ava => {
+test('Schema.load', async t => {
   let schema = new Schema()
   schema.load(schemas)
   expect(schema.Sex).to.be.a('object')
@@ -14,4 +14,5 @@ test('Schema.load', async ava => {
   expect(schema.RefAccount).to.be.a('object')
   expect(schema.ReqAccount).to.be.a('object')
   expect(schema.ResAccount).to.be.a('object')
+  t.pass()
 })

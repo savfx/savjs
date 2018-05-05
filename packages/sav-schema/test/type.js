@@ -4,7 +4,7 @@ import {expect} from 'chai'
 import {SchemaType} from '../src/SchemaType.js'
 import {Schema} from '../src/Schema.js'
 
-test('SchemaType', ava => {
+test('SchemaType', t => {
   expect(SchemaType).to.be.a('function')
   let Age = new SchemaType(null, {
     default: Number
@@ -14,9 +14,10 @@ test('SchemaType', ava => {
     default: 1
   })
   expect(Age2.create()).to.eql(1)
+  t.pass()
 })
 
-test('SchemaType.create', ava => {
+test('SchemaType.create', t => {
   let schema = new Schema()
   expect(schema.String.create()).to.eql('')
   expect(schema.String.create('s')).to.eql('s')
@@ -47,9 +48,10 @@ test('SchemaType.create', ava => {
   expect(schema.Int32.create()).to.eql(0)
 
   schema.Int32.check(0)
+  t.pass()
 })
 
-test('SchemaType.parse', ava => {
+test('SchemaType.parse', t => {
   let schema = new Schema()
   expect(schema.String.parse()).to.eql(undefined)
   expect(schema.String.parse(1)).to.eql('1')
@@ -83,9 +85,10 @@ test('SchemaType.parse', ava => {
   expect(schema.Object.parse({a: 1})).to.eql({a: 1})
   expect(schema.Object.parse('{"a": 1}')).to.eql({a: 1})
   expect(schema.Object.parse('{"a": b}')).to.eql('{"a": b}')
+  t.pass()
 })
 
-test('SchemaType.ObjectID', ava => {
+test('SchemaType.ObjectID', t => {
   let schema = new Schema()
   let m = schema.declare({
     props: {
@@ -104,4 +107,5 @@ test('SchemaType.ObjectID', ava => {
     id: new ObjectID('sss')
   }
   m.check(data)
+  t.pass()
 })

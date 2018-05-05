@@ -2,25 +2,22 @@ import test from 'ava'
 import {expect} from 'chai'
 import {HandlePromise} from '../src/handle.js'
 
-test('api', async (ava) => {
-  expect(HandlePromise).to.be.a('function')
-})
-
-test('HandlePromise.constructor', async (ava) => {
-  new HandlePromise((resolve, reject) => {
+test('HandlePromise.constructor', async (t) => {
+  await new HandlePromise((resolve, reject) => {
     resolve(1)
   }).then((a) => {
     expect(a).to.eql(1)
   })
-  new HandlePromise(Promise.resolve(1)).then((a) => {
+  await new HandlePromise(Promise.resolve(1)).then((a) => {
     expect(a).to.eql(1)
   })
-  new HandlePromise(1).then((a) => {
+  await new HandlePromise(1).then((a) => {
     expect(a).to.eql(1)
   })
+  t.pass()
 })
 
-test('HandlePromise', async (ava) => {
+test('HandlePromise', async (t) => {
   let p = new HandlePromise(Promise.resolve(1))
   let p1 = p.then((a) => {
     expect(a).to.eql(1)
@@ -41,12 +38,13 @@ test('HandlePromise', async (ava) => {
   }).then((a) => {
     expect(a).to.eql(4)
     return a++
-  }).then((a) => {
+  }).then(async (a) => {
     expect(a).to.eql(5)
-    Promise.resolve().then(() => {
+    await Promise.resolve().then(() => {
       expect(p.error).to.eql(a)
     })
     throw a
   })
   expect(p1).to.eql(p)
+  t.pass()
 })

@@ -1,23 +1,21 @@
 {
-  "name": "sav-router",
+  "name": "savfx-router",
   "version": "1.0.23",
   "description": "another nodejs controller style router",
   "main": "dist/sav-router.cjs.js",
   "module": "dist/sav-router.es.js",
   "jsnext:main": "dist/sav-router.umd.js",
   "scripts": {
-    "build": "node rollup.config.js",
+    "build": "rollup -c",
     "lint": "standard rollup.config.js test/** src/**",
     "fix": "npm run lint -- --fix",
     "start": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && npm run na\"",
     "na": "nyc ava ./test",
-    "pretest": "npm run lint",
-    "test": "npm run na",
-    "prepare": "npm run build"
+    "test": "npm run na"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/savjs/sav-router.git"
+    "url": "git+https://github.com/savfx/router.git"
   },
   "author": {
     "name": "jetiny",
@@ -25,25 +23,10 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/savjs/sav-router/issues"
-  },
-  "devDependencies": {
-    "ava": "^0.18.2",
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^7.2.3",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "chai": "^3.5.0",
-    "eslint-plugin-standard": "^2.3.1",
-    "nyc": "^10.3.2",
-    "rollup-standalone": "^0.42.9",
-    "standard": "^9.0.1",
-    "path-route": "^1.0.2",
-    "watch-cli": "^0.2.3"
+    "url": "https://github.com/savfx/router/issues"
   },
   "dependencies": {
-    "sav-util": "^1.0.26"
+    "sav-util": "^1.0.32"
   },
   "standard": {
     "parser": "babel-eslint"
@@ -65,5 +48,5 @@
       "transform-es2015-modules-commonjs"
     ]
   },
-  "homepage": "https://github.com/savjs/sav-router#readme"
+  "homepage": "https://github.com/savfx/router#readme"
 }

@@ -2,7 +2,7 @@ import test from 'ava'
 import {expect} from 'chai'
 import {SchemaEnum} from '../src/SchemaEnum.js'
 
-test('SchemaEnum', ava => {
+test('SchemaEnum', t => {
   const Sex = new SchemaEnum(null, {
     enums: [
       {key: 'male', value: 1},
@@ -18,9 +18,10 @@ test('SchemaEnum', ava => {
   expect(Sex.create()).to.eql(1)
   expect(Sex.create(2)).to.eql(2)
   expect(Sex.create('null')).to.eql('null')
+  t.pass()
 })
 
-test('SchemaEnum.strict', ava => {
+test('SchemaEnum.strict', t => {
   const Sex = new SchemaEnum(null, {
     strict: true,
     enums: [
@@ -37,9 +38,10 @@ test('SchemaEnum.strict', ava => {
   expect(Sex.create()).to.eql(1)
   expect(Sex.create(2)).to.eql(2)
   expect(Sex.create('null')).to.eql('null')
+  t.pass()
 })
 
-test('SchemaEnum.getEnum', ava => {
+test('SchemaEnum.getEnum', t => {
   const Sex = new SchemaEnum(null, {
     strict: true,
     enums: [
@@ -49,4 +51,5 @@ test('SchemaEnum.getEnum', ava => {
   })
   expect(Sex.value('male')).to.eql(1)
   expect(Sex.key(1)).to.eql('male')
+  t.pass()
 })

@@ -1,31 +1,31 @@
 import test from 'ava'
 import { each } from '../src'
 
-test('each.Array', (av) => {
-  av.plan(6)
+test('each.Array', (t) => {
+  t.plan(6)
   each([0, 1, 2], (val, key) => {
-    av.true(val === key)
-    av.pass()
+    t.true(val === key)
+    t.pass()
   })
 })
 
-test('each.Argument', (av) => {
-  av.plan(6)
+test('each.Argument', (t) => {
+  t.plan(6)
   each((function () { return arguments })(0, 1, 2), (val, key) => {
-    av.true(val === key)
-    av.pass()
+    t.true(val === key)
+    t.pass()
   })
 })
 
-test('each.Object', (av) => {
-  av.plan(6)
+test('each.Object', (t) => {
+  t.plan(6)
   let obj = {
     0: 0,
     1: 1,
     2: 2
   }
   each(obj, (val, key) => {
-    av.true(String(val) === key)
-    av.pass()
+    t.true(String(val) === key)
+    t.pass()
   })
 })

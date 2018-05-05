@@ -3,7 +3,7 @@ import {expect} from 'chai'
 
 import {convertCase} from '../src'
 
-test('convertCase', ava => {
+test('convertCase', t => {
   function batchConvert (strs) {
     for (let type in strs) {
       expect(convertCase(type, strs[type])).to.be.equal(strs[type])
@@ -40,4 +40,6 @@ test('convertCase', ava => {
 
   let str = 'aB-Cd'
   expect(convertCase('', str)).to.be.equal(str)
+
+  t.pass()
 })

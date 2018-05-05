@@ -2,7 +2,7 @@ import test from 'ava'
 import {expect} from 'chai'
 import {encode, decode} from '../lib/rc4.js'
 
-test('rc4', (ava) => {
+test('rc4', (t) => {
   [
     '',
     'a',
@@ -16,4 +16,5 @@ test('rc4', (ava) => {
     expect(decode(encode(val, val), val)).to.eql(val)
     expect(decode(encode(val, 'key'), 'key')).to.eql(val)
   })
+  t.pass()
 })

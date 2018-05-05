@@ -14,7 +14,7 @@ test.before(() => {
   })
 })
 
-test('check.registerCheck', ava => {
+test('check.registerCheck', t => {
   let UserInfo = schema.declare({
     props: {
       age: {
@@ -38,9 +38,10 @@ test('check.registerCheck', ava => {
       expect(exp instanceof SchemaCheckedError).to.eql(true)
     }
   }
+  t.pass()
 })
 
-test('check.SchemaNoRuleError', ava => {
+test('check.SchemaNoRuleError', t => {
   let UserInfo = schema.declare({
     props: {
       age: {
@@ -62,9 +63,10 @@ test('check.SchemaNoRuleError', ava => {
       expect(exp instanceof SchemaNoRuleError).to.eql(true)
     }
   }
+  t.pass()
 })
 
-test('check.Number', ava => {
+test('check.Number', t => {
   let UserInfo = schema.declare({
     props: {
       age: {
@@ -132,9 +134,10 @@ test('check.Number', ava => {
       expect(exp instanceof SchemaCheckedError).to.eql(true)
     }
   }
+  t.pass()
 })
 
-test('check.in', ava => {
+test('check.in', t => {
   let UserInfo = schema.declare({
     props: {
       sex: {
@@ -174,9 +177,10 @@ test('check.in', ava => {
       expect(exp instanceof SchemaCheckedError).to.eql(true)
     }
   }
+  t.pass()
 })
 
-test('check.Length', ava => {
+test('check.Length', t => {
   let UserInfo = schema.declare({
     props: {
       userName: {
@@ -245,9 +249,10 @@ test('check.Length', ava => {
       expect(exp instanceof SchemaCheckedError).to.eql(true)
     }
   }
+  t.pass()
 })
 
-test('check.regexp', ava => {
+test('check.regexp', t => {
   let UserInfo = schema.declare({
     props: {
       userName: {
@@ -257,8 +262,8 @@ test('check.regexp', ava => {
           ['re', '\\w+'],
           ['re', /\w+/],
           ['re', '/^[a-z]+/i'], // a-z ignore case
-          ['re', '/^[a-z]+/'],  // a-z only
-          ['re', '/\\']  // invalid regexp
+          ['re', '/^[a-z]+/'], // a-z only
+          ['re', '/\\'] // invalid regexp
         ]
       }
     }
@@ -311,9 +316,10 @@ test('check.regexp', ava => {
       expect(exp instanceof SchemaInvalidRegexpError).to.eql(true)
     }
   }
+  t.pass()
 })
 
-test('check.nre', ava => {
+test('check.nre', t => {
   let UserInfo = schema.declare({
     props: {
       userName: {
@@ -336,9 +342,10 @@ test('check.nre', ava => {
       expect(exp instanceof SchemaCheckedError).to.eql(true)
     }
   }
+  t.pass()
 })
 
-test('check.math', ava => {
+test('check.math', t => {
   let UserInfo = schema.declare({
     props: {
       age: {
@@ -406,9 +413,10 @@ test('check.math', ava => {
       expect(exp instanceof SchemaCheckedError).to.eql(true)
     }
   }
+  t.pass()
 })
 
-test('check.replace.struct', ava => {
+test('check.replace.struct', t => {
   let UserInfo = schema.declare({
     props: {
       age: Number,
@@ -419,18 +427,20 @@ test('check.replace.struct', ava => {
   let src = {age: '30', male: 'false', female: 'true'}
   UserInfo.check(src, {replace: true})
   expect(src).to.eql({age: 30, male: false, female: true})
+  t.pass()
 })
 
-test('check.replace.array', ava => {
+test('check.replace.array', t => {
   let UserInfo = schema.declare({
     list: 'Number'
   })
   let src = ['1', '2', '3']
   UserInfo.check(src, {replace: true})
   expect(src).to.eql([1, 2, 3])
+  t.pass()
 })
 
-test('check.min&max', ava => {
+test('check.min&max', t => {
   let UserInfo = schema.declare({
     props: {
       age: {
@@ -449,9 +459,10 @@ test('check.min&max', ava => {
   expect(() => {
     UserInfo.check({age: 50})
   }).to.throw()
+  t.pass()
 })
 
-test('check.len', ava => {
+test('check.len', t => {
   let UserInfo = schema.declare({
     props: {
       name: {
@@ -477,4 +488,5 @@ test('check.len', ava => {
   expect(() => {
     UserInfo.check({name: 'hello', password: '1234'})
   }).to.throw()
+  t.pass()
 })

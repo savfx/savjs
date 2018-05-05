@@ -1,8 +1,8 @@
 import test from 'ava'
-import expect from 'expect.js'
+import {expect} from 'chai'
 import {Url} from '../src'
 
-test('Url.parse & Url.stringify', () => {
+test('Url.parse & Url.stringify', (t) => {
   let item, val, orig
   item = 'https://username:password@www.test.com:8080/path/index.html?this=that&some=thing#content'
   expect(val = Url.parse(item)).to.eql({
@@ -21,7 +21,7 @@ test('Url.parse & Url.stringify', () => {
     protocol: 'https',
     source: 'https://username:password@www.test.com:8080/path/index.html?this=that&some=thing#content'
   })
-  expect(Url.stringify(val)).to.be(item)
+  expect(Url.stringify(val)).to.eql(item)
 
   item = ''
   expect(val = Url.parse(item)).to.eql(orig = {
@@ -40,21 +40,21 @@ test('Url.parse & Url.stringify', () => {
     protocol: '',
     source: ''
   })
-  expect(Url.stringify(val)).to.be(item)
+  expect(Url.stringify(val)).to.eql(item)
 
   orig.protocol = 'http'
-  expect(Url.stringify(orig)).to.be(item)
+  expect(Url.stringify(orig)).to.eql(item)
 
   orig.protocol = ''
   orig.host = 'www.google.com'
-  expect(Url.stringify(orig)).to.be(item = '//www.google.com')
+  expect(Url.stringify(orig)).to.eql(item = '//www.google.com')
   val = Url.parse(item)
   expect(val.authority).to.eql(orig.host); val.authority = ''
   expect(val.source).to.eql(item); val.source = ''
   expect(val).to.eql(orig)
 
   orig.protocol = 'https'
-  expect(Url.stringify(orig)).to.be(item = 'https://www.google.com')
+  expect(Url.stringify(orig)).to.eql(item = 'https://www.google.com')
   val = Url.parse(item)
   expect(val.authority).to.eql(orig.host); val.authority = ''
   expect(val.source).to.eql(item); val.source = ''
@@ -65,38 +65,40 @@ test('Url.parse & Url.stringify', () => {
   orig.userInfo = 'jetiny:password'
   orig.authority = 'jetiny:password@www.google.com'
   orig.source = 'https://jetiny:password@www.google.com'
-  expect(item = Url.stringify(orig)).to.be(orig.source)
+  expect(item = Url.stringify(orig)).to.eql(orig.source)
   expect(Url.parse(item)).to.eql(orig)
 
   orig.port = '80'
   orig.authority += ':80'
   orig.source = 'https://jetiny:password@www.google.com:80'
-  expect(item = Url.stringify(orig)).to.be(orig.source)
+  expect(item = Url.stringify(orig)).to.eql(orig.source)
   expect(Url.parse(item)).to.eql(orig)
 
   orig.path = '/'
   orig.directory = '/'
   orig.relative = '/'
   orig.source = 'https://jetiny:password@www.google.com:80/'
-  expect(item = Url.stringify(orig)).to.be(orig.source)
+  expect(item = Url.stringify(orig)).to.eql(orig.source)
   expect(Url.parse(item)).to.eql(orig)
 
   orig.path = '/index.html'
   orig.file = 'index.html'
   orig.relative = orig.directory + orig.file
   orig.source = 'https://jetiny:password@www.google.com:80/index.html'
-  expect(item = Url.stringify(orig)).to.be(orig.source)
+  expect(item = Url.stringify(orig)).to.eql(orig.source)
   expect(Url.parse(item)).to.eql(orig)
 
   orig.query = 'a=b'
   orig.relative = orig.directory + orig.file + '?' + orig.query
   orig.source = 'https://jetiny:password@www.google.com:80/index.html?a=b'
-  expect(item = Url.stringify(orig)).to.be(orig.source)
+  expect(item = Url.stringify(orig)).to.eql(orig.source)
   expect(Url.parse(item)).to.eql(orig)
 
   orig.anchor = 'c'
   orig.relative = orig.directory + orig.file + '?' + orig.query + '#' + orig.anchor
   orig.source = 'https://jetiny:password@www.google.com:80/index.html?a=b#c'
-  expect(item = Url.stringify(orig)).to.be(orig.source)
+  expect(item = Url.stringify(orig)).to.eql(orig.source)
   expect(Url.parse(item)).to.eql(orig)
+
+  t.pass()
 })

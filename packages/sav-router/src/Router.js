@@ -1,4 +1,4 @@
-import {parse, complie, match} from 'path-route'
+import {parse, complie, match} from './Route.js'
 import {isString, convertCase, pascalCase, isArray, isObject, bindEvent} from 'sav-util'
 
 export class Router {

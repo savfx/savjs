@@ -2,7 +2,7 @@ import test from 'ava'
 import {expect} from 'chai'
 import {Schema} from '../src/Schema.js'
 
-test('Schema.refs', async ava => {
+test('Schema.refs', async t => {
   let schema = new Schema()
   let User = schema.declare({
     props: {
@@ -22,4 +22,5 @@ test('Schema.refs', async ava => {
     }
   })
   expect(User.create()).to.eql({name: '', age: 0, sex: 1})
+  t.pass()
 })

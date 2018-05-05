@@ -6,7 +6,7 @@ function wait (ms) {
   return new Promise((resolve) => setTimeout(resolve, ms || 1))
 }
 
-test('compose should work', async ava => {
+test('compose should work', async t => {
   let arr = []
   let stack = []
   stack.push(async (context, next) => {
@@ -32,9 +32,11 @@ test('compose should work', async ava => {
   })
   await compose(stack)({})
   expect(arr).to.eql([1, 2, 3, 4, 5, 6])
+
+  t.pass()
 })
 
-test('compse should be able to be called twice', async ava => {
+test('compse should be able to be called twice', async t => {
   let stack = []
   stack.push(async (context, next) => {
     context.arr.push(1)
@@ -67,9 +69,11 @@ test('compse should be able to be called twice', async ava => {
   }).then(() => {
     expect(out).to.eql(ctx2.arr)
   })
+
+  t.pass()
 })
 
-test('compose should throw', async ava => {
+test('compose should throw', async t => {
   let err
   try {
     compose([{}])
@@ -77,4 +81,5 @@ test('compose should throw', async ava => {
     err = e
   }
   expect(err).to.not.be.a('undefined')
+  t.pass()
 })
