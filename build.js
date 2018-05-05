@@ -11,7 +11,7 @@ const actions = {
   deploy,
 }
 
-const nodeCwd = path.resolve(__dirname, './node')
+const packageCwd = path.resolve(__dirname, './packages')
 
 const npm = 'npm' + (process.platform === 'win32' ? '.cmd' : '')
 const lerna = 'lerna' + (process.platform === 'win32' ? '.cmd' : '')
@@ -37,23 +37,75 @@ actions[step]()
 function prepare() {
   return Promise.all([
     // process.platform !== 'win32' && spawn(phpenv, 'local 7.0'),
-    // process.platform !== 'win32' && spawn(npm, 'i stdx-linux --no-save', {cwd: nodeCwd}),
+    // process.platform !== 'win32' && spawn(npm, 'i stdx-linux --no-save', {cwd: packageCwd}),
     spawn(lerna, 'bootstrap'),
-    // spawn(npm, 'i', {cwd: nodeCwd}),
+    // spawn(npm, 'i', {cwd: packageCwd}),
     // spawn(composer, 'install --no-interaction --prefer-dist'),
     // spawn(go, 'get -v -t'),
   ])
 }
 
 function build() {
+
+  let allPackages = (async () => {
+    let dirs = await readDir(packageCwd)
+    let maps = {}
+    let packages = dirs.map(dir => {
+      let cwd = path.join(packageCwd, dir)
+      let package = require(cwd + '/package.json')
+      let {name, devDependencies, dependencies} = package
+      let deps = Object.keys(devDependencies || []).concat(Object.keys(dependencies || [])).
+        filter(dir => dirs.indexOf(dir) !== -1)
+      let it = {
+        dir,
+        name,
+        deps,
+        cwd
+      }
+      maps[name] = it
+      return it
+    })
+    return {maps, packages}
+  })()
+
+  async function buildAndTest() {
+    let {maps, packages} = await allPackages
+    let promiseMap = new Proxy({}, {
+      get: function(target, name, receiver){
+        if (target[name]) {
+          return target[name]
+        }
+        return target[name] = spawn(npm, 'run build', {
+          cwd: maps[name].cwd
+        })
+      }  
+    })
+    return Promise.all(packages.map(it => {
+      return Promise.all(it.deps.map(child => promiseMap[child]))
+        .then(async () => {
+          await promiseMap[it.name]
+          await spawn(npm, 'test', {cwd: maps[it.name].cwd})
+        })
+    }))
+  }
+
+  async function lint() {
+    let {maps, packages} = await allPackages
+    return Promise.all(packages.map(it => 
+      spawn(npm, 'run lint', {cwd: maps[it.name].cwd})))
+  }
+
   return Promise.all([
     // spawn(composer, 'test'),
-    spawn(lerna, 'run lint'),
-    spawn(lerna, 'run build').then(() => spawn(lerna, 'run test')),
-    // spawn(npm, 'run lint', {cwd: nodeCwd}),
-    // spawn(npm, 'test', {cwd: nodeCwd}),
-    // spawn(npm, 'run build', {cwd: nodeCwd}),
-    // copy(path.resolve(__dirname, './README.md'), path.join(nodeCwd, 'README.md')),
+    lint(),
+    buildAndTest(),
+    // spawn(lerna, 'run lint'),
+    // spawn(lerna, 'run build').then(() => spawn(lerna, 'run test')),
+    // spawn(npm, 'run lint', {cwd: packageCwd}),
+    // spawn(npm, 'test', {cwd: packageCwd}),
+    // spawn(npm, 'run build', {cwd: packageCwd}),
+    
+    // copy(path.resolve(__dirname, './README.md'), path.join(packageCwd, 'README.md')),
     // spawn(go, 'test -v'),
   ])
 }
@@ -130,6 +182,7 @@ function spawn (bin, args, opts) {
 
 function readDir (dir, opts) {
   return new Promise((resolve, reject) => {
+    opts || (opts = {})
     fs.readdir(dir, opts, (err, dirs) => {
       if (err) {
         return reject(err)

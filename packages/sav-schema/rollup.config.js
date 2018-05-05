@@ -1,10 +1,10 @@
 import babel from 'rollup-plugin-babel'
 
 export default {
-  entry: 'src/index.js',
-  targets: [
-    { dest: 'dist/sav-schema.cjs.js', format: 'cjs' },
-    { dest: 'dist/sav-schema.es.js', format: 'es' }
+  input: 'src/index.js',
+  output: [
+    { file: 'dist/sav-schema.cjs.js', format: 'cjs' },
+    { file: 'dist/sav-schema.es.js', format: 'es' }
   ],
   plugins: [
     babel({
