@@ -1,5 +1,19 @@
 {
+  "name": "sav",
+  "description": "savjs library",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sav.git"
+  },
+  "author": {
+    "name": "jetiny",
+    "email": "86287344@qq.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sav/issues"
+  },
+  "homepage": "https://github.com/sav#readme",
 	"devDependencies": {
-		"lerna": "^2.10.2"
 	}
 }
