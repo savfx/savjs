@@ -64,7 +64,8 @@ function deploy() {
 
 function publish() {
   return Promise.all([
-    spawn(lerna, `publish --skip-git --skip-npm --repo-version ${version} --yes`).catch(err => {
+    //  --skip-npm
+    spawn(lerna, `publish --skip-git --repo-version ${version} --yes`).catch(err => {
       console.warn('!*************WARN', 'lerna publish')
       console.warn(err)
     }),
