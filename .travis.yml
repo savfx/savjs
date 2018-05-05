@@ -3,7 +3,7 @@ dist: trusty
 language: go
 go:
   - 1.9
-before_script:
+before_insall:
   - nvm install 8
   - echo $NPM_AUTH_TOKEN>~/.npmrc
 install: node ./build.js prepare
