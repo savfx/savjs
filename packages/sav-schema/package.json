@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/savjs/sav.git"
+    "url": "git+https://github.com/savfx/savjs.git"
   },
   "author": {
     "name": "jetiny",
@@ -22,12 +22,12 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/savjs/sav/issues"
+    "url": "https://github.com/savfx/savjs/issues"
   },
   "dependencies": {
     "sav-util": "^2.0.1"
   },
-  "homepage": "https://github.com/savjs/sav#readme",
+  "homepage": "https://github.com/savfx/savjs#readme",
   "nyc": {
     "exclude": [
       "node_modules",

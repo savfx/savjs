@@ -12,9 +12,10 @@
     "start": "watch -p \"+(test|src)/*.js\" -c \"npm run lint -- --fix && npm test\"",
     "test": "nyc ava ./test"
   },
+  "homepage": "https://github.com/savfx/savjs#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/savjs/sav.git"
+    "url": "git+https://github.com/savfx/savjs.git"
   },
   "author": {
     "name": "jetiny",
@@ -22,7 +23,7 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/savjs/sav/issues"
+    "url": "https://github.com/savfx/savjs/issues"
   },
   "dependencies": {
     "sav-util": "^2.0.1"
@@ -46,6 +47,5 @@
       "transform-decorators-legacy",
       "transform-es2015-modules-commonjs"
     ]
-  },
-  "homepage": "https://github.com/savjs/sav#readme"
+  }
 }

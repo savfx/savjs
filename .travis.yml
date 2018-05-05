@@ -1,11 +1,13 @@
 sudo: required
 dist: trusty
-language: go
-go:
-  - 1.9
+language: node
+node:
+  - 8
 before_install:
-  - nvm install 8
   - echo $NPM_AUTH_TOKEN>~/.npmrc
   - npm i stdx-linux -g
-install: node ./build.js prepare
-script: node ./build.js deploy
+  - lerna bootstrap
+install:
+  - node ./build.js prepare
+script:
+  - node ./build.js deploy

@@ -15,15 +15,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sav.git"
+    "url": "git+https://github.com/savfx/savjs.git"
   },
+  "homepage": "https://github.com/savfx/savjs#readme",
   "author": {
     "name": "jetiny",
     "email": "86287344@qq.com"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sav/issues"
+    "url": "https://github.com/savfx/savjs/issues"
   },
   "nyc": {
     "exclude": [
@@ -39,6 +40,5 @@
     "plugins": [
       "transform-es2015-modules-commonjs"
     ]
-  },
-  "homepage": "https://github.com/sav#readme"
+  }
 }

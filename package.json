@@ -1,10 +1,10 @@
 {
-  "name": "sav",
-  "version": "2.0.1",
+  "name": "savjs",
+  "version": "2.0.2",
   "description": "savjs library",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sav.git"
+    "url": "git+https://github.com/savfx/savjs.git"
   },
   "author": {
     "name": "jetiny",
@@ -12,9 +12,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sav/issues"
+    "url": "https://github.com/savfx/savjs/issues"
   },
-  "homepage": "https://github.com/sav#readme",
+  "homepage": "https://github.com/savfx/savjs#readme",
 	"devDependencies": {
 	}
 }

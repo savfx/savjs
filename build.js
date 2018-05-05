@@ -15,10 +15,6 @@ const packageCwd = path.resolve(__dirname, './packages')
 
 const npm = 'npm' + (process.platform === 'win32' ? '.cmd' : '')
 const lerna = 'lerna' + (process.platform === 'win32' ? '.cmd' : '')
-const phpenv = 'phpenv' + (process.platform === 'win32' ? '.bat' : '')
-const composer = 'composer' + (process.platform === 'win32' ? '.bat' : '')
-const go = 'go' + (process.platform === 'win32' ? '.exe' : '')
-const curl = 'curl' + (process.platform === 'win32' ? '.exe' : '')
 const php = 'php' + (process.platform === 'win32' ? '.exe' : '')
 
 const startTime = new Date()
@@ -33,17 +29,6 @@ actions[step]()
   process.exit(-1)
   throw err
 })
-
-function prepare() {
-  return Promise.all([
-    // process.platform !== 'win32' && spawn(phpenv, 'local 7.0'),
-    // process.platform !== 'win32' && spawn(npm, 'i stdx-linux --no-save', {cwd: packageCwd}),
-    spawn(lerna, 'bootstrap'),
-    // spawn(npm, 'i', {cwd: packageCwd}),
-    // spawn(composer, 'install --no-interaction --prefer-dist'),
-    // spawn(go, 'get -v -t'),
-  ])
-}
 
 function build() {
 
@@ -94,19 +79,11 @@ function build() {
     return Promise.all(packages.map(it => 
       spawn(npm, 'run lint', {cwd: maps[it.name].cwd})))
   }
-
   return Promise.all([
-    // spawn(composer, 'test'),
     lint(),
     buildAndTest(),
     // spawn(lerna, 'run lint'),
     // spawn(lerna, 'run build').then(() => spawn(lerna, 'run test')),
-    // spawn(npm, 'run lint', {cwd: packageCwd}),
-    // spawn(npm, 'test', {cwd: packageCwd}),
-    // spawn(npm, 'run build', {cwd: packageCwd}),
-    
-    // copy(path.resolve(__dirname, './README.md'), path.join(packageCwd, 'README.md')),
-    // spawn(go, 'test -v'),
   ])
 }
 
@@ -121,20 +98,6 @@ function publish() {
       console.warn('!*************WARN', 'lerna publish')
       console.warn(err)
     }),
-    // spawn(npm, 'publish node --force').catch(err => {
-    //   console.warn('!*************WARN', 'npm publish')
-    //   console.warn(err)
-    // }),
-    // Promise.all([
-    //   spawn(curl, `-X POST -d @codeclimate.json -H 'Content-Type:application/json' https://codeclimate.com/test_reports --verbose`),
-    //   spawn(curl, `-F 'json_file=@coveralls.json' https://coveralls.io/api/v1/jobs --verbose`),
-    //   spawn(curl, `-L -O https://scrutinizer-ci.com/ocular.phar`).then(() => {
-    //     return spawn(php, `ocular.phar code-coverage:upload --format=php-clover './clover.xml'`)
-    //   }),
-    // ]).catch(err => {
-    //   console.warn('!*************WARN', 'php upload')
-    //   console.warn(err)
-    // })
   ])
 }
 
