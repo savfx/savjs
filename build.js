@@ -5,7 +5,6 @@ const step = process.argv[2]
 const version = require('./package.json').version
 
 const actions = {
-  prepare,
   build,
   publish,
   deploy,

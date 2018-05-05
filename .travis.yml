@@ -7,7 +7,5 @@ before_install:
   - echo $NPM_AUTH_TOKEN>~/.npmrc
   - npm i stdx-linux -g
   - lerna bootstrap
-install:
-  - node ./build.js prepare
 script:
   - node ./build.js deploy
