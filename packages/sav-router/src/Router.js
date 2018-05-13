@@ -1,4 +1,4 @@
-import {parse, complie, match} from './Route.js'
+import {parse, compile, match} from './Route.js'
 import {isString, convertCase, pascalCase, isArray, isObject, bindEvent} from 'sav-util'
 
 export class Router {
@@ -109,7 +109,7 @@ export class Router {
     })
     route.regexp = parsed.regexp
     route.keys = parsed.keys
-    route.complie = complie(parsed.tokens)
+    route.compile = compile(parsed.tokens)
     normalKeys(route)
     route.isAbsolute = isAbsolute
     if (isAbsolute) {

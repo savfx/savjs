@@ -1,7 +1,7 @@
 import test from 'ava'
 import {expect} from 'chai'
 
-import {parse, match, complie} from '../src/Route.js'
+import {parse, match, compile} from '../src/Route.js'
 
 const trustOpts = {
   sensitive: true,
@@ -120,14 +120,14 @@ test('regexp.match', t => {
   t.pass()
 })
 
-test('regexp.complie', t => {
-  let make = complie('test')
+test('regexp.compile', t => {
+  let make = compile('test')
   expect(make()).to.eql('test')
 
-  make = complie('/test')
+  make = compile('/test')
   expect(make()).to.eql('/test')
 
-  make = complie(':a')
+  make = compile(':a')
   expect(make({a: 1})).to.eql('1')
   expect(make({a: 's'})).to.eql('s')
   expect(make({a: 's b'})).to.eql('s%20b')
@@ -137,26 +137,26 @@ test('regexp.complie', t => {
   expect(make({a: 's?b'})).to.eql('s%3Fb')
   expect(make({a: true})).to.eql('true')
 
-  make = complie('/:a')
+  make = compile('/:a')
   expect(make({a: 1})).to.eql('/1')
   expect(make({a: 's'})).to.eql('/s')
   expect(make({a: 's b'})).to.eql('/s%20b')
   expect(make({a: true})).to.eql('/true')
 
-  make = complie('/:a/:b')
+  make = compile('/:a/:b')
   expect(make({a: 1, b: 2})).to.eql('/1/2')
   expect(make({a: 's', b: 'b'})).to.eql('/s/b')
   expect(make({a: 's b', b: 'c'})).to.eql('/s%20b/c')
   expect(make({a: true, b: false})).to.eql('/true/false')
 
-  make = complie('/:a?')
+  make = compile('/:a?')
   expect(make()).to.eql('')
   expect(make({a: 1})).to.eql('/1')
   expect(make({a: 's'})).to.eql('/s')
   expect(make({a: 's b'})).to.eql('/s%20b')
   expect(make({a: true})).to.eql('/true')
 
-  make = complie('/:a/:b?')
+  make = compile('/:a/:b?')
   expect(make({a: 1})).to.eql('/1')
   expect(make({a: 1, b: 2})).to.eql('/1/2')
   expect(make({a: 's', b: 'b'})).to.eql('/s/b')
@@ -166,7 +166,7 @@ test('regexp.complie', t => {
   expect(() => make()).to.throw()
 
   let route = parse('/home/:path?', trustOpts)
-  make = complie(route.tokens)
+  make = compile(route.tokens)
   expect(make()).to.eql('/home')
   expect(make({path: 1})).to.eql('/home/1')
 

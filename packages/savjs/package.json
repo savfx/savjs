@@ -1,6 +1,6 @@
 {
   "name": "savjs",
-  "version": "1.0.2",
+  "version": "2.0.2",
   "description": "savjs foundation",
   "repository": {
     "type": "git",
@@ -25,9 +25,9 @@
   },
   "dependencies": {
     "sav-flux": "^0.0.25",
-    "sav-router": "^1.0.23",
-    "sav-schema": "^1.0.37",
-    "sav-util": "^1.0.32"
+    "sav-router": "^2.0.2",
+    "sav-schema": "^2.0.2",
+    "sav-util": "^2.0.2"
   },
   "standard": {
     "require": "babel-eslint",
@@ -61,8 +61,5 @@
       "transform-es2015-modules-commonjs"
     ]
   },
-  "homepage": "https://github.com/savjs/savjs#readme",
-  "devDependencies": {
-    "vue-router": "^3.0.1"
-  }
+  "homepage": "https://github.com/savjs/savjs#readme"
 }

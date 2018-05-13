@@ -1,6 +1,6 @@
 {
   "name": "sav-router",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "another nodejs controller style router",
   "main": "dist/sav-router.cjs.js",
   "module": "dist/sav-router.es.js",

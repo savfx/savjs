@@ -49,7 +49,7 @@ export function match (route, path, params) {
   }
 }
 
-export function complie (path) {
+export function compile (path) {
   let tokens = Array.isArray(path) ? path : parseToken(path)
   return (params = {}) => {
     let path = ''
