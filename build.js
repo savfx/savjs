@@ -79,7 +79,13 @@ function build() {
     return Promise.all(packages.map(it => 
       spawn(npm, 'run lint', {cwd: maps[it.name].cwd})))
   }
+
+  async function preparePkg() {
+    return spawn(npm, 'run prepkg', {cwd: 'packages/sav-contract/'})
+  }
+
   return Promise.all([
+    preparePkg(),
     lint(),
     buildAndTest(),
     // spawn(lerna, 'run lint'),
