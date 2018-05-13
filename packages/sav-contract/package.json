@@ -1,6 +1,6 @@
 {
   "name": "sav-contract",
-  "version": "1.0.4",
+  "version": "2.0.2",
   "description": "sav contract tools",
   "scripts": {
     "prepkg": "node script/build prepare",

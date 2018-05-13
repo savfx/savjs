@@ -104,6 +104,18 @@ function publish() {
       console.warn('!*************WARN', 'lerna publish')
       console.warn(err)
     }),
+    spawn(npm, `publish --force`, {cwd: 'packages/sav-contract/platform/win'}).catch(err => {
+      console.warn('!*************WARN', 'npm publish sav-contract-win')
+      console.warn(err)
+    }),
+    spawn(npm, `publish --force`, {cwd: 'packages/sav-contract/platform/mac'}).catch(err => {
+      console.warn('!*************WARN', 'npm publish sav-contract-mac')
+      console.warn(err)
+    }),
+    spawn(npm, `publish --force`, {cwd: 'packages/sav-contract/platform/linux'}).catch(err => {
+      console.warn('!*************WARN', 'npm publish sav-contract-linux')
+      console.warn(err)
+    }),
   ])
 }
 
