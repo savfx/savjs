@@ -46,6 +46,7 @@ export default {
     commonjs({
       include: [
         'node_modules/**',
+        '../**',
         'src/**',
         process.env.ENTRYMODULE + '/**',
       ]

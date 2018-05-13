@@ -1,0 +1,8 @@
+{
+  "name": "sav-contract",
+  "pkg": {
+    "assets": [
+      "templates/**/**"
+    ]
+  }
+}

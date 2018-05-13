@@ -3,6 +3,7 @@
   "version": "1.0.4",
   "description": "sav contract tools",
   "scripts": {
+    "prepkg": "node script/build prepare",
     "build": "rollup -c script/rollup.cli.js",
     "tcreate": "node dist/contract.js -t create -a HelloWorld -F ./tmp/HelloWorld",
     "tcontrace": "node dist/contract.js -i test/fixtures/interface -l js,node,php -C ./tmp/contract -M ./tmp/modals -F ./tmp/front -S modal",
@@ -16,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/savjs/sav-contract.git"
+    "url": "git+https://github.com/savfx/savjs.git"
   },
   "author": {
     "name": "jetiny",
@@ -24,7 +25,7 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/savjs/sav-contract/issues"
+    "url": "https://github.com/savfx/savjs/issues"
   },
   "devDependencies": {
     "acorn": "^5.5.3",
@@ -36,9 +37,10 @@
     "jsonar": "^1.8.0",
     "os-locale": "^2.1.0",
     "php-parser": "^2.2.0",
-    "sav-router": "latest",
-    "sav-schema": "next",
-    "sav-util": "latest"
+    "pkg": "4.3.0",
+    "sav-router": "^2.0.2",
+    "sav-schema": "^2.0.2",
+    "sav-util": "^2.0.2"
   },
   "standard": {
     "require": "babel-eslint",
@@ -70,5 +72,5 @@
       "transform-es2015-modules-commonjs"
     ]
   },
-  "homepage": "https://github.com/savjs/sav-contract#readme"
+  "homepage": "https://github.com/savfx/savjs#readme"
 }

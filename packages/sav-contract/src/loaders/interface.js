@@ -8,12 +8,13 @@ import Module from 'module'
 import {isObject, isFunction} from 'sav-util'
 import * as decorators from '../utils/decorator.js'
 import {inputFile, readDir, pathExists} from '../utils/util.js'
+const req = require
 
 export async function loadInterface (dir) {
   let res = {}
   let projectFile = path.join(dir, 'project.js')
   if (await pathExists(projectFile)) {
-    res.project = require(projectFile)
+    res.project = req(projectFile)
   }
 
   let modalsDir = path.join(dir, 'modals')

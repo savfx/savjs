@@ -74,7 +74,7 @@ export class CommandContract extends Contract {
         routes: [],
         regexp: modal.regexp.toString()
       })
-      if (modal.keys.length) {
+      if (modal.keys && modal.keys.length) {
         modalRef.keys = modal.keys
       }
       ret.push(modalRef)
@@ -83,7 +83,7 @@ export class CommandContract extends Contract {
         let routeRef = Object.assign({}, route.opts, {
           regexp: route.regexp.toString()
         })
-        if (route.keys.length) {
+        if (route.keys && route.keys.length) {
           routeRef.keys = route.keys
         }
         delete routeRef.modal

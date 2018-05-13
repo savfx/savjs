@@ -2,7 +2,6 @@ import {Command} from 'commander'
 import osLocale from 'os-locale'
 import {CommandContract} from './CommandContract.js'
 import {generateFront} from './generaters/generateFront.js'
-import fs from 'fs'
 import path from 'path'
 
 const locals = {
@@ -16,7 +15,7 @@ const locals = {
     destModals: 'modals 输出目录',
     destFront: '前端项目输出目录',
     sassMode: 'sass 组织方式 app(单个)|modal(模块)',
-    rc: '配置缓存文件 (默认 contract.rc.js)',
+    rc: '配置缓存文件 (默认 contract.rc.js)'
   },
   'en': {
     type: 'command type sync(default)|create',
@@ -28,7 +27,7 @@ const locals = {
     destModals: 'output modals directory',
     destFront: 'output font-end projects directory',
     sassMode: 'sass mode with app|modal',
-    rc: 'config resourece file (default contract.rc.js)',
+    rc: 'config resourece file (default contract.rc.js)'
   }
 }
 
@@ -39,7 +38,7 @@ function getProgram (locale) {
   }
   let current = locals[locale]
   program
-    .option('-t, --type <type>', current.type)      
+    .option('-t, --type <type>', current.type)
     .option('-a, --app-name [appName]', current.appName)
     .option('-i, --interface [interface]', current.interface)
     .option('-c, --contract [contract]', current.contract)
