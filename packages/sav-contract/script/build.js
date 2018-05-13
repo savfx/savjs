@@ -1,6 +1,8 @@
 const path = require('path')
 const fs = require('fs')
 const childProcess = require('child_process')
+const lernaVersion = require('../../../lerna.json').version
+
 let packageFile = require('../package.json')
 const packageJSON = strip(JSON.parse(JSON.stringify(packageFile)))
 function strip (pkg) {
@@ -155,6 +157,13 @@ function createPlatformPackageJsons () {
   }))
 }
 
+async function updateTemplateVersion() {
+  let dist = path.join(__dirname, '../', 'templates', 'front-template', 'package.json')
+  var pkgfile = require(dist)
+  pkgfile.devDependencies.savjs = lernaVersion
+  return writeFile(dist, JSON.stringify(pkgfile, null, 2))
+}
+
 const actions = {
   prepare,
   build,
@@ -176,6 +185,7 @@ actions[step]()
 function prepare() { // 预先构建下节省时间
   return Promise.all([
     buildTmp(),
+    updateTemplateVersion(),
     createPlatformPackageJsons(),
   ])
 }

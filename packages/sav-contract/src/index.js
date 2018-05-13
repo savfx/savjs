@@ -54,7 +54,7 @@ function getProgram (locale) {
       if (locale === 'zh_CN') {
         console.log('  载入interface目录合约, 输出js和node标准合约到contract, 同步node方法, 同步前端路由,组件及样式')
       }
-      console.log('  contract -i ./interface -l js,node -C ./contract -M modals -F ./front')
+      console.log('  contract -t sync -i ./interface -l js,node -C ./contract -M modals -F ./front')
       if (locale === 'zh_CN') {
         console.log('  创建前端示例项目')
       }

@@ -1,7 +1,7 @@
 {
   "name": "ProjectName",
   "scripts": {
-    "build-interface": "contract -i ./interface -C ./contract -l js,node -F ./",
+    "build-interface": "contract -t sync -i ./interface -C ./contract -l js,node -F ./",
     "build-sass": "node-sass --output-style=compressed -r sass -o static/css",
     "build-client": "rollup -c ./script/build-client.js",
     "build": "run-p build-sass build-client",
@@ -14,7 +14,6 @@
     "build-prod": "cross-env NODE_ENV=production npm run build"
   },
   "devDependencies": {
-    "savjs": "latest",
-    "vue-router": "^3.0.1"
+    "savjs": "2.0.2"
   }
 }

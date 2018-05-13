@@ -79,6 +79,7 @@ function createPlugins () {
     commonjs({
       include: [
         'node_modules/**',
+        'contract/**',
         process.env.ENTRYMODULE + '/**'
       ]
     })
