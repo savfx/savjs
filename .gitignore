@@ -41,3 +41,9 @@ jspm_packages
 /packages/sav-contract/platform/linux/package.json
 /packages/sav-contract/platform/mac/package.json
 /packages/sav-contract/platform/win/package.json
+/packages/sav-contract/platform/linux/README.md
+/packages/sav-contract/platform/linux/contract
+/packages/sav-contract/platform/mac/README.md
+/packages/sav-contract/platform/mac/contract
+/packages/sav-contract/platform/win/README.md
+/packages/sav-contract/platform/win/contract.exe

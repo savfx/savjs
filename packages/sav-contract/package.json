@@ -4,7 +4,7 @@
   "description": "sav contract tools",
   "scripts": {
     "prepkg": "node script/build prepare",
-    "build": "rollup -c script/rollup.cli.js",
+    "build": "rollup -c script/rollup.cli.js && node script/build build",
     "tcreate": "node dist/contract.js -t create -a HelloWorld -F ./tmp/HelloWorld",
     "tcontrace": "node dist/contract.js -i test/fixtures/interface -l js,node,php -C ./tmp/contract -M ./tmp/modals -F ./tmp/front -S modal",
     "lint": "standard src/** test/**",
