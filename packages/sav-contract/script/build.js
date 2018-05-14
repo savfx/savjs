@@ -7,7 +7,7 @@ let packageFile = require('../package.json')
 const packageJSON = strip(JSON.parse(JSON.stringify(packageFile)))
 function strip (pkg) {
   ['scripts', 'devDependencies', 'dependencies', 'bin',
-  'standard', 'nyc', 'ava', 'babel'].forEach(it => delete pkg[it])
+    'standard', 'nyc', 'ava', 'babel'].forEach(it => delete pkg[it])
   return JSON.stringify(pkg)
 }
 
@@ -66,7 +66,7 @@ function copyFile (src, dest, flags) {
 const pkg = path.resolve(`./node_modules/.bin/pkg${process.platform === 'win32' ? '.cmd' : ''}`)
 let platforms = {
   win: 'win32',
-  mac: 'darwin',
+  mac: 'darwin'
 }
 
 let nodeVersion = process.env.PKG_NODE_VERSION || 8
@@ -94,18 +94,18 @@ let targets = {
 
 function buildTmp () {
   let cache = path.resolve('./cache')
-  return spawn(pkg, ['-t', 
+  return spawn(pkg, ['-t',
     Object.keys(targets).map(it => targets[it].target).join(','),
     '--out-path', cache, 'script/tmp.js'])
-    // 串行
-    // return Object.keys(targets).reduce((ret, it) => {
-    //   return ret.then(() => spawn(pkg, [
-    //     '-t', targets[it].target,
-    //     '--output', path.join(__dirname, '../', 'platform', it, targets[it].distFile),
-    //     '--config', 'pkg.json', file], {
-    //       cwd: path.join(__dirname, '../')
-    //     }))
-    // }, Promise.resolve())
+  // 串行
+  // return Object.keys(targets).reduce((ret, it) => {
+  //   return ret.then(() => spawn(pkg, [
+  //     '-t', targets[it].target,
+  //     '--output', path.join(__dirname, '../', 'platform', it, targets[it].distFile),
+  //     '--config', 'pkg.json', file], {
+  //       cwd: path.join(__dirname, '../')
+  //     }))
+  // }, Promise.resolve())
 }
 
 function buildPkgs () {
@@ -122,7 +122,7 @@ function buildPkgs () {
       '-t', target,
       '--out-path', cache,
       '--config', 'pkg.json', 'dist/contract.js']
-    let ps = childProcess.spawn(pkg, args , { stdio: 'inherit' })
+    let ps = childProcess.spawn(pkg, args, { stdio: 'inherit' })
     ps.on('close', (code) => {
       if (code) {
         return reject(new Error(`pkg error: ${code}`))
@@ -141,7 +141,7 @@ function buildPkgs () {
             .replace('-win', '')
         }
         return copyFile(path.join(cache, cacheFile),
-            path.join(dest, it, targets[it].distFile))
+          path.join(dest, it, targets[it].distFile))
       }))
   })
 }
@@ -152,12 +152,13 @@ function createPlatformPackageJsons () {
     var pkgfile = JSON.parse(packageJSON)
     pkgfile.name = pkgfile.name + '-' + platform
     pkgfile.bin = 'exec.js'
-    return writeFile(path.join(dist, 'package.json'), 
+    pkgfile.version = lernaVersion
+    return writeFile(path.join(dist, 'package.json'),
       JSON.stringify(pkgfile, null, 2))
   }))
 }
 
-async function updateTemplateVersion() {
+async function updateTemplateVersion () {
   let dist = path.join(__dirname, '../', 'templates', 'front-template', 'package.json')
   var pkgfile = require(dist)
   pkgfile.devDependencies.savjs = lernaVersion
@@ -166,30 +167,30 @@ async function updateTemplateVersion() {
 
 const actions = {
   prepare,
-  build,
+  build
 }
 const step = process.argv[2]
 const startTime = new Date()
 
 actions[step]()
-.then(() => {
-  console.log('!-------------DONE', step, (new Date() - startTime) / 1000)
-}, (err) => {
-  console.error('@-------------ERROR', step)
-  console.error(err)
-  console.error('!-------------ERROR')
-  process.exit(-1)
-  throw err
-})
+  .then(() => {
+    console.log('!-------------DONE', step, (new Date() - startTime) / 1000)
+  }, (err) => {
+    console.error('@-------------ERROR', step)
+    console.error(err)
+    console.error('!-------------ERROR')
+    process.exit(-1)
+    throw err
+  })
 
-function prepare() { // 预先构建下节省时间
+function prepare () { // 预先构建下节省时间
   return Promise.all([
     buildTmp(),
     updateTemplateVersion(),
-    createPlatformPackageJsons(),
+    createPlatformPackageJsons()
   ])
 }
 
-function build() {
+function build () {
   return buildPkgs()
 }
