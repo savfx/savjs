@@ -38,3 +38,6 @@ jspm_packages
 /dist
 /package-lock.json
 /tmp
+/packages/sav-contract/platform/linux/package.json
+/packages/sav-contract/platform/mac/package.json
+/packages/sav-contract/platform/win/package.json
