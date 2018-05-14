@@ -56,7 +56,15 @@ export class CommandContract extends Contract {
         await updateNodeActions(destModals, modals)
       }
       if (langs.indexOf('php') !== -1) { // php后端
-        await updatePhpActions(destModals, modals)
+        let opts = {}
+        if (params.lumen) {
+          opts.args = '$ctx, $input';
+          opts.parentClass = 'Controller';
+          opts.classSuffix = 'Controller';
+          opts.fileSuffix = 'Controller';
+          opts.namespace = 'namespace App\\Http\\Controllers;';
+        }
+        await updatePhpActions(destModals, modals, opts)
       }
     }
     if (destFront) {

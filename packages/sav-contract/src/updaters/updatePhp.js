@@ -24,16 +24,16 @@ function syncPhpAction (dir, className, modal, opts) {
   if (!routes.length) {
     return
   }
-  let file = path.resolve(dir, className + '.php')
+  let file = path.resolve(dir, className + (opts.fileSuffix || '') + '.php')
   return pathExists(file).then(async (exists) => {
     let methods = routes.map(it => it.name)
     if (exists) {
       let data = (await inputFile(file)).toString()
-      let parsed = parseClassModule(data, className)
+      let parsed = parseClassModule(data, className, opts)
       if (parsed) {
         methods = methods.filter((method) => parsed.methods.indexOf(method) === -1)
         if (methods.length) {
-          let attach = createMethods(methods)
+          let attach = createMethods(methods, opts)
           data = data.substr(0, parsed.end - 1) + attach + data.substr(parsed.end - 1)
           await outputFile(file, data)
         }
@@ -47,35 +47,31 @@ function syncPhpAction (dir, className, modal, opts) {
 }
 
 function createClassModule (className, methods, opts) {
-  let {body, args} = opts
-  if (body) {
-    body = '    ' + body
-  }
+  let {body, args, parentClass, classSuffix} = opts
   methods = methods.map((method) => {
     return `
-  public function ${method}(${args || ''}) {
-${body || ''}
-  }`
+    public function ${method}(${args || ''}) {
+        ${body || ''}
+    }`
   }).join('').trim()
   return `${opts.namespace || ''}
-class ${className}
+
+class ${className + (classSuffix || '')}${parentClass ? (' extends ' + parentClass) : ''}
 {
-  ${methods}
+    ${methods}
 }
 `
 }
 
-function createMethods (methods, args = '', body = '') {
-  if (body) {
-    body = '    ' + body
-  }
-  return methods.map((method) => `  public function ${method} (${args}) {
-${body}
-  }`).join('\n') + '\n'
+function createMethods (methods, opts) {
+  return methods.map((method) => `    public function ${method} (${opts.args || ''}) {
+        ${opts.body || ''}
+    }`).join('\n') + '\n'
 }
 
-function parseClassModule (str, className) {
-  let ast = parser.parseCode(str, `${className}.php`)
+function parseClassModule (str, method, opts) {
+  let className = method + (opts.classSuffix || '')
+  let ast = parser.parseCode(str, `${className + (opts.fileSuffix || '') }.php`)
   let target
   for (let item of ast.children) {
     if (item.kind === 'namespace') {
