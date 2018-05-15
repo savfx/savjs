@@ -151,7 +151,9 @@ function createPlatformPackageJsons () {
     let dist = path.join(__dirname, '../', 'platform', platform)
     var pkgfile = JSON.parse(packageJSON)
     pkgfile.name = pkgfile.name + '-' + platform
-    pkgfile.bin = 'exec.js'
+    pkgfile.bin = {
+      contract: 'bin/contract'
+    }
     pkgfile.version = lernaVersion
     return Promise.all([
       writeFile(path.join(dist, 'package.json'), JSON.stringify(pkgfile, null, 2)),
