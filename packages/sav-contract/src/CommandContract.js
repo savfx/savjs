@@ -58,11 +58,11 @@ export class CommandContract extends Contract {
       if (langs.indexOf('php') !== -1) { // php后端
         let opts = {}
         if (params.lumen) {
-          opts.args = '$ctx, $input';
-          opts.parentClass = 'Controller';
-          opts.classSuffix = 'Controller';
-          opts.fileSuffix = 'Controller';
-          opts.namespace = 'namespace App\\Http\\Controllers;';
+          opts.args = '$ctx, $input'
+          opts.parentClass = 'Controller'
+          opts.classSuffix = 'Controller'
+          opts.fileSuffix = 'Controller'
+          opts.namespace = 'namespace App\\Http\\Controllers;'
         }
         await updatePhpActions(destModals, modals, opts)
       }

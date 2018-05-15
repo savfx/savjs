@@ -71,7 +71,7 @@ function createMethods (methods, opts) {
 
 function parseClassModule (str, method, opts) {
   let className = method + (opts.classSuffix || '')
-  let ast = parser.parseCode(str, `${className + (opts.fileSuffix || '') }.php`)
+  let ast = parser.parseCode(str, `${className + (opts.fileSuffix || '')}.php`)
   let target
   for (let item of ast.children) {
     if (item.kind === 'namespace') {
