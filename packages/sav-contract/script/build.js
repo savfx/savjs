@@ -152,6 +152,7 @@ function createPlatformPackageJsons () {
     var pkgfile = JSON.parse(packageJSON)
     pkgfile.name = pkgfile.name + '-' + platform
     pkgfile.bin = 'exec.js'
+    pkgfile.version = lernaVersion
     return Promise.all([
       writeFile(path.join(dist, 'package.json'), JSON.stringify(pkgfile, null, 2)),
       copyFile('README.md', path.join(dist, 'README.md'))
