@@ -24,7 +24,7 @@ const typeMaps = {
 const nativeTypes = Object.values(typeMaps)
 
 export function isNativeType (val) {
-  return nativeTypes.indexOf(val) != -1 || (!!typeMaps[val])
+  return nativeTypes.indexOf(val) !== -1 || (!!typeMaps[val])
 }
 
 export function getNativeType (val) {

@@ -12,13 +12,13 @@ function prepareEnumState (input, opts = {}) {
   state.keyType = opts.keyType || 'string'
   state.valueType = opts.valueType || 'int'
   if (input.enums.length) {
-	  let key = input.enums[0].key
-	  let val = input.enums[0].val
-	  state.keyType = isString(key) ? 'string' : (opts.defaultIntType || 'int')
-	  state.valType = isString(val) ? 'string' : (opts.defaultIntType || 'int')
+    let key = input.enums[0].key
+    let val = input.enums[0].val
+    state.keyType = isString(key) ? 'string' : (opts.defaultIntType || 'int')
+    state.valType = isString(val) ? 'string' : (opts.defaultIntType || 'int')
   }
-  let keyIsString = state.keyType == 'string'
-  let valIsString = state.valType == 'string'
+  let keyIsString = state.keyType === 'string'
+  let valIsString = state.valType === 'string'
   let keyText = []
   let valueText = []
   input.enums.forEach(it => {

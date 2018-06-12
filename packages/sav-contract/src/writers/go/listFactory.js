@@ -1,7 +1,7 @@
 import * as SavUtil from 'sav-util'
-import {isNativeType, getNativeType} from './type'
+import {getNativeType} from './type'
 
-const {tmpl, isArray, isString, isObject} = SavUtil
+const {tmpl} = SavUtil
 
 function prepareListState (input, opts = {}) {
   let state = {

@@ -64,6 +64,7 @@ test('loadContract', async (ava) => {
   expect(outputPhp3).to.eql(outputPhp2)
   expect(outputPhp3).to.eql(outputPhp)
   let outputGo = await writeGoContract(dist, cmd)
+  expect(outputGo).to.be.a('object')
 
   let actionPath = path.resolve(__dirname, '../../fixtures/contract-actions')
   let modals = cmd.getContractModals()

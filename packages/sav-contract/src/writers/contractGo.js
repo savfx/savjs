@@ -10,13 +10,13 @@ import {
 } from '../utils/util.js'
 // import jsonar from 'jsonar'
 import {
-  convertCase,
-  pascalCase,
+  convertCase
+  // pascalCase,
   // camelCase
-  isString, isArray, isObject
+  // isString, isArray, isObject
 } from 'sav-util'
 
-import {Context} from './go/Context.js'
+import {Context} from './go/context.js'
 
 /**
  * 写入contract
@@ -71,7 +71,7 @@ export async function writeGoContract (dir, contract, opts = {}) {
     remains.push(item)
     ret[it.name] = item
     return ret
-  }, {});
+  }, {})
 
   let ctx = new Context()
   schemas.forEach(ref => {
@@ -127,16 +127,17 @@ export async function writeGoContract (dir, contract, opts = {}) {
     }
   }
   return {
-    schemas
+    schemas,
+    schemaData
   }
 }
 
 function makePackage (text, opts) {
   let pakcages = []
-  if (text.indexOf('ObjectAccess') !== -1 || 
-    text.indexOf('FormObject') !== -1 || 
-    text.indexOf('ObjectArray') !== -1 || 
-    text.indexOf('FormArray') !== -1 || 
+  if (text.indexOf('ObjectAccess') !== -1 ||
+    text.indexOf('FormObject') !== -1 ||
+    text.indexOf('ObjectArray') !== -1 ||
+    text.indexOf('FormArray') !== -1 ||
     text.indexOf('ValueAccess') !== -1) {
     pakcages.push('\t"github.com/savfx/savgo/util/convert"')
   }
