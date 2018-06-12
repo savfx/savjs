@@ -55,7 +55,7 @@ test('loadInterface', async (ava) => {
   expect(outputPhp3).to.eql(outputPhp2)
   expect(outputPhp3).to.eql(outputPhp)
 
-  // let outputGo = await writeGoContract(dist, cmd)
+  let outputGo = await writeGoContract(dist, cmd)
 
   let actionPath = path.resolve(__dirname, '../../fixtures/interface-actions')
   let modals = cmd.getContractModals()

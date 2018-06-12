@@ -14,6 +14,6 @@
     "build-prod": "cross-env NODE_ENV=production npm run build"
   },
   "devDependencies": {
-    "savjs": "2.0.2"
+    "savjs": "2.0.5"
   }
 }

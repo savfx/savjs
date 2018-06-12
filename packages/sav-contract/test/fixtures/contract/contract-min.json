@@ -1,0 +1,212 @@
+{
+  "project": {
+    "id": "5a5dabae61b3092460e4a8d6",
+    "name": "lmsf",
+    "version": "1.0.9",
+    "title": "多对多",
+    "description": "sxs"
+  },
+  "fields": [
+    {
+      "name": "id",
+      "title": "会话ID",
+      "type": "String"
+    },
+    {
+      "name": "user",
+      "title": "用户信息",
+      "type": "User",
+      "checks": [
+        {
+          "value": "10",
+          "name": "lgt",
+          "title": "s"
+        },
+        {
+          "value": "100",
+          "name": "llt",
+          "title": "b"
+        }
+      ]
+    },
+    {
+      "name": "id",
+      "title": "用户ID",
+      "type": "Long"
+    },
+    {
+      "name": "age",
+      "title": "用户年龄",
+      "type": "UInt8"
+    },
+    {
+      "name": "name",
+      "title": "用户名",
+      "type": "String"
+    },
+    {
+      "name": "sex",
+      "title": "性别",
+      "type": "Sex"
+    },
+    {
+      "name": "sport",
+      "title": "喜爱的运动",
+      "type": "Sport"
+    },
+    {
+      "name": "stars",
+      "title": "喜爱的明星列表",
+      "type": "StringList"
+    },
+    {
+      "name": "username",
+      "title": "用户名",
+      "type": "String"
+    },
+    {
+      "name": "password",
+      "title": "密码",
+      "type": "String"
+    }
+  ],
+  "enums": [
+    {
+      "name": "Sex",
+      "title": "性别",
+      "enums": [
+        {
+          "key": "male",
+          "value": "1",
+          "title": "男"
+        },
+        {
+          "key": "female",
+          "value": "2",
+          "title": "女"
+        }
+      ]
+    },
+    {
+      "name": "Sport",
+      "title": "喜爱的运动",
+      "enums": [
+        {
+          "key": "pingpang",
+          "value": "1",
+          "title": "乒乓球"
+        },
+        {
+          "key": "blackboard",
+          "value": "2",
+          "title": "篮球"
+        }
+      ]
+    }
+  ],
+  "lists": [
+    {
+      "name": "NumberList",
+      "title": "NumberList",
+      "list": "Number"
+    },
+    {
+      "name": "ObjectList",
+      "title": "对象列表",
+      "list": "SessionInfo"
+    },
+    {
+      "name": "StringList",
+      "title": "字符串列表",
+      "list": "String"
+    }
+  ],
+  "structs": [
+    {
+      "name": "SessionInfo",
+      "title": "会话信息",
+      "props": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "User",
+      "title": "用户信息",
+      "props": [
+        2,
+        4,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "name": "LoginData",
+      "title": "登录信息",
+      "props": [
+        8,
+        9
+      ]
+    }
+  ],
+  "schemas": [
+    {
+      "name": "ReqAccountLogin",
+      "title": "帐号s-fds-请求",
+      "refer": "LoginData",
+      "flow": 1
+    },
+    {
+      "name": "ResAccountLogin",
+      "title": "帐号s-sdsd-响应",
+      "refer": "User",
+      "flow": 2
+    },
+    {
+      "name": "ResHomeGetSession",
+      "title": "主页-获取Session-响应",
+      "refer": "SessionInfo",
+      "flow": 2
+    }
+  ],
+  "modals": [
+    {
+      "name": "Account",
+      "title": "帐号模块",
+      "auth": true
+    },
+    {
+      "name": "Home",
+      "title": "主页",
+      "auth": true
+    }
+  ],
+  "pages": [
+    {
+      "modal": "Account",
+      "name": "Login",
+      "title": "登录",
+      "view": true
+    }
+  ],
+  "actions": [
+    {
+      "modal": "Account",
+      "name": "Login",
+      "title": "登录接口",
+      "api": true,
+      "request": "ReqAccountLogin",
+      "response": "ResAccountLogin"
+    },
+    {
+      "modal": "Home",
+      "name": "GetSession",
+      "title": "获取Session",
+      "method": "GET",
+      "api": true,
+      "response": "ResHomeGetSession"
+    }
+  ]
+}

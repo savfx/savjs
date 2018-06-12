@@ -4,6 +4,7 @@ import {loadInterface} from '../../../src/loaders/interface.js'
 import {loadContract} from '../../../src/loaders/contract.js'
 import {writeContract} from '../../../src/writers/contract.js'
 import {writePhpContract} from '../../../src/writers/contractPhp.js'
+import {writeGoContract} from '../../../src/writers/contractGo.js'
 import {CommandContract} from '../../../src/CommandContract.js'
 import {updatePhpActions} from '../../../src/updaters/updatePhp.js'
 import {updateNodeActions} from '../../../src/updaters/updateNode.js'
@@ -15,7 +16,7 @@ test('loadContract', async (ava) => {
   expect(loadContract).to.be.a('function')
   expect(writeContract).to.be.a('function')
   let contract = await loadContract(path.resolve(__dirname,
-    '../../fixtures/suite'))
+    '../../fixtures/contract'))
   expect(contract).to.be.a('object')
   expect(contract.project).to.be.a('object')
 
@@ -34,7 +35,7 @@ test('loadContract', async (ava) => {
   let cmd = new CommandContract()
   cmd.load(contract)
 
-  let dist = path.resolve(__dirname, '../../fixtures/suite-contract')
+  let dist = path.resolve(__dirname, '../../fixtures/contract-contract')
   await writeContract(dist, cmd)
 
   let output = await writeContract(dist, cmd, {mem: true})
@@ -62,8 +63,9 @@ test('loadContract', async (ava) => {
 
   expect(outputPhp3).to.eql(outputPhp2)
   expect(outputPhp3).to.eql(outputPhp)
+  let outputGo = await writeGoContract(dist, cmd)
 
-  let actionPath = path.resolve(__dirname, '../../fixtures/suite-actions')
+  let actionPath = path.resolve(__dirname, '../../fixtures/contract-actions')
   let modals = cmd.getContractModals()
   await updatePhpActions(actionPath, modals)
   await updateNodeActions(actionPath, modals)

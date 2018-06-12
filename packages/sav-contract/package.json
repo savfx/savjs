@@ -11,7 +11,7 @@
     "tcontrace": "node dist/contract.js -i test/fixtures/interface -l js,node,php -C ./tmp/contract -M ./tmp/modals -F ./tmp/front -S modal",
     "lint": "standard src/** test/**",
     "fix": "standard src/** test/** --fix",
-    "t": "nyc ava ./test/specs/src/decorator.js --no-color",
+    "t": "ava ./test/specs/src/contractLoader.js --no-color",
     "test": "nyc ava ./test/specs"
   },
   "bin": {

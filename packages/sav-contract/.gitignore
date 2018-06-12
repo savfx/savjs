@@ -63,5 +63,7 @@ package-lock.json
 /test/fixtures/interface-contract
 /test/fixtures/suite-actions
 /test/fixtures/suite-contract
+/test/fixtures/contract-actions
+/test/fixtures/contract-contract
 /dist
 /cache

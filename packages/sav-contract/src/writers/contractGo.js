@@ -1,20 +1,22 @@
 /**
  * 生成 contract 目录的内容
  */
-// import path from 'path'
+import path from 'path'
 import {
   // noticeString,
-  // outputFile,
-  // getBackRoutes,
+  outputFile,
+  getBackRoutes,
   ensureDir
 } from '../utils/util.js'
 // import jsonar from 'jsonar'
 import {
-  // convertCase,
+  convertCase,
   pascalCase,
   // camelCase
   isString, isArray, isObject
 } from 'sav-util'
+
+import {Context} from './go/Context.js'
 
 /**
  * 写入contract
@@ -41,12 +43,12 @@ export async function writeGoContract (dir, contract, opts = {}) {
   //     await outputFile(mockFile, mockData)
   //   }
   // }
-  // // php 剔除掉view
-  // let modals = contract.getContractModals().map(modal => {
-  //   let routes = getBackRoutes(modal, modal.routes)
-  //   modal.routes = routes
-  //   return modal
-  // }).filter(it => it.routes.length)
+  // 剔除掉view
+  let modals = contract.getContractModals().map(modal => {
+    let routes = getBackRoutes(modal, modal.routes)
+    modal.routes = routes
+    return modal
+  }).filter(it => it.routes.length)
 
   // let contractData = {
   //   project,
@@ -58,16 +60,26 @@ export async function writeGoContract (dir, contract, opts = {}) {
   //   await outputFile(contractFile, contractOutData)
   // }
   let schemas = contract.getContractSchemas({reference: true})
+  let remains = []
   let schemaMap = schemas.reduce((ret, it) => {
-    ret[it.name] = {
+    let item = {
       name: it.name,
+      schema: it,
+      pass: false,
       ref: 0
     }
+    remains.push(item)
+    ret[it.name] = item
     return ret
-  }, {})
+  }, {});
+
+  let ctx = new Context()
   schemas.forEach(ref => {
+    ctx.addRef(ref)
     ref.refs.forEach(it => {
-      schemaMap[it].ref++
+      if (schemaMap[it]) {
+        schemaMap[it].ref++
+      }
     })
   })
 
@@ -75,97 +87,82 @@ export async function writeGoContract (dir, contract, opts = {}) {
     return schemaMap[b.name].ref - schemaMap[a.name].ref
   })
 
-  let schemaData = schemas.map(it => {
-    let ret
-    if (it.list) {
-      ret = convertList(it)
-    } else if (it.refer) {
-      ret = convertRefer(it)
-    } else if (it.props) {
-      ret = convertStruct(it)
-    } else if (it.enums) {
-      ret = convertEnum(it)
+  let schemaList = modals.reduce((ref, modal) => {
+    return modal.routes.reduce((ref, route) => {
+      let name = convertCase('pascal', `${modal.name}_${route.name}`)
+      let ret = []
+      if (route.request) {
+        getSchemas(route.request, schemaMap, ret)
+      }
+      if (route.response) {
+        getSchemas(route.response, schemaMap, ret)
+      }
+      if (ret.length) {
+        ref.push({
+          name,
+          schemas: ret
+        })
+      }
+      return ref
+    }, ref)
+  }, [])
+
+  let schemaPath = path.join(dir, `schemas`)
+  let schemaData = await schemaList.reduce((ref, item) => {
+    return ref.then(async (arr) => {
+      let data = item.schemas.map(it => ctx.createBody(it.schema)).join('\n')
+      if (!isMem) {
+        await outputFile(path.join(schemaPath, `${item.name}.go`), makePackage(data, opts))
+      }
+      arr.push(data)
+      return arr
+    })
+  }, Promise.resolve([]))
+
+  remains = remains.filter(it => !it.pass)
+  if (remains.length) {
+    let data = remains.map(it => ctx.createBody(it.schema)).join('\n')
+    if (!isMem) {
+      await outputFile(path.join(schemaPath, 'Unknown.go'), makePackage(data, opts))
     }
-    return ret
-  })
-
-  console.log(schemas)
-  console.log(schemaData)
-
+  }
   return {
     schemas
   }
 }
 
-function convertStruct (input) {
-  let ret = []
-  if (isArray(input.props)) {
-    input.props.forEach(field => {
-      let type = typeMaps[field.type] || field.type
-      field.type = type
-      ret.push(`${pascalCase(field.name)} ${type} \`schema: ${JSON.stringify(field)} \``)
-    })
-  } else if (isObject(input.props)) {
-    for (let name in input.props) {
-      let field = input.props[name]
-      if (isString(field)) {
-        field = {
-          type: field,
-          name: name
-        }
-      }
-      let type = typeMaps[field.type] || field.type
-      field.type = type
-      ret.push(`${pascalCase(field.name)} ${type} \`schema: ${JSON.stringify(field)} \``)
-    }
+function makePackage (text, opts) {
+  let pakcages = []
+  if (text.indexOf('ObjectAccess') !== -1 || 
+    text.indexOf('FormObject') !== -1 || 
+    text.indexOf('ObjectArray') !== -1 || 
+    text.indexOf('FormArray') !== -1 || 
+    text.indexOf('ValueAccess') !== -1) {
+    pakcages.push('\t"github.com/savfx/savgo/util/convert"')
   }
-  return ret
+  return `package schemas
+
+import(
+${pakcages.join('\n')}
+)
+${text}
+`
 }
 
-function convertList (input) {
-  return `type ${input.name} []${input.list} // ${input.title}`
-}
-
-function convertRefer (input) {
-  return `type ${input.name} ${input.refer} // ${input.title}`
-}
-
-function convertEnum (input) {
-  let ret = input.enums.map(it => {
-    return `var ${pascalCase(it.key)} = ${it.value} // ${it.title}`
+function getSchemas (name, maps, ret) {
+  let ref = maps[name]
+  if (!ref) {
+    return
+  }
+  if (ret.indexOf(ref) !== -1) {
+    return
+  }
+  if (ref.pass) {
+    return
+  }
+  ref.pass = true
+  ret.push(ref)
+  ref.schema.refs.forEach(it => {
+    getSchemas(it, maps, ret)
   })
-  /*
-    type SexType int
-    type SexEnum struct {
-      Male SexType
-      Female SexType
-    }
-    var Sex = SexEnum{1, 2}
-
-    schema.bindEnum(&Sex, &SexType, `{enums: }`)
-
-   */
-  //
-  return ret
-}
-
-const typeMaps = {
-  String: 'string',
-  // 大数字会走科学计数
-  Number: 'float64',
-
-  Int8: 'int8',
-  UInt8: 'uint8',
-  Byte: 'int16', // 只能升级
-
-  Int16: 'int16',
-  UInt16: 'uint16',
-  Short: 'int32',
-
-  Int32: 'int32',
-  UInt32: 'uint32',
-  Integer: 'int64',
-
-  Long: 'int64'
-
 }
