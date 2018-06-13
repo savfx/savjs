@@ -2,22 +2,26 @@
   "project": {
     "id": "5a5dabae61b3092460e4a8d6",
     "name": "lmsf",
-    "version": "1.0.9",
+    "version": "1.0.14",
     "title": "多对多",
-    "description": "sxs"
+    "description": "是是是"
   },
   "fields": [
     {
       "id": "5a5dbaffd5fe4449384277e0",
       "name": "id",
       "title": "会话ID",
-      "type": "String"
+      "type": "String",
+      "message": "是是是",
+      "empty": true
     },
     {
       "id": "5a5dbaffd5fe4449384277e1",
       "name": "user",
       "title": "用户信息",
       "type": "5a63093d5ded884864721389",
+      "message": "不不不",
+      "optional": true,
       "checks": [
         {
           "value": "10",
@@ -41,7 +45,20 @@
       "id": "5a63093d5ded884864721388",
       "name": "age",
       "title": "用户年龄",
-      "type": "UInt8"
+      "type": "UInt8",
+      "message": "儿童除外",
+      "checks": [
+        {
+          "value": "10",
+          "name": "gt",
+          "title": "10岁"
+        },
+        {
+          "value": "150",
+          "name": "lt",
+          "title": "150岁"
+        }
+      ]
     },
     {
       "id": "5a63093d5ded884864721387",
@@ -65,19 +82,54 @@
       "id": "5b1f6fdd47f165253c5ed0bf",
       "name": "stars",
       "title": "喜爱的明星列表",
-      "type": "5b1f6e2c47f165253c5ed0bc"
+      "type": "5b1f6e2c47f165253c5ed0bc",
+      "message": "1-9个明星",
+      "checks": [
+        {
+          "value": "1",
+          "name": "lgt",
+          "title": "大于1个"
+        },
+        {
+          "value": "10",
+          "name": "llt",
+          "title": "小于10个"
+        }
+      ]
     },
     {
       "id": "5b1f89f29e5ecd2f3cccb1e1",
       "name": "username",
       "title": "用户名",
-      "type": "String"
+      "type": "String",
+      "message": "用户名格式是3-20",
+      "checks": [
+        {
+          "value": "3",
+          "name": "lgt",
+          "title": "3个"
+        },
+        {
+          "value": "20",
+          "name": "llt",
+          "title": "20个"
+        }
+      ]
     },
     {
       "id": "5b1f89f29e5ecd2f3cccb1e2",
       "name": "password",
       "title": "密码",
-      "type": "String"
+      "type": "String",
+      "message": "密码不能为空...."
+    },
+    {
+      "id": "5b20bf0e847d40264c22f46a",
+      "name": "isAdmin",
+      "title": "是否管理员",
+      "type": "Boolean",
+      "message": "管理员嘻嘻嘻",
+      "nullable": true
     }
   ],
   "enums": [
@@ -143,7 +195,8 @@
       "title": "会话信息",
       "props": [
         "5a5dbaffd5fe4449384277e0",
-        "5a5dbaffd5fe4449384277e1"
+        "5a5dbaffd5fe4449384277e1",
+        "5b20bf0e847d40264c22f46a"
       ]
     },
     {

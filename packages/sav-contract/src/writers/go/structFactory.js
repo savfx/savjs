@@ -1,5 +1,5 @@
 import * as SavUtil from 'sav-util'
-import {getNativeType} from './type'
+import {getNativeType, isNumberType} from './type'
 
 const {tmpl, isArray, isString, isObject} = SavUtil
 
@@ -11,6 +11,7 @@ function prepareStructState (input, opts = {}) {
   state.structName = input.name
   state.fields = parseFields(input)
   state.ctx = opts.ctx
+  state.isNumberType = isNumberType
   return state
 }
 
@@ -84,4 +85,36 @@ func ParseForm{%#state.structName%} (object * convert.FormObject) * {%#state.str
 {% } }) %}\treturn res
 }
 
+func (self {%#state.structName%}) Check(t * checker.Checker) error {
+\treturn t.Exec(func () {
+{%
+  state.fields.forEach((it) => { 
+  let uname = ucfirst(it.name)
+  let allowNull = it.optional || it.nullable // 1. 可选, 为null, 为空判断
+  // console.log(it.refType)
+  let isNative = state.ctx.isNative(it.refType)
+  let uType = ucfirst(it.refType)
+%}\t\t{% if (allowNull) { %}if self.{%#uname%} != nil {% } %}{
+\t\t\tt.Field("{%#it.name%}", "{%#it.message || ''%}").
+{% if (!allowNull) { %}\t\t\tNotNull(self.{%#uname%}).{% } %}
+{% if (isNative) {
+  if (it.checks) {
+    it.checks.forEach(({value, name, title}) => {     
+      if (['gt', 'lt', 'gte', 'lte'].indexOf(name) !== -1) {// 大小比较
+        if (state.isNumberType(it.refType)) {
+%}\t\t\t{%=uType%}Ptr{%=ucfirst(name)%}(self.{%#uname%}, {%#value%}).
+{%
+        }
+      } else if (['lgt', 'llt', 'lgte', 'llte'].indexOf(name) !== -1) {// 长度比较
+%}\t\t\t{%=ucfirst(name)%}(len(*self.{%#uname%}), {%#value%}).
+{%
+      }
+    })
+  }
+%}{% } else { %}\t\t\tCheck(self.{%#uname%}).
+{% } %}\t\t\tPop()
+\t\t}
+{% }) %}
+\t})
+}
 `)

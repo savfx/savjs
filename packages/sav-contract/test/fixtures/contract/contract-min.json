@@ -2,20 +2,24 @@
   "project": {
     "id": "5a5dabae61b3092460e4a8d6",
     "name": "lmsf",
-    "version": "1.0.9",
+    "version": "1.0.14",
     "title": "多对多",
-    "description": "sxs"
+    "description": "是是是"
   },
   "fields": [
     {
       "name": "id",
       "title": "会话ID",
-      "type": "String"
+      "type": "String",
+      "message": "是是是",
+      "empty": true
     },
     {
       "name": "user",
       "title": "用户信息",
       "type": "User",
+      "message": "不不不",
+      "optional": true,
       "checks": [
         {
           "value": "10",
@@ -37,7 +41,20 @@
     {
       "name": "age",
       "title": "用户年龄",
-      "type": "UInt8"
+      "type": "UInt8",
+      "message": "儿童除外",
+      "checks": [
+        {
+          "value": "10",
+          "name": "gt",
+          "title": "10岁"
+        },
+        {
+          "value": "150",
+          "name": "lt",
+          "title": "150岁"
+        }
+      ]
     },
     {
       "name": "name",
@@ -57,17 +74,51 @@
     {
       "name": "stars",
       "title": "喜爱的明星列表",
-      "type": "StringList"
+      "type": "StringList",
+      "message": "1-9个明星",
+      "checks": [
+        {
+          "value": "1",
+          "name": "lgt",
+          "title": "大于1个"
+        },
+        {
+          "value": "10",
+          "name": "llt",
+          "title": "小于10个"
+        }
+      ]
     },
     {
       "name": "username",
       "title": "用户名",
-      "type": "String"
+      "type": "String",
+      "message": "用户名格式是3-20",
+      "checks": [
+        {
+          "value": "3",
+          "name": "lgt",
+          "title": "3个"
+        },
+        {
+          "value": "20",
+          "name": "llt",
+          "title": "20个"
+        }
+      ]
     },
     {
       "name": "password",
       "title": "密码",
-      "type": "String"
+      "type": "String",
+      "message": "密码不能为空...."
+    },
+    {
+      "name": "isAdmin",
+      "title": "是否管理员",
+      "type": "Boolean",
+      "message": "管理员嘻嘻嘻",
+      "nullable": true
     }
   ],
   "enums": [
@@ -127,7 +178,8 @@
       "title": "会话信息",
       "props": [
         0,
-        1
+        1,
+        10
       ]
     },
     {

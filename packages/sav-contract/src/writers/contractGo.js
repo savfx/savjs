@@ -134,12 +134,18 @@ export async function writeGoContract (dir, contract, opts = {}) {
 
 function makePackage (text, opts) {
   let pakcages = []
+  if (text.indexOf('errors.New') !== -1) {
+    pakcages.push('\t"errors"')
+  }
   if (text.indexOf('ObjectAccess') !== -1 ||
     text.indexOf('FormObject') !== -1 ||
     text.indexOf('ObjectArray') !== -1 ||
     text.indexOf('FormArray') !== -1 ||
     text.indexOf('ValueAccess') !== -1) {
     pakcages.push('\t"github.com/savfx/savgo/util/convert"')
+  }
+  if (text.indexOf('checker.Checker') !== -1) {
+    pakcages.push('\t"github.com/savfx/savgo/util/checker"')
   }
   return `package schemas
 

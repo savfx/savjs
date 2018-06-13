@@ -30,3 +30,19 @@ export function isNativeType (val) {
 export function getNativeType (val) {
   return typeMaps[val] || val
 }
+
+const numberTypes = [
+  'float64',
+  'int8',
+  'uint8',
+  'int16',
+  'uint16',
+  'int32',
+  'int32',
+  'uint32',
+  'int64'
+]
+
+export function isNumberType (val) {
+  return numberTypes.indexOf(val) !== -1
+}

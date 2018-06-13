@@ -58,4 +58,12 @@ func ParseForm{%#state.listName%}(arr * convert.FormArray) * {%#state.listName%}
 \t})
 {% } %}\treturn &res
 }
-`)
+
+func (self {%#state.listName%}) Check(t * checker.Checker) error {
+{% if (state.ctx.isNative(state.refType)){ %} \treturn nil
+{% } else { %}\treturn t.Exec(func () {
+\t\tfor id, it := range self {
+\t\t\tt.Index(id).Check(it).Pop()
+\t\t}
+\t})
+{% } %}}`)

@@ -6,6 +6,7 @@ function prepareEnumState (input, opts = {}) {
   let state = {
     SavUtil
   }
+  state.ctx = opts.ctx
   state.input = input
   state.enums = input.enums
   state.enumName = input.name
@@ -38,15 +39,14 @@ const makeEnumBody = tmpl(`{%
   const {ucfirst, lcfirst} = state.SavUtil
 %}
 // {%#state.enumName%} {%#state.input.title%} 
-{% state.enums.forEach((it) => { %}// {%#it.key%} {%#it.value%} {%#it.title||''%}
-{% }) %}type {%#state.enumName%} {%#state.valueType%}
+type {%#state.enumName%} {%#state.valueType%}
 
 var {%#state.enumName%}Value = &struct {
-{% state.enums.forEach((it) => { %}\t{%#ucfirst(it.key)%} {%#state.enumName%}
+{% state.enums.forEach((it) => { %}\t{%#ucfirst(it.key)%} {%#state.enumName%} // {%#it.key%} {%#it.value%} {%#it.title||''%}
 {% }) %}}{{%#state.valueText%}}
 
 var {%#state.enumName%}Name = &struct {
-{% state.enums.forEach((it) => { %}\t{%#ucfirst(it.key)%} {%#state.keyType%}
+{% state.enums.forEach((it) => { %}\t{%#ucfirst(it.key)%} {%#state.keyType%} // {%#it.key%} {%#it.value%} {%#it.title||''%}
 {% }) %}}{{%#state.keyText%}}
 
 var {%#lcfirst(state.enumName)%}ValueMap = map[{%#state.keyType%}]{%#state.enumName%} {
@@ -78,4 +78,11 @@ func Parse{%#state.enumName%}(val *convert.ValueAccess) *{%#state.enumName%} {
 }
 
 var ParseForm{%#state.enumName%} = Parse{%#state.enumName%}
+
+func (self {%#state.enumName%}) Check(t * checker.Checker) error {
+\tif _, ok := {%#lcfirst(state.enumName)%}KeyMap[self]; ok {
+\t\treturn nil
+\t}
+\treturn errors.New("{%#state.enumName%} enum value out of range")
+}
 `)
