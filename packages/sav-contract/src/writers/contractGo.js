@@ -17,6 +17,7 @@ import {
 } from 'sav-util'
 
 import {Context} from './go/context.js'
+import {createActionBody} from './go/actionFactory.js'
 
 /**
  * 写入contract
@@ -87,14 +88,56 @@ export async function writeGoContract (dir, contract, opts = {}) {
     return schemaMap[b.name].ref - schemaMap[a.name].ref
   })
 
+  let actionMap = {}
+
+  let getStructType = (name) => {
+    let schemaItem = schemaMap[name]
+    if (schemaItem && schemaItem.schema) {
+      if (schemaItem.schema.refer) {
+        return getStructType(schemaItem.schema.refer)
+      } else if (schemaItem.schema.list) {
+        return 'Array'
+      } else if (schemaItem.schema.props) {
+        return 'Object'
+      }
+    }
+    return ''
+  }
+
+  let getRealName = (name) => {
+    let schemaItem = schemaMap[name]
+    if (schemaItem && schemaItem.schema) {
+      if (schemaItem.schema.refer) {
+        return getRealName(schemaItem.schema.refer)
+      }
+      return schemaItem.schema.name
+    }
+    return ''
+  }
+
+  let contextData = {}
   let schemaList = modals.reduce((ref, modal) => {
+    let actions = actionMap[modal.name] = []
     return modal.routes.reduce((ref, route) => {
       let name = convertCase('pascal', `${modal.name}_${route.name}`)
       let ret = []
+      let action = {
+        modalName: modal.name,
+        actionName: route.name,
+      }
+      actions.push(action)
       if (route.request) {
+        action.request = route.request
+        action.requestSchema = getRealName(route.request)
+        action.requestType = getStructType(route.request)
+        action.requestName = 'Req' + name
         getSchemas(route.request, schemaMap, ret)
       }
       if (route.response) {
+        action.response = route.response
+        action.responseSchema = getRealName(route.response)
+        action.responseType = getStructType(route.response)
+        action.responseName = 'Res' + name
         getSchemas(route.response, schemaMap, ret)
       }
       if (ret.length) {
@@ -126,10 +169,40 @@ export async function writeGoContract (dir, contract, opts = {}) {
       await outputFile(path.join(schemaPath, 'Unknown.go'), makePackage(data, opts))
     }
   }
+
+  let actionDir = path.join(dir, 'actions')
+  let actionData = await Object.keys(actionMap).reduce((ref, actionName) => {
+    return ref.then(async (arr) => {
+      let data = makeAction(actionMap[actionName].map(it => {
+        return createActionBody(it)
+      }).join('\n'), opts)
+      if (!isMem) {
+        await outputFile(path.join(schemaPath, `${actionName}.go`), data)
+      }
+      arr.push(data)
+      return arr
+    })
+  }, Promise.resolve([]))
+  console.log(actionMap)
+  // console.log(createActionBody(actionMap.Account[0]))
   return {
     schemas,
     schemaData
   }
+}
+
+function makeAction (text, opts) {
+  let pakcages = []
+  if (text.indexOf('func Prepare') !== -1) {
+    pakcages.push('\t"github.com/savfx/savgo/schema"')
+  }
+  return `package schemas
+
+import(
+${pakcages.join('\n')}
+)
+${text}
+`
 }
 
 function makePackage (text, opts) {

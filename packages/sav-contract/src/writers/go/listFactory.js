@@ -59,10 +59,22 @@ func ParseForm{%#state.listName%}(arr * convert.FormArray) * {%#state.listName%}
 {% } %}\treturn &res
 }
 
-func (self {%#state.listName%}) Check(t * checker.Checker) error {
+func (ctx * {%#state.listName%}) Append (val {%#state.refType%}) * {%#state.listName%}{
+  *ctx = append(*ctx, &val)
+  return ctx
+}
+
+func (ctx * {%#state.listName%}) AppendAll (val []{%#state.refType%}) * {%#state.listName%}{
+  for i, length := 0, len(val); i < length; i++ {
+    *ctx = append(*ctx, &val[i])
+  }
+  return ctx
+}
+
+func (ctx {%#state.listName%}) Check(t * checker.Checker) error {
 {% if (state.ctx.isNative(state.refType)){ %} \treturn nil
 {% } else { %}\treturn t.Exec(func () {
-\t\tfor id, it := range self {
+\t\tfor id, it := range ctx {
 \t\t\tt.Index(id).Check(it).Pop()
 \t\t}
 \t})

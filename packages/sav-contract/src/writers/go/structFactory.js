@@ -49,15 +49,15 @@ type {%#state.structName%} struct {
 {% state.fields.forEach((it) => { %}\t{%#ucfirst(it.name)%} * {%#it.refType%} // {%#(it.title || '') %}
 {% }) %}}
 {% state.fields.forEach((it) => {let uname = ucfirst(it.name) %}
-func (self {%#state.structName%}) Get{%#uname%}()(res {%#it.refType%}){
-\tif self.{%#uname%} != nil {
-\t\tres = *self.{%#uname%}
+func (ctx {%#state.structName%}) Get{%#uname%}()(res {%#it.refType%}){
+\tif ctx.{%#uname%} != nil {
+\t\tres = *ctx.{%#uname%}
 \t}
 \treturn
 }
 
-func (self * {%#state.structName%}) Set{%#uname%}(val {%#it.refType%}){
-\tself.{%#uname%} = &val
+func (ctx * {%#state.structName%}) Set{%#uname%}(val {%#it.refType%}){
+\tctx.{%#uname%} = &val
 }
 {% }) %}
 
@@ -85,7 +85,7 @@ func ParseForm{%#state.structName%} (object * convert.FormObject) * {%#state.str
 {% } }) %}\treturn res
 }
 
-func (self {%#state.structName%}) Check(t * checker.Checker) error {
+func (ctx {%#state.structName%}) Check(t * checker.Checker) error {
 \treturn t.Exec(func () {
 {%
   state.fields.forEach((it) => { 
@@ -94,24 +94,24 @@ func (self {%#state.structName%}) Check(t * checker.Checker) error {
   // console.log(it.refType)
   let isNative = state.ctx.isNative(it.refType)
   let uType = ucfirst(it.refType)
-%}\t\t{% if (allowNull) { %}if self.{%#uname%} != nil {% } %}{
+%}\t\t{% if (allowNull) { %}if ctx.{%#uname%} != nil {% } %}{
 \t\t\tt.Field("{%#it.name%}", "{%#it.message || ''%}").
-{% if (!allowNull) { %}\t\t\tNotNull(self.{%#uname%}).{% } %}
+{% if (!allowNull) { %}\t\t\tNotNull(ctx.{%#uname%}).{% } %}
 {% if (isNative) {
   if (it.checks) {
     it.checks.forEach(({value, name, title}) => {     
       if (['gt', 'lt', 'gte', 'lte'].indexOf(name) !== -1) {// 大小比较
         if (state.isNumberType(it.refType)) {
-%}\t\t\t{%=uType%}Ptr{%=ucfirst(name)%}(self.{%#uname%}, {%#value%}).
+%}\t\t\t{%=uType%}Ptr{%=ucfirst(name)%}(ctx.{%#uname%}, {%#value%}).
 {%
         }
       } else if (['lgt', 'llt', 'lgte', 'llte'].indexOf(name) !== -1) {// 长度比较
-%}\t\t\t{%=ucfirst(name)%}(len(*self.{%#uname%}), {%#value%}).
+%}\t\t\t{%=ucfirst(name)%}(len(*ctx.{%#uname%}), {%#value%}).
 {%
       }
     })
   }
-%}{% } else { %}\t\t\tCheck(self.{%#uname%}).
+%}{% } else { %}\t\t\tCheck(ctx.{%#uname%}).
 {% } %}\t\t\tPop()
 \t\t}
 {% }) %}

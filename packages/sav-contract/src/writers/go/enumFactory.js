@@ -79,8 +79,8 @@ func Parse{%#state.enumName%}(val *convert.ValueAccess) *{%#state.enumName%} {
 
 var ParseForm{%#state.enumName%} = Parse{%#state.enumName%}
 
-func (self {%#state.enumName%}) Check(t * checker.Checker) error {
-\tif _, ok := {%#lcfirst(state.enumName)%}KeyMap[self]; ok {
+func (ctx {%#state.enumName%}) Check(t * checker.Checker) error {
+\tif _, ok := {%#lcfirst(state.enumName)%}KeyMap[ctx]; ok {
 \t\treturn nil
 \t}
 \treturn errors.New("{%#state.enumName%} enum value out of range")
