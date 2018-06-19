@@ -1,6 +1,6 @@
 import * as SavUtil from 'sav-util'
 
-const {tmpl, isString} = SavUtil
+const {tmpl} = SavUtil
 
 export function createActionBody (input, opts = {}) {
   return makeActionBody(prepareActionState(input, opts))
@@ -15,20 +15,169 @@ function prepareActionState (input, opts = {}) {
 
 const makeActionBody = tmpl(`{% const {ucfirst, lcfirst} = state.SavUtil 
 %}// {%#state.modalName%}.{%#state.actionName%}
+
+type {%#lcfirst(state.modalName)%}{%#state.actionName%}Data struct {
+{% if (state.request){ %}  Input * {%#state.requestSchema%} {% } %}
+{% if (state.response){ %}  Output * {%#state.responseSchema%} {% } %}
+}
+
+func (ctx {%#lcfirst(state.modalName)%}{%#state.actionName%}Data) GetInputValue () interface{} {
 {% if (state.request){ %}
-func Prepare{%#state.requestName%}(ds schema.DataSource, ctx *Context)  {
-  if ds.IsForm() {
-    ctx.{%#state.requestName%} = ParseForm{%#state.requestSchema%}(ds.GetForm{%#state.requestType%}())
-  } else {
-    ctx.{%#state.requestName%} = Parse{%#state.requestSchema%}(ds.Get{%#state.requestType%}Access())
-  }
-}{% } %}
+  return ctx.Input
+{% }else { %} 
+  return nil
+{% } %}
+}
+
+func (ctx {%#lcfirst(state.modalName)%}{%#state.actionName%}Data) GetOutputValue () interface{} {
 {% if (state.response){ %}
-func Prepare{%#state.responseName%}(ds schema.DataSource, ctx *Context)  {
+  return ctx.Output
+{% }else { %} 
+  return nil
+{% } %}
+}
+
+func (ctx *{%#lcfirst(state.modalName)%}{%#state.actionName%}Data) ParseInput(ds sav.DataSource)  {
+{% if (state.request){ %}
   if ds.IsForm() {
-    ctx.{%#state.responseName%} = ParseForm{%#state.responseSchema%}(ds.GetForm{%#state.responseType%}())
+    ctx.Input = ParseForm{%#state.requestSchema%}(ds.GetForm{%#state.requestType%}())
   } else {
-    ctx.{%#state.responseName%} = Parse{%#state.responseSchema%}(ds.Get{%#state.responseType%}Access())
+    ctx.Input = Parse{%#state.requestSchema%}(ds.Get{%#state.requestType%}Access())
   }
-}{% } %}
+{% } %}
+}
+
+func (ctx *{%#lcfirst(state.modalName)%}{%#state.actionName%}Data) ParseOutput(ds sav.DataSource)  {
+{% if (state.response){ %}
+  if ds.IsForm() {
+    ctx.Output = ParseForm{%#state.responseSchema%}(ds.GetForm{%#state.responseType%}())
+  } else {
+    ctx.Output = Parse{%#state.responseSchema%}(ds.Get{%#state.responseType%}Access())
+  }
+{% } %}
+}
+
+func new{%#state.modalName%}{%#state.actionName%}Data() sav.DataHandler {
+  res := &{%#lcfirst(state.modalName)%}{%#state.actionName%}Data{}
+  return  res
+}
+
+func bind{%#state.modalName%}{%#state.actionName%}Input(handler sav.DataHandler, value interface{}) {
+{% if (state.request){ %}
+  data := handler.(*{%#lcfirst(state.modalName)%}{%#state.actionName%}Data)
+  data.Input = value.(*{%#state.requestSchema%})
+{% } %}
+}
+
+func bind{%#state.modalName%}{%#state.actionName%}Output(handler sav.DataHandler, value interface{}) {
+{% if (state.response){ %}
+  data := handler.(*{%#lcfirst(state.modalName)%}{%#state.actionName%}Data)
+  data.Output= value.(*{%#state.responseSchema%})
+{% } %}
+}
+
+func new{%#state.modalName%}{%#state.actionName%}ActionHandler() sav.ActionHandler {
+  return sav.ActionHandler{
+    Create: new{%#state.modalName%}{%#state.actionName%}Data,
+    BindInput: bind{%#state.modalName%}{%#state.actionName%}Input,
+    BindOutput: bind{%#state.modalName%}{%#state.actionName%}Output,
+  }
+}
+
+{% if (state.request && state.response){ %}
+
+func (ctx Contract) {%#state.modalName%}{%#state.actionName%} (input {%#state.requestSchema%}) {%#state.responseSchema%} {
+  res, _, err := ctx.Fetch{%#state.modalName%}{%#state.actionName%}(input)
+  if err != nil {
+    panic(err)
+  }
+  return *res
+}
+
+func (ctx Contract) Fetch{%#state.modalName%}{%#state.actionName%}(input {%#state.requestSchema%}) (* {%#state.responseSchema%}, sav.Response, error) {
+  data := &{%#lcfirst(state.modalName)%}{%#state.actionName%}Data{Input:&input}
+  response, err := ctx.Fetch("{%#state.modalName%}", "{%#state.actionName%}", data)
+  return data.Output, response, err
+}
+
+{% } else if (state.request) { %}
+
+func (ctx Contract) {%#state.modalName%}{%#state.actionName%} (input {%#state.requestSchema%}) {
+  _, err := ctx.Fetch{%#state.modalName%}{%#state.actionName%}(input)
+  if err != nil {
+    panic(err)
+  }
+  return
+}
+
+func (ctx Contract) Fetch{%#state.modalName%}{%#state.actionName%}(input {%#state.requestSchema%}) (sav.Response, error) {
+  data := &{%#lcfirst(state.modalName)%}{%#state.actionName%}Data{Input:&input}
+  response, err := ctx.Fetch("{%#state.modalName%}", "{%#state.actionName%}", data)
+  return response, err
+}
+
+{% } else if (state.response) { %}
+
+func (ctx Contract) {%#state.modalName%}{%#state.actionName%} () {%#state.responseSchema%} {
+  res, _, err := ctx.Fetch{%#state.modalName%}{%#state.actionName%}()
+  if err != nil {
+    panic(err)
+  }
+  return *res
+}
+
+func (ctx Contract) Fetch{%#state.modalName%}{%#state.actionName%}() (* {%#state.responseSchema%}, sav.Response, error) {
+  data := &{%#lcfirst(state.modalName)%}{%#state.actionName%}Data{}
+  response, err := ctx.Fetch("{%#state.modalName%}", "{%#state.actionName%}", data)
+  return data.Output, response, err
+}
+
+{% } else { %}
+
+func (ctx Contract) {%#state.modalName%}{%#state.actionName%} () {
+  _, err := ctx.Fetch{%#state.modalName%}{%#state.actionName%}()
+  if err != nil {
+    panic(err)
+  }
+}
+
+func (ctx Contract) Fetch{%#state.modalName%}{%#state.actionName%}() (sav.Response, error) {
+  data := &{%#lcfirst(state.modalName)%}{%#state.actionName%}Data{}
+  response, err := ctx.Fetch("{%#state.modalName%}", "{%#state.actionName%}", data)
+  return response, err
+}
+
+{% } %}
+
+`)
+
+export function createContractBody (input, opts = {}) {
+  return makeContractBody(prepareContractState(input, opts))
+}
+
+function prepareContractState (input, opts = {}) {
+  let state = Object.assign({
+    SavUtil
+  }, input)
+  return state
+}
+
+const makeContractBody = tmpl(`
+type Contract struct {
+  sav.BaseContract
+}
+
+func NewContract(app sav.Application) *Contract {
+  res := &Contract{}
+  res.Init(app, "{%#state.name%}")
+  res.SetJsonRoutes(routes)
+  {% for (let name in state.modals) { let actions = state.modals[name] %}
+  res.DefineModal("{%#name%}",map[string]sav.ActionHandler{
+      {% actions.forEach(it => { %}"{%#it.actionName%}": new{%#it.name%}ActionHandler(), {% }) %}
+    },
+  )
+  {% } %}
+  return res
+}
+
 `)

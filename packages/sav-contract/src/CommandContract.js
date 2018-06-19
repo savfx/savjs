@@ -3,6 +3,7 @@ import {Contract} from './Contract.js'
 import {loadInterface} from './loaders/interface.js'
 import {loadContract} from './loaders/contract.js'
 import {writeContract} from './writers/contract.js'
+import {writeGoContract} from './writers/contractGo.js'
 import {writePhpContract} from './writers/contractPhp.js'
 import {updatePhpActions} from './updaters/updatePhp.js'
 import {updateNodeActions} from './updaters/updateNode.js'
@@ -21,7 +22,7 @@ export class CommandContract extends Contract {
    *   contract: './contract', // 输入的contract目录
    *   destContract: './contract-out', // 输出的contract目录
    *   destAction: './modals', // 输出的modals目录
-   *   langs: 'js,php,node', // 支持的语言
+   *   langs: 'js,php,node,go', // 支持的语言
    * }
    */
   async execute (params) {
@@ -47,6 +48,9 @@ export class CommandContract extends Contract {
       }
       if (langs.indexOf('php') !== -1) { // php后端
         await writePhpContract(path.join(destContract, 'php'), this)
+      }
+      if (langs.indexOf('go') !== -1) { // go后端
+        await writeGoContract(path.join(destContract, 'go'), this)
       }
     }
     let modals = this.getContractModals()

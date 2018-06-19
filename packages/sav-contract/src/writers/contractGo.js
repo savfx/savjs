@@ -17,7 +17,10 @@ import {
 } from 'sav-util'
 
 import {Context} from './go/context.js'
-import {createActionBody} from './go/actionFactory.js'
+import {
+  createActionBody,
+  createContractBody
+} from './go/actionFactory.js'
 
 /**
  * 写入contract
@@ -34,7 +37,8 @@ export async function writeGoContract (dir, contract, opts = {}) {
   if (!isMem) {
     await ensureDir(dir)
   }
-
+  let name = contract.project.name
+  let contractPath = dir
   // let {mocks, project} = contract
   // let mockData
   // if (mocks) {
@@ -51,15 +55,6 @@ export async function writeGoContract (dir, contract, opts = {}) {
     return modal
   }).filter(it => it.routes.length)
 
-  // let contractData = {
-  //   project,
-  //   modals
-  // }
-  // let contractFile = path.join(dir, `contract.php`)
-  // let contractOutData = `<?php\n${noticeString}return ${jsonar.arrify(contractData, ifyOpts)}\n`
-  // if (!isMem) {
-  //   await outputFile(contractFile, contractOutData)
-  // }
   let schemas = contract.getContractSchemas({reference: true})
   let remains = []
   let schemaMap = schemas.reduce((ret, it) => {
@@ -115,15 +110,17 @@ export async function writeGoContract (dir, contract, opts = {}) {
     return ''
   }
 
-  let contextData = {}
+  let dataList = []
+
   let schemaList = modals.reduce((ref, modal) => {
     let actions = actionMap[modal.name] = []
     return modal.routes.reduce((ref, route) => {
       let name = convertCase('pascal', `${modal.name}_${route.name}`)
       let ret = []
       let action = {
+        name,
         modalName: modal.name,
-        actionName: route.name,
+        actionName: route.name
       }
       actions.push(action)
       if (route.request) {
@@ -131,6 +128,10 @@ export async function writeGoContract (dir, contract, opts = {}) {
         action.requestSchema = getRealName(route.request)
         action.requestType = getStructType(route.request)
         action.requestName = 'Req' + name
+        dataList.push({
+          fieldName: action.requestName,
+          fieldType: action.requestSchema
+        })
         getSchemas(route.request, schemaMap, ret)
       }
       if (route.response) {
@@ -138,6 +139,10 @@ export async function writeGoContract (dir, contract, opts = {}) {
         action.responseSchema = getRealName(route.response)
         action.responseType = getStructType(route.response)
         action.responseName = 'Res' + name
+        dataList.push({
+          fieldName: action.responseName,
+          fieldType: action.responseSchema
+        })
         getSchemas(route.response, schemaMap, ret)
       }
       if (ret.length) {
@@ -150,12 +155,11 @@ export async function writeGoContract (dir, contract, opts = {}) {
     }, ref)
   }, [])
 
-  let schemaPath = path.join(dir, `schemas`)
   let schemaData = await schemaList.reduce((ref, item) => {
     return ref.then(async (arr) => {
       let data = item.schemas.map(it => ctx.createBody(it.schema)).join('\n')
       if (!isMem) {
-        await outputFile(path.join(schemaPath, `${item.name}.go`), makePackage(data, opts))
+        await outputFile(path.join(contractPath, `${item.name}.go`), makePackage(name, data, opts))
       }
       arr.push(data)
       return arr
@@ -166,65 +170,77 @@ export async function writeGoContract (dir, contract, opts = {}) {
   if (remains.length) {
     let data = remains.map(it => ctx.createBody(it.schema)).join('\n')
     if (!isMem) {
-      await outputFile(path.join(schemaPath, 'Unknown.go'), makePackage(data, opts))
+      await outputFile(path.join(contractPath, 'Unknown.go'), makePackage(name, data, opts))
     }
   }
 
-  let actionDir = path.join(dir, 'actions')
   let actionData = await Object.keys(actionMap).reduce((ref, actionName) => {
     return ref.then(async (arr) => {
-      let data = makeAction(actionMap[actionName].map(it => {
-        return createActionBody(it)
-      }).join('\n'), opts)
-      if (!isMem) {
-        await outputFile(path.join(schemaPath, `${actionName}.go`), data)
+      if (!actionMap[actionName].length) { // 跳过空的
+        delete actionMap[actionName]
+        return arr
       }
+      let data = await Promise.all(actionMap[actionName].map(it => {
+        return (async () => {
+          var data = makePackage(name, createActionBody(it), opts)
+          if (!isMem) {
+            await outputFile(path.join(contractPath, `${it.name}Action.go`), data)
+          }
+          return data
+        })()
+      }))
       arr.push(data)
       return arr
     })
   }, Promise.resolve([]))
-  console.log(actionMap)
-  // console.log(createActionBody(actionMap.Account[0]))
+
+  let contractData = createContractBody({
+    name,
+    modals: actionMap
+  })
+
+  let contractOutData = makePackage(name, contractData)
+  if (!isMem) {
+    await outputFile(path.join(contractPath, `contract.go`), contractOutData)
+  }
+  let routes = makePackage(name, 'var routes = `' + JSON.stringify(modals, null, 2) + '`')
+  if (!isMem) {
+    await outputFile(path.join(contractPath, `routes.go`), routes)
+  }
   return {
     schemas,
-    schemaData
+    schemaData,
+    actionData
   }
 }
 
-function makeAction (text, opts) {
-  let pakcages = []
-  if (text.indexOf('func Prepare') !== -1) {
-    pakcages.push('\t"github.com/savfx/savgo/schema"')
-  }
-  return `package schemas
-
-import(
-${pakcages.join('\n')}
-)
-${text}
-`
-}
-
-function makePackage (text, opts) {
+function makePackage (name, text, opts) {
   let pakcages = []
   if (text.indexOf('errors.New') !== -1) {
     pakcages.push('\t"errors"')
   }
-  if (text.indexOf('ObjectAccess') !== -1 ||
-    text.indexOf('FormObject') !== -1 ||
-    text.indexOf('ObjectArray') !== -1 ||
-    text.indexOf('FormArray') !== -1 ||
-    text.indexOf('ValueAccess') !== -1) {
+  if (text.indexOf('.ObjectAccess') !== -1 ||
+    text.indexOf('.FormObject') !== -1 ||
+    text.indexOf('.ObjectArray') !== -1 ||
+    text.indexOf('.FormArray') !== -1 ||
+    text.indexOf('.ValueAccess') !== -1) {
     pakcages.push('\t"github.com/savfx/savgo/util/convert"')
   }
-  if (text.indexOf('checker.Checker') !== -1) {
+  if (text.indexOf('sav.DataSource') !== -1 ||
+    text.indexOf('sav.Application') !== -1 ||
+    text.indexOf('sav.ActionHandler') !== -1) {
+    pakcages.push('\t"github.com/savfx/savgo/sav"')
+  }
+  if (text.indexOf('.Checker') !== -1) {
     pakcages.push('\t"github.com/savfx/savgo/util/checker"')
   }
-  return `package schemas
-
+  let imports = pakcages.length ? `
 import(
 ${pakcages.join('\n')}
-)
+)` : ''
+  return `package ${name}
+${imports}
+
 ${text}
 `
 }
