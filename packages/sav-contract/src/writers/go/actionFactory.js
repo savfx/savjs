@@ -177,6 +177,7 @@ func NewContract(app sav.Application) *Contract {
     },
   )
   {% } %}
+  app.SyncContract(res)
   return res
 }
 

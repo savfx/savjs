@@ -203,7 +203,7 @@ export async function writeGoContract (dir, contract, opts = {}) {
   if (!isMem) {
     await outputFile(path.join(contractPath, `contract.go`), contractOutData)
   }
-  let routes = makePackage(name, 'var routes = `' + JSON.stringify(modals, null, 2) + '`')
+  let routes = makePackage(name, 'var routes = `' + JSON.stringify({modals}, null, 2) + '`')
   if (!isMem) {
     await outputFile(path.join(contractPath, `routes.go`), routes)
   }
