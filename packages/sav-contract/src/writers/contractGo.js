@@ -120,8 +120,10 @@ export async function writeGoContract (dir, contract, opts = {}) {
       let action = {
         name,
         modalName: modal.name,
-        actionName: route.name
+        actionName: route.name,
+        route: route,
       }
+      console.log(route)
       actions.push(action)
       if (route.request) {
         action.request = route.request

@@ -277,6 +277,7 @@
       "title": "登录接口",
       "method": "POST",
       "api": true,
+      "path": "login/:uid/:age?",
       "request": "5a5dbb25d5fe4449384277e4",
       "response": "5a6309455ded88486472138a"
     },

@@ -14,9 +14,21 @@ function prepareActionState (input, opts = {}) {
 }
 
 const makeActionBody = tmpl(`{% const {ucfirst, lcfirst} = state.SavUtil 
+  let paramsArgs = ''
+  let paramsInput = ''
+  let makeParams = ''
+  let hasParams = state.route.keys && state.route.keys.length > 0
+  if (hasParams) {
+    paramsArgs = state.route.keys.join(', ') + ' string'
+    paramsInput = state.route.keys.join(', ')
+    makeParams = "data.Params = map[string]interface{}{\\n" + 
+      state.route.keys.map(it => '\\t"' + it + '": ' + it + ',').join('\\n') + 
+      "\\n  }\\n"
+  }
 %}// {%#state.modalName%}.{%#state.actionName%}
 
 type {%#lcfirst(state.modalName)%}{%#state.actionName%}Data struct {
+  sav.BaseDataHandler
 {% if (state.request){ %}  Input * {%#state.requestSchema%} {% } %}
 {% if (state.response){ %}  Output * {%#state.responseSchema%} {% } %}
 }
@@ -86,63 +98,67 @@ func new{%#state.modalName%}{%#state.actionName%}ActionHandler() sav.ActionHandl
 
 {% if (state.request && state.response){ %}
 
-func (ctx Contract) {%#state.modalName%}{%#state.actionName%} (input {%#state.requestSchema%}) {%#state.responseSchema%} {
-  res, _, err := ctx.Fetch{%#state.modalName%}{%#state.actionName%}(input)
+func (ctx Contract) {%#state.modalName%}{%#state.actionName%} ({%#(paramsArgs ? (paramsArgs + ', ') : paramsArgs)%}inputData {%#state.requestSchema%}) {%#state.responseSchema%} {
+  res, _, err := ctx.Fetch{%#state.modalName%}{%#state.actionName%}({%#(paramsInput ? (paramsInput + ', ') : paramsInput)%}inputData)
   if err != nil {
     panic(err)
   }
   return *res
 }
 
-func (ctx Contract) Fetch{%#state.modalName%}{%#state.actionName%}(input {%#state.requestSchema%}) (* {%#state.responseSchema%}, sav.Response, error) {
-  data := &{%#lcfirst(state.modalName)%}{%#state.actionName%}Data{Input:&input}
+func (ctx Contract) Fetch{%#state.modalName%}{%#state.actionName%}({%#(paramsArgs ? (paramsArgs + ', ') : paramsArgs)%}inputData {%#state.requestSchema%}) (* {%#state.responseSchema%}, sav.Response, error) {
+  data := &{%#lcfirst(state.modalName)%}{%#state.actionName%}Data{Input:&inputData}
+  {%#makeParams%}
   response, err := ctx.Fetch("{%#state.modalName%}", "{%#state.actionName%}", data)
   return data.Output, response, err
 }
 
 {% } else if (state.request) { %}
 
-func (ctx Contract) {%#state.modalName%}{%#state.actionName%} (input {%#state.requestSchema%}) {
-  _, err := ctx.Fetch{%#state.modalName%}{%#state.actionName%}(input)
+func (ctx Contract) {%#state.modalName%}{%#state.actionName%} ({%#(paramsArgs ? (paramsArgs + ', ') : paramsArgs)%}inputData {%#state.requestSchema%}) {
+  _, err := ctx.Fetch{%#state.modalName%}{%#state.actionName%}({%#(paramsInput ? (paramsInput + ', ') : paramsInput)%}inputData)
   if err != nil {
     panic(err)
   }
   return
 }
 
-func (ctx Contract) Fetch{%#state.modalName%}{%#state.actionName%}(input {%#state.requestSchema%}) (sav.Response, error) {
-  data := &{%#lcfirst(state.modalName)%}{%#state.actionName%}Data{Input:&input}
+func (ctx Contract) Fetch{%#state.modalName%}{%#state.actionName%}({%#(paramsArgs ? (paramsArgs + ', ') : paramsArgs)%}inputData {%#state.requestSchema%}) (sav.Response, error) {
+  data := &{%#lcfirst(state.modalName)%}{%#state.actionName%}Data{Input:&inputData}
+  {%#makeParams%}
   response, err := ctx.Fetch("{%#state.modalName%}", "{%#state.actionName%}", data)
   return response, err
 }
 
 {% } else if (state.response) { %}
 
-func (ctx Contract) {%#state.modalName%}{%#state.actionName%} () {%#state.responseSchema%} {
-  res, _, err := ctx.Fetch{%#state.modalName%}{%#state.actionName%}()
+func (ctx Contract) {%#state.modalName%}{%#state.actionName%} ({%#paramsArgs%}) {%#state.responseSchema%} {
+  res, _, err := ctx.Fetch{%#state.modalName%}{%#state.actionName%}({%#paramsInput%})
   if err != nil {
     panic(err)
   }
   return *res
 }
 
-func (ctx Contract) Fetch{%#state.modalName%}{%#state.actionName%}() (* {%#state.responseSchema%}, sav.Response, error) {
+func (ctx Contract) Fetch{%#state.modalName%}{%#state.actionName%}({%#paramsArgs%}) (* {%#state.responseSchema%}, sav.Response, error) {
   data := &{%#lcfirst(state.modalName)%}{%#state.actionName%}Data{}
+  {%#makeParams%}
   response, err := ctx.Fetch("{%#state.modalName%}", "{%#state.actionName%}", data)
   return data.Output, response, err
 }
 
 {% } else { %}
 
-func (ctx Contract) {%#state.modalName%}{%#state.actionName%} () {
-  _, err := ctx.Fetch{%#state.modalName%}{%#state.actionName%}()
+func (ctx Contract) {%#state.modalName%}{%#state.actionName%} ({%#paramsArgs%}) {
+  _, err := ctx.Fetch{%#state.modalName%}{%#state.actionName%}({%#paramsInput%})
   if err != nil {
     panic(err)
   }
 }
 
-func (ctx Contract) Fetch{%#state.modalName%}{%#state.actionName%}() (sav.Response, error) {
+func (ctx Contract) Fetch{%#state.modalName%}{%#state.actionName%}({%#paramsArgs%}) (sav.Response, error) {
   data := &{%#lcfirst(state.modalName)%}{%#state.actionName%}Data{}
+  {%#makeParams%}
   response, err := ctx.Fetch("{%#state.modalName%}", "{%#state.actionName%}", data)
   return response, err
 }

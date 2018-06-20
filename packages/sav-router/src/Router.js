@@ -110,7 +110,6 @@ export class Router {
     route.regexp = parsed.regexp
     route.keys = parsed.keys
     route.compile = compile(parsed.tokens)
-    normalKeys(route)
     route.isAbsolute = isAbsolute
     if (isAbsolute) {
       this.absoluteRoutes[route.method].push(route)
@@ -190,8 +189,4 @@ export function stripPrefix (src, prefix) {
   } else {
     return src
   }
-}
-
-function normalKeys (ref) {
-  ref.keys = ref.keys.map(it => it.name)
 }
