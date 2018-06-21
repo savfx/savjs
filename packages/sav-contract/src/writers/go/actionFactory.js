@@ -103,6 +103,9 @@ func (ctx Contract) {%#state.modalName%}{%#state.actionName%} ({%#(paramsArgs ? 
   if err != nil {
     panic(err)
   }
+  if res == nil {
+    panic(errors.New("invalidate response of {%#state.modalName%}{%#state.actionName%}"))
+  }
   return *res
 }
 
@@ -136,6 +139,9 @@ func (ctx Contract) {%#state.modalName%}{%#state.actionName%} ({%#paramsArgs%}) 
   res, _, err := ctx.Fetch{%#state.modalName%}{%#state.actionName%}({%#paramsInput%})
   if err != nil {
     panic(err)
+  }
+  if res == nil {
+    panic(errors.New("invalidate response of {%#state.modalName%}{%#state.actionName%}"))
   }
   return *res
 }

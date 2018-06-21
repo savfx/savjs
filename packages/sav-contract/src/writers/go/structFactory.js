@@ -46,7 +46,7 @@ function parseFields (input) {
 
 const makeStructBody = tmpl(`{% const {ucfirst, lcfirst} = state.SavUtil%}// {%#state.structName%} {%#state.input.title%} 
 type {%#state.structName%} struct {
-{% state.fields.forEach((it) => { %}\t{%#ucfirst(it.name)%} * {%#it.refType%} \`json:"{%#(it.name)%},omitempty"\` // {%#(it.title || '') %}
+{% state.fields.forEach((it) => { %}\t{%#ucfirst(it.name)%} * {%#it.refType%} \`json:"{%#(it.name)%}"\` // {%#(it.title || '') %}
 {% }) %}}
 {% state.fields.forEach((it) => {let uname = ucfirst(it.name) %}
 func (ctx {%#state.structName%}) Get{%#uname%}()(res {%#it.refType%}){

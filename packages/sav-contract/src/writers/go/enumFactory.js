@@ -61,15 +61,15 @@ func Parse{%#state.enumName%}(val *convert.ValueAccess) *{%#state.enumName%} {
   if val != nil {
     ptr := val.{%#ucfirst(state.valType)%}Ptr()
     if ptr != nil {
-      sval := ({%#state.enumName%})(*ptr)
-      if _, ok := {%#lcfirst(state.enumName)%}KeyMap[sval]; ok {
-        return &sval
+      value := ({%#state.enumName%})(*ptr)
+      if _, ok := {%#lcfirst(state.enumName)%}KeyMap[value]; ok {
+        return &value
       }
     }
-    sptr := val.{%#ucfirst(state.keyType)%}Ptr()
-    if sptr != nil {
-      sval := {%#state.keyType%}(*sptr)
-      if v, ok := {%#lcfirst(state.enumName)%}ValueMap[sval]; ok {
+    stringPtr := val.{%#ucfirst(state.keyType)%}Ptr()
+    if stringPtr != nil {
+      value := {%#state.keyType%}(*stringPtr)
+      if v, ok := {%#lcfirst(state.enumName)%}ValueMap[value]; ok {
         return &v
       }
     }
@@ -83,6 +83,6 @@ func (ctx {%#state.enumName%}) Check(t * checker.Checker) error {
 \tif _, ok := {%#lcfirst(state.enumName)%}KeyMap[ctx]; ok {
 \t\treturn nil
 \t}
-\treturn errors.New("{%#state.enumName%} enum value out of range")
+\treturn errors.New("enum {%#state.enumName%} value out of range")
 }
 `)
