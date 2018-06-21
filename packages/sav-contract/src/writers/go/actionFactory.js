@@ -183,9 +183,9 @@ type Contract struct {
   sav.BaseContract
 }
 
-func NewContract(app sav.Application) *Contract {
+func NewContract(app sav.Application, options map[string]interface{}) *Contract {
   res := &Contract{}
-  res.Init(app, "{%#state.name%}")
+  res.Init(app, "{%#state.name%}", options)
   res.SetJsonRoutes(routes)
   {% for (let name in state.modals) { let actions = state.modals[name] %}
   res.DefineModal("{%#name%}",map[string]sav.ActionHandler{
