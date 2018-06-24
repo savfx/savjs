@@ -1,6 +1,6 @@
 {
   "name": "sav-contract",
-  "version": "2.0.2",
+  "version": "2.0.6",
   "description": "sav contract tools",
   "scripts": {
     "prepkg": "node script/build prepare",
@@ -40,9 +40,9 @@
     "os-locale": "^2.1.0",
     "php-parser": "^2.2.0",
     "pkg": "4.3.0",
-    "sav-router": "^2.0.2",
-    "sav-schema": "^2.0.2",
-    "sav-util": "^2.0.2"
+    "sav-router": "^2.0.6",
+    "sav-schema": "^2.0.6",
+    "sav-util": "^2.0.6"
   },
   "standard": {
     "require": "babel-eslint",

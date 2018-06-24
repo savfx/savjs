@@ -7,6 +7,7 @@ const version = require('./package.json').version
 const actions = {
   build,
   publish,
+  sync,
   deploy,
 }
 
@@ -95,6 +96,13 @@ function build() {
 
 function deploy() {
   return build().then(publish)
+}
+
+function sync() {
+  return spawn(lerna, `publish --yes --skip-npm --skip-git --repo-version ${version} --yes`).catch(err => {
+    console.warn('!*************WARN', 'lerna sync')
+    console.warn(err)
+  })
 }
 
 function publish() {

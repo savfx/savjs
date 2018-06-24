@@ -1,6 +1,6 @@
 {
   "name": "sav-router",
-  "version": "2.0.2",
+  "version": "2.0.6",
   "description": "another nodejs controller style router",
   "main": "dist/sav-router.cjs.js",
   "module": "dist/sav-router.es.js",
@@ -26,7 +26,7 @@
     "url": "https://github.com/savfx/savjs/issues"
   },
   "dependencies": {
-    "sav-util": "^2.0.1"
+    "sav-util": "^2.0.6"
   },
   "standard": {
     "parser": "babel-eslint"

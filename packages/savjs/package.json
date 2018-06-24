@@ -1,6 +1,6 @@
 {
   "name": "savjs",
-  "version": "2.0.2",
+  "version": "2.0.6",
   "description": "savjs foundation",
   "repository": {
     "type": "git",
@@ -25,9 +25,9 @@
   },
   "dependencies": {
     "sav-flux": "^0.0.25",
-    "sav-router": "^2.0.2",
-    "sav-schema": "^2.0.2",
-    "sav-util": "^2.0.2"
+    "sav-router": "^2.0.6",
+    "sav-schema": "^2.0.6",
+    "sav-util": "^2.0.6"
   },
   "standard": {
     "require": "babel-eslint",
