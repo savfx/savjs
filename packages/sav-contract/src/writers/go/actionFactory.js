@@ -49,13 +49,13 @@ func (ctx {%#lcfirst(state.modalName)%}{%#state.actionName%}Data) GetOutputValue
 {% } %}
 }
 
-func (ctx {%#lcfirst(state.modalName)%}{%#state.actionName%}Data) SetInputValue (value interface{}) {
+func (ctx * {%#lcfirst(state.modalName)%}{%#state.actionName%}Data) SetInputValue (value interface{}) {
 {% if (state.request){ %}
   ctx.Input = value.(*{%#state.requestSchema%})
 {% } %}
 }
 
-func (ctx {%#lcfirst(state.modalName)%}{%#state.actionName%}Data) SetOutputValue (value interface{}) {
+func (ctx * {%#lcfirst(state.modalName)%}{%#state.actionName%}Data) SetOutputValue (value interface{}) {
 {% if (state.response){ %}
   ctx.Output = value.(*{%#state.responseSchema%})
 {% } %}
