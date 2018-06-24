@@ -49,6 +49,18 @@ func (ctx {%#lcfirst(state.modalName)%}{%#state.actionName%}Data) GetOutputValue
 {% } %}
 }
 
+func (ctx {%#lcfirst(state.modalName)%}{%#state.actionName%}Data) SetInputValue (value interface{}) {
+{% if (state.request){ %}
+  ctx.Input = value.(*{%#state.requestSchema%})
+{% } %}
+}
+
+func (ctx {%#lcfirst(state.modalName)%}{%#state.actionName%}Data) SetOutputValue (value interface{}) {
+{% if (state.response){ %}
+  ctx.Output = value.(*{%#state.responseSchema%})
+{% } %}
+}
+
 func (ctx *{%#lcfirst(state.modalName)%}{%#state.actionName%}Data) ParseInput(ds sav.DataSource)  {
 {% if (state.request){ %}
   if ds.IsForm() {

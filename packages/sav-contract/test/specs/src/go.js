@@ -5,7 +5,7 @@ import {createEnumBody} from '../../../src/writers/go/enumFactory.js'
 import {createStructBody} from '../../../src/writers/go/structFactory.js'
 import {createListBody} from '../../../src/writers/go/listFactory.js'
 import {createReferBody} from '../../../src/writers/go/referFactory.js'
-import {Context} from '../../../src/writers/go/Context.js'
+import {Context} from '../../../src/writers/go/context.js'
 
 test('contract_go', async (ava) => {
   let res = []
