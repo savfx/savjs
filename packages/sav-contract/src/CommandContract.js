@@ -6,6 +6,7 @@ import {writeContract} from './writers/contract.js'
 import {writeGoContract} from './writers/contractGo.js'
 import {writePhpContract} from './writers/contractPhp.js'
 import {updatePhpActions} from './updaters/updatePhp.js'
+import {updateGoActions} from './updaters/updateGo.js'
 import {updateNodeActions} from './updaters/updateNode.js'
 import {updateFront} from './updaters/updateFront.js'
 
@@ -69,6 +70,15 @@ export class CommandContract extends Contract {
           opts.namespace = 'namespace App\\Http\\Controllers;'
         }
         await updatePhpActions(destModals, modals, opts)
+      }
+      if (langs.indexOf('go') !== -1) { // go 后端
+        let opts = {
+          project: this.project
+        }
+        if (params.gin) {
+          opts.gin = true
+        }
+        await updateGoActions(this, destModals, modals, opts)
       }
     }
     if (destFront) {

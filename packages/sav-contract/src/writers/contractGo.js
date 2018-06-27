@@ -37,7 +37,7 @@ export async function writeGoContract (dir, contract, opts = {}) {
   if (!isMem) {
     await ensureDir(dir)
   }
-  let name = contract.project.name
+  let name = contract.project.goName || contract.project.name
   let contractPath = dir
   // let {mocks, project} = contract
   // let mockData

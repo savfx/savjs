@@ -15,6 +15,7 @@ const locals = {
     destModals: 'modals 输出目录',
     destFront: '前端项目输出目录',
     lumen: 'php的lumen模式',
+    gin: 'go的gin模式',
     sassMode: 'sass 组织方式 app(单个)|modal(模块)',
     rc: '配置缓存文件 (默认 contract.rc.js)'
   },
@@ -29,6 +30,7 @@ const locals = {
     destFront: 'output font-end projects directory',
     sassMode: 'sass mode with app|modal',
     lumen: 'for php lumen',
+    gin: 'for go gin',
     rc: 'config resourece file (default contract.rc.js)'
   }
 }
@@ -49,6 +51,7 @@ function getProgram (locale) {
     .option('-M, --dest-modals [destModals]', current.destModals)
     .option('-F, --dest-front [destFront]', current.destFront)
     .option('-L, --lumen [lumen]', current.lumen)
+    .option('-G, --gin [gin]', current.gin)
     .option('-S, --sassMode [sassMode]', current.sassMode, /^(app|modal)$/i, 'app')
     .option('-r, --rc [rc]', current.rc, String, 'contract.rc')
     .on('--help', function () {
