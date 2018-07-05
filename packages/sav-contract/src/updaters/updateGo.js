@@ -35,7 +35,7 @@ func registerRoutes(app sgin.GinApplication)  {
 }
  */
 
-async function syncRoutes(dir, routes, opts) {
+async function syncRoutes (dir, routes, opts) {
   let text = routes.map(it => {
     return `\tapp.Handle("${it.modalName}", "${it.actionName}", func(ctx interface{}, ctrl sav.Controller, handler sav.DataHandler, extra interface{}) {
 ${it.routeBody}
@@ -144,8 +144,8 @@ import (
 
       routes.push({
         modalName,
-        actionName : pascalCase(action.actionName),
-        routeBody,
+        actionName: pascalCase(action.actionName),
+        routeBody
       })
 
       let header = arr.join(' ')
@@ -160,13 +160,13 @@ import (
         fileText += `${text}\n\n`
       }
     })
-    if (fileText.indexOf("convert.NewObjectAccess") !== -1) {
-      let injectLib = "github.com/savfx/savgo/util/convert"
-      if (fileText.indexOf(injectLib) == -1) {
-        let findText = "github.com/savfx/savgo/server/sgin"
+    if (fileText.indexOf('convert.NewObjectAccess') !== -1) {
+      let injectLib = 'github.com/savfx/savgo/util/convert'
+      if (fileText.indexOf(injectLib) === -1) {
+        let findText = 'github.com/savfx/savgo/server/sgin'
         let pos = fileText.indexOf(findText)
-        fileText = fileText.substr(0, pos + findText.length + 1) + `\n\t"${injectLib}"`
-          + fileText.substr(pos + findText.length + 1, fileText.length)
+        fileText = fileText.substr(0, pos + findText.length + 1) + `\n\t"${injectLib}"` +
+          fileText.substr(pos + findText.length + 1, fileText.length)
       }
     }
     await outputFile(file, fileText)
