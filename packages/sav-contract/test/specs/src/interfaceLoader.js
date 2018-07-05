@@ -8,6 +8,7 @@ import {writeGoContract} from '../../../src/writers/contractGo.js'
 import {CommandContract} from '../../../src/CommandContract.js'
 import {updatePhpActions} from '../../../src/updaters/updatePhp.js'
 import {updateNodeActions} from '../../../src/updaters/updateNode.js'
+import {updateGoActions} from '../../../src/updaters/updateGo.js'
 import path from 'path'
 // import fs from 'fs'
 
@@ -62,6 +63,7 @@ test('loadInterface', async (ava) => {
   let modals = cmd.getContractModals()
   await updatePhpActions(actionPath, modals)
   await updateNodeActions(actionPath, modals)
+  await updateGoActions(cmd, actionPath)
 
   ava.pass()
 })

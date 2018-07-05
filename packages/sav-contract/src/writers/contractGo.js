@@ -5,18 +5,10 @@ import path from 'path'
 import {
   // noticeString,
   outputFile,
-  getBackRoutes,
   ensureDir
 } from '../utils/util.js'
-// import jsonar from 'jsonar'
-import {
-  convertCase
-  // pascalCase,
-  // camelCase
-  // isString, isArray, isObject
-} from 'sav-util'
 
-import {Context} from './go/context.js'
+import {parseContract} from './go/parseContract.js'
 import {
   createActionBody,
   createContractBody
@@ -48,115 +40,116 @@ export async function writeGoContract (dir, contract, opts = {}) {
   //     await outputFile(mockFile, mockData)
   //   }
   // }
+  let {modals, ctx, schemaList, actionMap, schemas, schemaMap, remains} = parseContract(contract, opts)
+  //! BEGIN
   // 剔除掉view
-  let modals = contract.getContractModals().map(modal => {
-    let routes = getBackRoutes(modal, modal.routes)
-    modal.routes = routes
-    return modal
-  }).filter(it => it.routes.length)
+  // let modals = contract.getContractModals().map(modal => {
+  //   let routes = getBackRoutes(modal, modal.routes)
+  //   modal.routes = routes
+  //   return modal
+  // }).filter(it => it.routes.length)
 
-  let schemas = contract.getContractSchemas({reference: true})
-  let remains = []
-  let schemaMap = schemas.reduce((ret, it) => {
-    let item = {
-      name: it.name,
-      schema: it,
-      pass: false,
-      ref: 0
-    }
-    remains.push(item)
-    ret[it.name] = item
-    return ret
-  }, {})
+  // let schemas = contract.getContractSchemas({reference: true})
+  // let remains = []
+  // let schemaMap = schemas.reduce((ret, it) => {
+  //   let item = {
+  //     name: it.name,
+  //     schema: it,
+  //     pass: false,
+  //     ref: 0
+  //   }
+  //   remains.push(item)
+  //   ret[it.name] = item
+  //   return ret
+  // }, {})
 
-  let ctx = new Context()
-  schemas.forEach(ref => {
-    ctx.addRef(ref)
-    ref.refs.forEach(it => {
-      if (schemaMap[it]) {
-        schemaMap[it].ref++
-      }
-    })
-  })
+  // let ctx = new Context()
+  // schemas.forEach(ref => {
+  //   ctx.addRef(ref)
+  //   ref.refs.forEach(it => {
+  //     if (schemaMap[it]) {
+  //       schemaMap[it].ref++
+  //     }
+  //   })
+  // })
 
-  schemas.sort(function (a, b) {
-    return schemaMap[b.name].ref - schemaMap[a.name].ref
-  })
+  // schemas.sort(function (a, b) {
+  //   return schemaMap[b.name].ref - schemaMap[a.name].ref
+  // })
 
-  let actionMap = {}
+  // let actionMap = {}
 
-  let getStructType = (name) => {
-    let schemaItem = schemaMap[name]
-    if (schemaItem && schemaItem.schema) {
-      if (schemaItem.schema.refer) {
-        return getStructType(schemaItem.schema.refer)
-      } else if (schemaItem.schema.list) {
-        return 'Array'
-      } else if (schemaItem.schema.props) {
-        return 'Object'
-      }
-    }
-    return ''
-  }
+  // let getStructType = (name) => {
+  //   let schemaItem = schemaMap[name]
+  //   if (schemaItem && schemaItem.schema) {
+  //     if (schemaItem.schema.refer) {
+  //       return getStructType(schemaItem.schema.refer)
+  //     } else if (schemaItem.schema.list) {
+  //       return 'Array'
+  //     } else if (schemaItem.schema.props) {
+  //       return 'Object'
+  //     }
+  //   }
+  //   return ''
+  // }
 
-  let getRealName = (name) => {
-    let schemaItem = schemaMap[name]
-    if (schemaItem && schemaItem.schema) {
-      if (schemaItem.schema.refer) {
-        return getRealName(schemaItem.schema.refer)
-      }
-      return schemaItem.schema.name
-    }
-    return ''
-  }
+  // let getRealName = (name) => {
+  //   let schemaItem = schemaMap[name]
+  //   if (schemaItem && schemaItem.schema) {
+  //     if (schemaItem.schema.refer) {
+  //       return getRealName(schemaItem.schema.refer)
+  //     }
+  //     return schemaItem.schema.name
+  //   }
+  //   return ''
+  // }
 
-  let dataList = []
+  // let dataList = []
 
-  let schemaList = modals.reduce((ref, modal) => {
-    let actions = actionMap[modal.name] = []
-    return modal.routes.reduce((ref, route) => {
-      let name = convertCase('pascal', `${modal.name}_${route.name}`)
-      let ret = []
-      let action = {
-        name,
-        modalName: modal.name,
-        actionName: route.name,
-        route: route,
-      }
-      console.log(route)
-      actions.push(action)
-      if (route.request) {
-        action.request = route.request
-        action.requestSchema = getRealName(route.request)
-        action.requestType = getStructType(route.request)
-        action.requestName = 'Req' + name
-        dataList.push({
-          fieldName: action.requestName,
-          fieldType: action.requestSchema
-        })
-        getSchemas(route.request, schemaMap, ret)
-      }
-      if (route.response) {
-        action.response = route.response
-        action.responseSchema = getRealName(route.response)
-        action.responseType = getStructType(route.response)
-        action.responseName = 'Res' + name
-        dataList.push({
-          fieldName: action.responseName,
-          fieldType: action.responseSchema
-        })
-        getSchemas(route.response, schemaMap, ret)
-      }
-      if (ret.length) {
-        ref.push({
-          name,
-          schemas: ret
-        })
-      }
-      return ref
-    }, ref)
-  }, [])
-
+  // let schemaList = modals.reduce((ref, modal) => {
+  //   let actions = actionMap[modal.name] = []
+  //   return modal.routes.reduce((ref, route) => {
+  //     let name = convertCase('pascal', `${modal.name}_${route.name}`)
+  //     let ret = []
+  //     let action = {
+  //       name,
+  //       modalName: modal.name,
+  //       actionName: route.name,
+  //       route: route,
+  //     }
+  //     actions.push(action)
+  //     if (route.request) {
+  //       action.request = route.request
+  //       action.requestSchema = getRealName(route.request)
+  //       action.requestType = getStructType(route.request)
+  //       action.requestName = 'Req' + name
+  //       dataList.push({
+  //         fieldName: action.requestName,
+  //         fieldType: action.requestSchema
+  //       })
+  //       getSchemas(route.request, schemaMap, ret)
+  //     }
+  //     if (route.response) {
+  //       action.response = route.response
+  //       action.responseSchema = getRealName(route.response)
+  //       action.responseType = getStructType(route.response)
+  //       action.responseName = 'Res' + name
+  //       dataList.push({
+  //         fieldName: action.responseName,
+  //         fieldType: action.responseSchema
+  //       })
+  //       getSchemas(route.response, schemaMap, ret)
+  //     }
+  //     if (ret.length) {
+  //       ref.push({
+  //         name,
+  //         schemas: ret
+  //       })
+  //     }
+  //     return ref
+  //   }, ref)
+  // }, [])
+  //! END
   let schemaData = await schemaList.reduce((ref, item) => {
     return ref.then(async (arr) => {
       let data = item.schemas.map(it => ctx.createBody(it.schema)).join('\n')
@@ -212,7 +205,8 @@ export async function writeGoContract (dir, contract, opts = {}) {
   return {
     schemas,
     schemaData,
-    actionData
+    actionData,
+    schemaMap
   }
 }
 
@@ -245,22 +239,4 @@ ${imports}
 
 ${text}
 `
-}
-
-function getSchemas (name, maps, ret) {
-  let ref = maps[name]
-  if (!ref) {
-    return
-  }
-  if (ret.indexOf(ref) !== -1) {
-    return
-  }
-  if (ref.pass) {
-    return
-  }
-  ref.pass = true
-  ret.push(ref)
-  ref.schema.refs.forEach(it => {
-    getSchemas(it, maps, ret)
-  })
 }
